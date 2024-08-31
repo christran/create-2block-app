@@ -76,13 +76,14 @@ export async function signup(_: any, formData: FormData): Promise<ActionResponse
     const err = parsed.error.flatten();
     return {
       fieldError: {
+        fullname: err.fieldErrors.fullname?.[0],
         email: err.fieldErrors.email?.[0],
         password: err.fieldErrors.password?.[0],
       },
     };
   }
 
-  const { email, password } = parsed.data;
+  const { fullname, email, password } = parsed.data;
 
   const existingUser = await db.query.users.findFirst({
     where: (table, { eq }) => eq(table.email, email),
@@ -91,21 +92,20 @@ export async function signup(_: any, formData: FormData): Promise<ActionResponse
 
   if (existingUser) {
     return {
-      formError: "Cannot create account with that email",
+      formError: "The email is already registered with another account.",
     };
   }
 
   const userId = generateId(21);
   const hashedPassword = await new Scrypt().hash(password);
   
-  // Create a placeholder avatar using the user's initials
-
-  // current using email should implement first and last name
-  const initials = email.split('@')[0]?.slice(0, 2).toUpperCase() ?? 'CT';
+  // Generate initials from the fullname
+  const initials = fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('');
   const avatar = `https://ui-avatars.com/api/?name=${initials}&background=random&color=random`;
 
   await db.insert(users).values({
     id: userId,
+    fullname,
     email,
     hashedPassword,
     avatar,
@@ -117,20 +117,23 @@ export async function signup(_: any, formData: FormData): Promise<ActionResponse
   const session = await lucia.createSession(userId, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-  return redirect(Paths.VerifyEmail);
+
+  // Redirect to /verify-email or to dashboard
+  return redirect(Paths.Dashboard);
 }
 
 export async function logout(): Promise<{ error: string } | void> {
   const { session } = await validateRequest();
   if (!session) {
     return {
-      error: "No session found",
+      error: "No session found.",
     };
   }
   await lucia.invalidateSession(session.id);
   const sessionCookie = lucia.createBlankSessionCookie();
   cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-  return redirect("/");
+
+  return redirect(Paths.Home);
 }
 
 export async function resendVerificationEmail(): Promise<{
@@ -148,7 +151,7 @@ export async function resendVerificationEmail(): Promise<{
 
   if (lastSent && isWithinExpirationDate(lastSent.expiresAt)) {
     return {
-      error: `Please wait ${timeFromNow(lastSent.expiresAt)} before resending`,
+      error: `Please wait ${timeFromNow(lastSent.expiresAt)} before resending.`,
     };
   }
   const verificationCode = await generateEmailVerificationCode(user.id, user.email);
@@ -160,7 +163,7 @@ export async function resendVerificationEmail(): Promise<{
 export async function verifyEmail(_: any, formData: FormData): Promise<{ error: string } | void> {
   const code = formData.get("code");
   if (typeof code !== "string" || code.length !== 8) {
-    return { error: "Invalid code" };
+    return { error: "Invalid code." };
   }
   const { user } = await validateRequest();
   if (!user) {
@@ -177,17 +180,18 @@ export async function verifyEmail(_: any, formData: FormData): Promise<{ error: 
     return item;
   });
 
-  if (!dbCode || dbCode.code !== code) return { error: "Invalid verification code" };
+  if (!dbCode || dbCode.code !== code) return { error: "Invalid verification code." };
 
-  if (!isWithinExpirationDate(dbCode.expiresAt)) return { error: "Verification code expired" };
+  if (!isWithinExpirationDate(dbCode.expiresAt)) return { error: "Verification code expired." };
 
-  if (dbCode.email !== user.email) return { error: "Email does not match" };
+  if (dbCode.email !== user.email) return { error: "Email does not match." };
 
   await lucia.invalidateUserSessions(user.id);
   await db.update(users).set({ emailVerified: true }).where(eq(users.id, user.id));
   const session = await lucia.createSession(user.id, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+
   redirect(Paths.Dashboard);
 }
 
@@ -245,7 +249,7 @@ export async function resetPassword(
     return item;
   });
 
-  if (!dbToken) return { error: "Invalid password reset link" };
+  if (!dbToken) return { error: "Invalid password reset link." };
 
   if (!isWithinExpirationDate(dbToken.expiresAt)) return { error: "Password reset link expired." };
 
@@ -255,6 +259,7 @@ export async function resetPassword(
   const session = await lucia.createSession(dbToken.userId, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+  
   redirect(Paths.Dashboard);
 }
 

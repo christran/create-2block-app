@@ -28,6 +28,7 @@ export async function GET(request: Request): Promise<Response> {
         Authorization: `Bearer ${tokens.accessToken}`,
       },
     });
+
     const discordUser = (await discordUserRes.json()) as DiscordUser;
 
     if (!discordUser.email || !discordUser.verified) {
@@ -38,27 +39,34 @@ export async function GET(request: Request): Promise<Response> {
         { status: 400, headers: { Location: Paths.Login } },
       );
     }
+
     const existingUser = await db.query.users.findFirst({
       where: (table, { eq, or }) =>
         or(eq(table.discordId, discordUser.id), eq(table.email, discordUser.email!)),
     });
 
+    const initials = discordUser.username.split(' ').map(name => name.charAt(0).toUpperCase()).join('');
+
     const avatar = discordUser.avatar
       ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.webp`
-      : null;
+      : `https://ui-avatars.com/api/?name=${initials}&background=random&color=random`;
 
     if (!existingUser) {
       const userId = generateId(21);
       await db.insert(users).values({
         id: userId,
+        fullname: discordUser.username,
         email: discordUser.email,
         emailVerified: true,
         discordId: discordUser.id,
         avatar,
       });
+
       const session = await lucia.createSession(userId, {});
       const sessionCookie = lucia.createSessionCookie(session.id);
+
       cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+
       return new Response(null, {
         status: 302,
         headers: { Location: Paths.Dashboard },
@@ -70,14 +78,18 @@ export async function GET(request: Request): Promise<Response> {
         .update(users)
         .set({
           discordId: discordUser.id,
+          fullname: discordUser.username,
           emailVerified: true,
           avatar,
         })
         .where(eq(users.id, existingUser.id));
     }
+
     const session = await lucia.createSession(existingUser.id, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
+
     cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+
     return new Response(null, {
       status: 302,
       headers: { Location: Paths.Dashboard },
@@ -92,7 +104,7 @@ export async function GET(request: Request): Promise<Response> {
     }
     console.error(e);
 
-    return new Response(JSON.stringify({ message: "internal server error" }), {
+    return new Response(JSON.stringify({ message: "Internal server error" }), {
       status: 500,
     });
   }

@@ -9,6 +9,7 @@ import { toast } from "sonner";
 
 export function ManageSubscriptionForm({
   isPro,
+  isCanceled,
   stripeCustomerId,
   stripeSubscriptionId,
   stripePriceId,
@@ -23,6 +24,7 @@ export function ManageSubscriptionForm({
       try {
         const session = await managePlanMutation.mutateAsync({
           isPro,
+          isCanceled,
           stripeCustomerId,
           stripeSubscriptionId,
           stripePriceId,
@@ -42,7 +44,13 @@ export function ManageSubscriptionForm({
   return (
     <form className="w-full" onSubmit={onSubmit}>
       <Button className="w-full" disabled={isPending}>
-        {isPending ? "Loading..." : isPro ? "Manage plan" : "Subscribe now"}
+        {isPending
+          ? "Loading..."
+          : isCanceled
+          ? "Resubscribe"
+          : isPro
+          ? "Manage plan"
+          : "Subscribe"}
       </Button>
     </form>
   );

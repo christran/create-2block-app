@@ -24,12 +24,12 @@ export function ResetPassword({ token }: { token: string }) {
     <form action={formAction} className="space-y-4">
       <input type="hidden" name="token" value={token} />
       <div className="space-y-2">
-        <Label>New Password</Label>
+        {/* <Label>Password</Label> */}
         <PasswordInput
           name="password"
           required
           autoComplete="new-password"
-          placeholder="********"
+          placeholder="Password"
         />
       </div>
       <SubmitButton className="w-full">Reset Password</SubmitButton>

@@ -1,4 +1,4 @@
-import { Body, Container, Head, Html, Preview, Section, Text } from "@react-email/components";
+import { Body, Container, Head, Html, Preview, Section, Text, Button } from "@react-email/components";
 import { APP_TITLE } from "@/lib/constants";
 
 export interface EmailVerificationTemplateProps {
@@ -14,14 +14,18 @@ export const EmailVerificationTemplate = ({ code }: EmailVerificationTemplatePro
         <Container style={container}>
           <Section>
             <Text style={title}>{APP_TITLE}</Text>
-            <Text style={text}>Hi,</Text>
+            <Text style={text}>Hello,</Text>
             <Text style={text}>
               Thank you for registering for an account on {APP_TITLE}. To complete your
               registration, please verify your your account by using the following code:
             </Text>
             <Text style={codePlaceholder}>{code}</Text>
 
-            <Text style={text}>Have a nice day!</Text>
+            {/* <Button style={button} href={link}>
+              Reset password
+            </Button> */}
+
+            {/* Add a button or link to /verify-email */}
           </Section>
         </Container>
       </Body>
@@ -54,6 +58,19 @@ const title = {
   fontSize: "22px",
   fontWeight: "700",
   lineHeight: "32px",
+};
+
+const button = {
+  backgroundColor: "#09090b",
+  borderRadius: "4px",
+  color: "#fafafa",
+  fontFamily: "'Open Sans', 'Helvetica Neue', Arial",
+  fontSize: "15px",
+  textDecoration: "none",
+  textAlign: "center" as const,
+  display: "block",
+  width: "210px",
+  padding: "14px 7px",
 };
 
 const codePlaceholder = {

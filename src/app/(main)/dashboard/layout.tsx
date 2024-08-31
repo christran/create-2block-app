@@ -1,4 +1,5 @@
 import { DashboardNav } from "./_components/dashboard-nav";
+import { UpdateEmailWarning } from "./_components/update-email-warning";
 import { VerificiationWarning } from "./_components/verificiation-warning";
 
 interface Props {
@@ -11,6 +12,7 @@ export default function DashboardLayout({ children }: Props) {
       <div className="flex flex-col gap-6 md:flex-row lg:gap-10">
         <DashboardNav className="flex flex-shrink-0 gap-2 md:w-48 md:flex-col lg:w-80" />
         <main className="w-full space-y-4">
+          <UpdateEmailWarning />
           <VerificiationWarning />
           <div>{children}</div>
         </main>

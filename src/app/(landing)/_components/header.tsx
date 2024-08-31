@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { RocketIcon } from "@/components/icons";
-import { APP_TITLE } from "@/lib/constants";
+import { PiHandPeaceLight } from "@/components/icons";
+import { APP_TITLE_UNSTYLED, Paths } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -8,14 +8,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { HamburgerMenuIcon } from "@radix-ui/react-icons";
+import { DesktopIcon, HamburgerMenuIcon, PersonIcon } from "@radix-ui/react-icons";
 
 const routes = [
   { name: "Home", href: "/" },
-  { name: "Features", href: "/#features" },
+  { name: "Team", href: "/#features" },
   {
-    name: "Documentation",
-    href: "https://www.touha.dev/posts/simple-nextjs-t3-authentication-with-lucia",
+    name: "Jobs",
+    href: "https://google.com",
   },
 ] as const;
 
@@ -44,10 +44,10 @@ export const Header = () => {
           </DropdownMenuContent>
         </DropdownMenu>
         <Link
-          className="flex items-center justify-center text-xl font-medium"
+          className="flex items-center justify-center text-xs font-bold"
           href="/"
         >
-          <RocketIcon className="mr-2 h-5 w-5" /> {APP_TITLE}
+          <PiHandPeaceLight className="h-5 w-5" />{APP_TITLE_UNSTYLED}
         </Link>
         <nav className="ml-10 hidden gap-4 sm:gap-6 md:flex">
           {routes.map(({ name, href }) => (
@@ -61,8 +61,11 @@ export const Header = () => {
           ))}
         </nav>
         <div className="ml-auto">
-          <Button asChild variant={"secondary"}>
-            <Link href="/login">Login</Link>
+          <Button size="sm" variant="outline" asChild>
+            <a href={Paths.Login}>
+              <PersonIcon className="mr-2 h-5 w-5" />
+              Login
+            </a>
           </Button>
         </div>
       </div>

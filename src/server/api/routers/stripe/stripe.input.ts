@@ -5,6 +5,7 @@ export const manageSubscriptionSchema = z.object({
   stripeCustomerId: z.string().optional().nullable(),
   stripeSubscriptionId: z.string().optional().nullable(),
   isPro: z.boolean(),
+  isCanceled: z.boolean(),
 });
 
 export type ManageSubscriptionInput = z.infer<typeof manageSubscriptionSchema>;

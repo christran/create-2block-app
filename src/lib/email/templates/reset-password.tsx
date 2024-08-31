@@ -33,13 +33,11 @@ export const ResetPasswordTemplate = ({ link }: ResetPasswordTemplateProps) => {
               Reset password
             </Button>
             <Text style={text}>
-              If you don&apos;t want to change your password or didn&apos;t request this, just
-              ignore and delete this message.
+              If you didn&apos;t request this, you may ignore this email.
             </Text>
             <Text style={text}>
               To keep your account secure, please don&apos;t forward this email to anyone.
             </Text>
-            <Text style={text}>Have a nice day!</Text>
           </Section>
         </Container>
       </Body>

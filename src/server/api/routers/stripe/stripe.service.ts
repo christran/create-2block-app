@@ -3,6 +3,7 @@ import type { ProtectedTRPCContext } from "../../trpc";
 import { stripe } from "@/lib/stripe";
 import { absoluteUrl, formatPrice } from "@/lib/utils";
 import type { ManageSubscriptionInput } from "./stripe.input";
+import { env } from "@/env";
 
 export const getStripePlans = async (ctx: ProtectedTRPCContext) => {
   try {
@@ -138,3 +139,12 @@ export const manageSubscription = async (
     url: stripeSession.url,
   };
 };
+
+export async function createBillingPortalSession(customerId: string) {
+  const session = await stripe.billingPortal.sessions.create({
+    customer: customerId,
+    return_url: `${env.NEXT_PUBLIC_APP_URL}/dashboard/billing`,
+  })
+  
+  return session.url
+}

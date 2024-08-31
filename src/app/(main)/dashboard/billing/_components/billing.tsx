@@ -14,6 +14,7 @@ import {
 import { formatDate } from "@/lib/utils";
 import { type RouterOutputs } from "@/trpc/shared";
 import { ManageSubscriptionForm } from "./manage-subscription-form";
+import { createBillingPortalSession } from "@/server/api/routers/stripe/stripe.service";
 
 interface BillingProps {
   stripePromises: Promise<
@@ -28,14 +29,30 @@ export async function Billing({ stripePromises }: BillingProps) {
     <>
       <section>
         <Card className="space-y-2 p-8">
-          <h3 className="text-lg font-semibold sm:text-xl">{plan?.name ?? "Free"} plan</h3>
+          <h3 className="text-lg font-semibold sm:text-xl">Subscription</h3>
+          <h4 className="text-lg font-semibold sm:text-xl">{plan?.name ?? "Free"}</h4>
           <p className="text-sm text-muted-foreground">
             {!plan?.isPro
-              ? "The free plan is limited to 2 posts. Upgrade to the Pro plan to unlock unlimited posts."
+              ? "The free plan is limited to 2 posts. Upgrade to to unlock unlimited posts."
               : plan.isCanceled
-                ? "Your plan will be canceled on "
-                : "Your plan renews on "}
-            {plan?.stripeCurrentPeriodEnd ? formatDate(plan.stripeCurrentPeriodEnd) : null}
+                ? <>
+                    {`Your subscription will be canceled on `}
+                    <span className="font-semibold">
+                      {plan?.stripeCurrentPeriodEnd ? formatDate(plan.stripeCurrentPeriodEnd) : null}
+                    </span>
+                    {`. `}
+                    {plan?.stripeCustomerId && (
+                      <Link href={await createBillingPortalSession(plan.stripeCustomerId)} className="underline">
+                        Click here to resubscribe
+                      </Link>
+                    )}
+                  </>
+                : <>
+                    Your subscription renews on{" "}
+                    <span className="font-semibold">
+                      {plan?.stripeCurrentPeriodEnd ? formatDate(plan.stripeCurrentPeriodEnd) : null}
+                    </span>
+                  </>}
           </p>
         </Card>
       </section>
@@ -64,16 +81,19 @@ export async function Billing({ stripePromises }: BillingProps) {
             </CardContent>
             <CardFooter className="pt-4">
               {item.name === "Free" ? (
-                <Button className="w-full" asChild>
+                <Button className="w-full" disabled={plan?.isPro}>
                   <Link href="/dashboard">
-                    Get started
-                    <span className="sr-only">Get started</span>
+                    {plan?.isPro ? "Upgraded" : "Continue"}
+                    <span className="sr-only">
+                      {plan?.isPro ? "You are currently on the Pro plan" : "Continue with Free plan"}
+                    </span>
                   </Link>
                 </Button>
               ) : (
                 <ManageSubscriptionForm
                   stripePriceId={item.stripePriceId}
                   isPro={plan?.isPro ?? false}
+                  isCanceled={plan?.isCanceled ?? false}
                   stripeCustomerId={plan?.stripeCustomerId}
                   stripeSubscriptionId={plan?.stripeSubscriptionId}
                 />

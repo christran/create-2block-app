@@ -42,18 +42,19 @@ export function SendResetEmail() {
         />
       </div>
 
-      <div className="flex flex-wrap justify-between">
-        <Link href={Paths.Signup}>
-          <Button variant={"link"} size={"sm"} className="p-0">
-            Not signed up? Sign up now
-          </Button>
-        </Link>
-      </div>
+      {/* <div className="flex flex-wrap items-center justify-between text-xs">
+            <div>
+              Don't have an account?{" "}
+              <Button variant="link" size="sm" className="p-0 h-auto" asChild>
+                <Link href={Paths.Signup}>Sign up</Link>
+              </Button>
+            </div>
+      </div> */}
 
       <SubmitButton className="w-full">Reset Password</SubmitButton>
-      <Button variant="outline" className="w-full" asChild>
-        <Link href="/">Cancel</Link>
-      </Button>
+      {/* <Button variant="outline" className="w-full" asChild>
+        <Link href={Paths.Login}>Cancel</Link>
+      </Button> */}
     </form>
   );
 }

@@ -6,11 +6,12 @@ import { PasswordInput } from "@/components/password-input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { DiscordLogoIcon } from "@/components/icons";
+import { DiscordLogoIcon, faGoogle, FontAwesomeIcon, GitHubLogoIcon } from "@/components/icons";
 import { APP_TITLE } from "@/lib/constants";
 import { Label } from "@/components/ui/label";
 import { signup } from "@/lib/auth/actions";
 import { SubmitButton } from "@/components/submit-button";
+import { Paths } from "@/lib/constants";
 
 export function Signup() {
   const [state, formAction] = useFormState(signup, null);
@@ -18,23 +19,22 @@ export function Signup() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
-        <CardTitle>{APP_TITLE} Sign Up</CardTitle>
-        <CardDescription>Sign up to start using the app</CardDescription>
+        <CardTitle>{APP_TITLE}</CardTitle>
+        {/* <CardDescription>Sign up to start using the app</CardDescription> */}
       </CardHeader>
       <CardContent>
-        <Button variant="outline" className="w-full" asChild>
-          <Link href="/login/discord" prefetch={false}>
-            <DiscordLogoIcon className="mr-2 h-5 w-5" />
-            Sign up with Discord
-          </Link>
-        </Button>
-        <div className="my-2 flex items-center">
-          <div className="flex-grow border-t border-muted" />
-          <div className="mx-2 text-muted-foreground">or</div>
-          <div className="flex-grow border-t border-muted" />
-        </div>
-
         <form action={formAction} className="space-y-4">
+        <div className="space-y-2">
+            <Label htmlFor="fullname">Full Name</Label>
+            <Input
+              id="fullname"
+              required
+              placeholder="Jeon Jungkook"
+              autoComplete="name"
+              name="fullname"
+              type="text"
+            />
+          </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -70,21 +70,46 @@ export function Signup() {
               {state?.formError}
             </p>
           ) : null}
-          <div>
-            <Link href={"/login"}>
-              <span className="p-0 text-xs font-medium underline-offset-4 hover:underline">
-                Already signed up? Login instead.
-              </span>
-            </Link>
+          <div className="flex flex-wrap items-center justify-between text-xs">
+            <div>
+              Already have an account?{" "}
+              <Button variant="link" size="sm" className="p-0 h-auto" asChild>
+                <Link href={Paths.Login}>Log in</Link>
+              </Button>
+            </div>
           </div>
-
           <SubmitButton className="w-full" aria-label="submit-btn">
-            Sign Up
+            Sign up
           </SubmitButton>
           <Button variant="outline" className="w-full" asChild>
-            <Link href="/">Cancel</Link>
+            {/* <Link href={Paths.Home}>Cancel</Link> */}
           </Button>
         </form>
+        <div className="my-2 mt-8 mb-8 flex items-center">
+          <div className="flex-grow border-t border-muted" />
+          <div className="mx-2 text-sm text-muted-foreground">or continue with</div>
+          <div className="flex-grow border-t border-muted" />
+        </div>
+      <CardContent className="space-y-2">
+      <Button variant="outline" className="w-full" asChild>
+          <Link href="/login/google" prefetch={false}>
+            <FontAwesomeIcon icon={faGoogle} className="mr-2 h-5 w-5" />
+            Continue with Google
+          </Link>
+        </Button>
+        <Button variant="outline" className="w-full" asChild>
+          <Link href="/login/discord" prefetch={false}>
+            <DiscordLogoIcon className="mr-2 h-5 w-5" />
+            Continue with Discord
+          </Link>
+        </Button>
+        <Button variant="outline" className="w-full" asChild>
+          <Link href="/login/github" prefetch={false}>
+            <GitHubLogoIcon className="mr-2 h-5 w-5" />
+            Continue with GitHub
+          </Link>
+        </Button>
+      </CardContent>
       </CardContent>
     </Card>
   );

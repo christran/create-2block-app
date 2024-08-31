@@ -1,5 +1,5 @@
 import { Lucia, TimeSpan } from "lucia";
-import { Discord } from "arctic";
+import { Discord, GitHub } from "arctic";
 import { DrizzlePostgreSQLAdapter } from "@lucia-auth/adapter-drizzle";
 import { env } from "@/env.js";
 import { db } from "@/server/db";
@@ -19,6 +19,7 @@ export const lucia = new Lucia(adapter, {
   getUserAttributes: (attributes) => {
     return {
       id: attributes.id,
+      fullname: attributes.fullname,
       email: attributes.email,
       emailVerified: attributes.emailVerified,
       avatar: attributes.avatar,
@@ -43,6 +44,13 @@ export const discord = new Discord(
   absoluteUrl("/login/discord/callback")
 );
 
+export const github = new GitHub(
+  env.GITHUB_CLIENT_ID as string,
+  env.GITHUB_CLIENT_SECRET as string,
+  {
+    redirectURI: absoluteUrl("/login/github/callback")
+  }
+);
 declare module "lucia" {
   interface Register {
     Lucia: typeof lucia;

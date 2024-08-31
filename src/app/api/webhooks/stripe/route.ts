@@ -94,16 +94,63 @@ export async function POST(req: Request) {
 
       break;
     }
+    case "customer.subscription.updated": {
+      // Triggers when admin updates a user's subscription directly on the Stripe dashboard
+      console.log("customer.subscription.updated");
+
+      const subscriptionUpdated = event.data.object;
+
+      const customerId = subscriptionUpdated?.customer;
+
+      if (!customerId) {
+        return new Response("Customer id not found in database.", {
+          status: 404,
+        });
+      }
+
+      // Retrieve the subscription details from Stripe
+      const subscription = await stripe.subscriptions.retrieve(
+        subscriptionUpdated.id,
+      );
+
+      // Reason: cancellation_requested, admin canceled with custom date
+      if (subscription.cancellation_details?.reason) {
+        const subscription = await stripe.subscriptions.update(
+          subscriptionUpdated.id,
+          {
+            cancel_at_period_end: true
+          }
+        );
+        console.log(subscription);
+      }
+
+      // Update the user stripe into in our database
+      // Since this is the initial subscription, we need to update
+      // the subscription id and customer id
+      await db
+        .update(users)
+        .set({
+          stripeSubscriptionId: subscription.id,
+          stripeCustomerId: subscription.customer as string,
+          stripePriceId: subscription.items.data[0]?.price.id,
+          stripeCurrentPeriodEnd: new Date(
+            subscription.current_period_end * 1000,
+          ),
+        })
+        .where(eq(users.stripeCustomerId, customerId as string));
+
+      break;
+    }
     case "customer.subscription.deleted": {
-      // Triggers when admin cancels user's subscription directly on the Stripe dashboard
+      // Triggers when admin cancels a user's subscription directly on the Stripe dashboard
       console.log("customer.subscription.deleted");
 
-      const checkoutSessionCompleted = event.data.object;
+      const subscriptionDeleted = event.data.object;
 
-      const customerId = checkoutSessionCompleted.customer;
+      const customerId = subscriptionDeleted.customer;
         
       if (!customerId) {
-        return new Response("User id not found in checkout session metadata.", {
+        return new Response("Customer id not found in database.", {
           status: 404,
         });
       }

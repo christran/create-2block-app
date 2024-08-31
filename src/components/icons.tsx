@@ -81,7 +81,24 @@ const CreditCard = forwardRef<SVGSVGElement, SVGProps<SVGSVGElement>>(
 );
 CreditCard.displayName = "CreditCard";
 
+export {
+  PiHandPeace,
+  PiHandPeaceFill,
+  PiHandPeaceLight,
+  PiHandPeaceThin,
+}
+  from "react-icons/pi";
+
 export { AnimatedSpinner, CreditCard };
+
+export { 
+  FontAwesomeIcon 
+} from '@fortawesome/react-fontawesome';
+
+
+export {
+  faGoogle
+} from "@fortawesome/free-brands-svg-icons";
 
 export {
   EyeOpenIcon,
@@ -92,7 +109,6 @@ export {
   ExitIcon,
   EnterIcon,
   GearIcon,
-  RocketIcon,
   PlusIcon,
   HamburgerMenuIcon,
   Pencil2Icon,
@@ -103,6 +119,7 @@ export {
   ArchiveIcon,
   ResetIcon,
   DiscordLogoIcon,
+  GitHubLogoIcon,
   FileTextIcon,
   IdCardIcon,
   PlusCircledIcon,

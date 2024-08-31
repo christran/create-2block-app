@@ -26,7 +26,7 @@ export default async function EditPostPage({ params }: Props) {
         href="/dashboard"
         className="mb-3 flex items-center gap-2 text-sm text-muted-foreground hover:underline"
       >
-        <ArrowLeftIcon className="h-5 w-5" /> back to dashboard
+        <ArrowLeftIcon className="h-5 w-5" /> Dashboard
       </Link>
 
       <PostEditor post={post} />

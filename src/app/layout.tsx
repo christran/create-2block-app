@@ -7,14 +7,15 @@ import { fontSans } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 import { TRPCReactProvider } from "@/trpc/react";
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: {
     default: APP_TITLE,
     template: `%s | ${APP_TITLE}`,
   },
-  description: "Acme - Simple auth with lucia and trpc",
-  icons: [{ rel: "icon", url: "/icon.png" }],
+  description: "✌️BLOCK",
+  icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
 export const viewport: Viewport = {
@@ -33,7 +34,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "flex flex-col min-h-screen bg-background font-sans antialiased",
           fontSans.variable,
         )}
       >
@@ -46,6 +47,16 @@ export default function RootLayout({
           <TRPCReactProvider>{children}</TRPCReactProvider>
           <Toaster />
         </ThemeProvider>
+
+      {/* 
+      - umami analytics 
+      - password-reset is getting sent along with the verificationToken which is bad
+      */}
+      <Script
+        async
+        src="/census.js"
+        data-website-id="372170b5-8c79-4b86-8bd5-18864240a4d9"
+      />
       </body>
     </html>
   );
