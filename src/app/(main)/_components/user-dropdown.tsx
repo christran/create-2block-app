@@ -15,6 +15,7 @@ import {
 import { ExclamationTriangleIcon } from "@/components/icons";
 import { logout } from "@/lib/auth/actions";;
 import { toast } from "sonner";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const UserDropdown = ({
   fullname,
@@ -46,13 +47,10 @@ export const UserDropdown = ({
     <DropdownMenu>
       <DropdownMenuTrigger className={className}>
         {/* eslint @next/next/no-img-element:off */}
-        <img
-          src={avatar!}
-          alt="Avatar"
-          className="block h-8 w-8 rounded-full leading-none"
-          width={64}
-          height={64}
-        ></img>
+      <Avatar>
+        <AvatarImage src={avatar!} alt={fullname} />
+        <AvatarFallback>{fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}</AvatarFallback>
+      </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>

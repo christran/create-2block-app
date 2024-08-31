@@ -45,11 +45,9 @@ export async function GET(request: Request): Promise<Response> {
         or(eq(table.discordId, discordUser.id), eq(table.email, discordUser.email!)),
     });
 
-    const initials = discordUser.username.split(' ').map(name => name.charAt(0).toUpperCase()).join('');
-
     const avatar = discordUser.avatar
       ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.webp`
-      : `https://ui-avatars.com/api/?name=${initials}&background=random&color=random`;
+      : null;
 
     if (!existingUser) {
       const userId = generateId(21);

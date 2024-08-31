@@ -39,11 +39,9 @@ export async function GET(request: Request): Promise<Response> {
     // Users can hide/private their email on GitHub
     const userEmail = githubUser.email ?? "No Email";
 
-    const initials = githubUser.name.split(' ').map(name => name.charAt(0).toUpperCase()).join('');
-
     const avatar = githubUser.avatar_url
     ? githubUser.avatar_url
-    : `https://ui-avatars.com/api/?name=${initials}&background=random&color=random`;
+    : null;
 
     if (!existingUser) {
         const userId = generateId(21);
