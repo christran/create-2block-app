@@ -29,7 +29,6 @@ export async function GET(request: Request): Promise<Response> {
     });
 
     const githubUser = (await githubUserResponse.json()) as GitHubUser;
-    console.log(githubUser)
 
     const existingUser = await db.query.users.findFirst({
         where: (table, { eq, or }) =>

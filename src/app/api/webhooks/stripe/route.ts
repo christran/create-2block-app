@@ -121,7 +121,6 @@ export async function POST(req: Request) {
             cancel_at_period_end: true
           }
         );
-        console.log(subscription);
       }
 
       // Update the user stripe into in our database

@@ -49,7 +49,7 @@ export const UserDropdown = ({
         {/* eslint @next/next/no-img-element:off */}
       <Avatar>
         <AvatarImage src={avatar!} alt={fullname} />
-        <AvatarFallback>{fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}</AvatarFallback>
+        <AvatarFallback delayMs={100}>{fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}</AvatarFallback>
       </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

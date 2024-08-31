@@ -23,10 +23,10 @@ export default async function EditPostPage({ params }: Props) {
   return (
     <main className="container min-h-[calc(100vh-160px)] pt-3 md:max-w-screen-md">
       <Link
-        href="/dashboard"
-        className="mb-3 flex items-center gap-2 text-sm text-muted-foreground hover:underline"
+        href={Paths.Dashboard}
+        className="mb-3 flex items-center text-sm text-muted-foreground hover:underline"
       >
-        <ArrowLeftIcon className="h-5 w-5" /> Dashboard
+        <ArrowLeftIcon className="h-5 w-5 mr-1" /> Dashboard
       </Link>
 
       <PostEditor post={post} />

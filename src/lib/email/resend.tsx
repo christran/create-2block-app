@@ -1,13 +1,14 @@
 import "server-only";
 
+import { Resend } from 'resend';
 import { EmailVerificationTemplate } from "./templates/email-verification";
 import { ResetPasswordTemplate } from "./templates/reset-password";
-import { render } from "@react-email/render";
 import { env } from "@/env";
 import { EMAIL_SENDER } from "@/lib/constants";
-import { createTransport, type TransportOptions } from "nodemailer";
 import type { ComponentProps } from "react";
 import { logger } from "../logger";
+
+const resend = new Resend(env.RESEND_API_KEY as string);
 
 export enum EmailTemplate {
   EmailVerification = "EmailVerification",
@@ -24,34 +25,19 @@ const getEmailTemplate = <T extends EmailTemplate>(template: T, props: PropsMap[
     case EmailTemplate.EmailVerification:
       return {
         subject: "Verify your account",
-        body: render(
-          <EmailVerificationTemplate {...(props as PropsMap[EmailTemplate.EmailVerification])} />,
-        ),
+        react: <EmailVerificationTemplate {...(props as PropsMap[EmailTemplate.EmailVerification])} />,
       };
     case EmailTemplate.PasswordReset:
       return {
         subject: "Password reset",
-        body: render(
-          <ResetPasswordTemplate {...(props as PropsMap[EmailTemplate.PasswordReset])} />,
-        ),
+        react: <ResetPasswordTemplate {...(props as PropsMap[EmailTemplate.PasswordReset])} />,
       };
     default:
       throw new Error("Invalid email template");
   }
 };
 
-const smtpConfig = {
-  host: env.SMTP_HOST,
-  port: env.SMTP_PORT,
-  auth: {
-    user: env.SMTP_USER,
-    pass: env.SMTP_PASSWORD,
-  },
-};
-
-const transporter = createTransport(smtpConfig as TransportOptions);
-
-export const sendMail = async <T extends EmailTemplate>(
+export const sendEmail = async <T extends EmailTemplate>(
   to: string,
   template: T,
   props: PropsMap[NoInfer<T>],
@@ -61,7 +47,24 @@ export const sendMail = async <T extends EmailTemplate>(
     return;
   }
 
-  const { subject, body } = getEmailTemplate(template, props);
+  const { subject, react } = getEmailTemplate(template, props);
 
-  return transporter.sendMail({ from: EMAIL_SENDER, to, subject, html: body });
+  try {
+    const { data, error } = await resend.emails.send({
+      from: EMAIL_SENDER,
+      to,
+      subject,
+      react,
+    });
+
+    if (error) {
+      console.error('Error sending email:', error);
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Unexpected error:', error);
+    throw error;
+  }
 };

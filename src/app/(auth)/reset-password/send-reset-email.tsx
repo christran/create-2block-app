@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useFormState } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -13,45 +13,51 @@ import { sendPasswordResetLink } from "@/lib/auth/actions";
 import { ExclamationTriangleIcon } from "@/components/icons";
 import { Paths } from "@/lib/constants";
 
+
+// Rate limit this
 export function SendResetEmail() {
   const [state, formAction] = useFormState(sendPasswordResetLink, null);
-  const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     if (state?.success) {
-      toast("A password reset link has been sent to your email.");
-      router.push(Paths.Login);
+      toast("A link to reset your password has been sent to your email.");
+      // formRef.current?.reset();
     }
     if (state?.error) {
       toast(state.error, {
         icon: <ExclamationTriangleIcon className="h-5 w-5 text-destructive" />,
       });
     }
-  }, [state?.error, state?.success]);
+  }, [state]);
+
+  const handleSubmit = (formData: FormData) => {
+    formAction(formData);
+  };
 
   return (
-    <form className="space-y-4" action={formAction}>
+    <form ref={formRef} className="flex flex-col gap-2" action={handleSubmit}>
       <div className="space-y-2">
-        <Label>Your Email</Label>
+        <Label>Email</Label>
         <Input
           required
-          placeholder="email@example.com"
+          placeholder="hello@2bock.co"
           autoComplete="email"
           name="email"
           type="email"
         />
       </div>
 
-      {/* <div className="flex flex-wrap items-center justify-between text-xs">
+      <div className="flex flex-wrap justify-between text-xs">
             <div>
-              Don't have an account?{" "}
+              Don't want to reset?{" "}
               <Button variant="link" size="sm" className="p-0 h-auto" asChild>
-                <Link href={Paths.Signup}>Sign up</Link>
+                <Link href={Paths.Login}>Log in</Link>
               </Button>
             </div>
-      </div> */}
+      </div>
 
-      <SubmitButton className="w-full">Reset Password</SubmitButton>
+      <SubmitButton className="mt-4 w-full">Reset Password</SubmitButton>
       {/* <Button variant="outline" className="w-full" asChild>
         <Link href={Paths.Login}>Cancel</Link>
       </Button> */}

@@ -1,9 +1,7 @@
-import Link from "next/link";
 import { type Metadata } from "next";
-import { PiHandPeaceLight, PlusIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import { ArrowRightIcon, DesktopIcon, PersonIcon } from "@radix-ui/react-icons";
-import { CopyToClipboard } from "./_components/copy-to-clipboard";
+import { DesktopIcon } from "@radix-ui/react-icons";
+
 import { Paths } from "@/lib/constants";
 
 import {

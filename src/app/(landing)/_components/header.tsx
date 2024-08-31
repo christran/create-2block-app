@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DesktopIcon, HamburgerMenuIcon, PersonIcon } from "@radix-ui/react-icons";
+import { validateRequest } from "@/lib/auth/validate-request";
 
 const routes = [
   { name: "Home", href: "/" },
@@ -19,7 +20,9 @@ const routes = [
   },
 ] as const;
 
-export const Header = () => {
+export const Header = async () => {
+  const { user } = await validateRequest();
+
   return (
     <header className="sticky top-0 z-10 border-b-2 border-gray-200">
       <div className="container flex items-center gap-2 px-2 py-2 lg:px-4">
@@ -62,10 +65,17 @@ export const Header = () => {
         </nav>
         <div className="ml-auto">
           <Button size="sm" variant="outline" asChild>
-            <a href={Paths.Login}>
-              <PersonIcon className="mr-2 h-5 w-5" />
-              Login
-            </a>
+            {user ? (
+              <Link href={Paths.Dashboard}>
+                <DesktopIcon className="mr-1 h-4 w-4" />
+                Connect
+              </Link>
+            ) : (
+              <Link href={Paths.Login}>
+                <PersonIcon className="mr-1 h-4 w-4" />
+                Login
+              </Link>
+            )}
           </Button>
         </div>
       </div>

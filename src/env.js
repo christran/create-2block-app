@@ -20,6 +20,7 @@ export const env = createEnv({
     GITHUB_CLIENT_SECRET: z.string().trim().min(1),
     DISCORD_CLIENT_ID: z.string().trim().min(1),
     DISCORD_CLIENT_SECRET: z.string().trim().min(1),
+    RESEND_API_KEY: z.string().trim().min(1),
     SMTP_HOST: z.string().trim().min(1),
     SMTP_PORT: z.number().int().min(1),
     SMTP_USER: z.string().trim().min(1),
@@ -47,6 +48,7 @@ export const env = createEnv({
     // Server-side env vars
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
     SMTP_HOST: process.env.SMTP_HOST,
     SMTP_PORT: parseInt(process.env.SMTP_PORT ?? ""),
     SMTP_USER: process.env.SMTP_USER,

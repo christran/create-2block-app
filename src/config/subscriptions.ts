@@ -9,15 +9,15 @@ export interface SubscriptionPlan {
 
 export const freePlan: SubscriptionPlan = {
   name: "Free",
-  description: "The Free plan is limited to 3 posts.",
-  features: ["Up to 3 posts", "Limited support"],
+  description: "The Free plan is limited to 2 posts.",
+  features: ["Up to 2 posts", "Limited support"],
   stripePriceId: "",
 };
 
 export const proPlan: SubscriptionPlan = {
   name: "Unlimited",
   description: "The Unlimited plan has unlimited posts.",
-  features: ["Unlimited posts", "Priority support"],
+  features: ["Unlimited posts", "Priority support", "Access to Discord server"],
   stripePriceId: env.STRIPE_PRO_MONTHLY_PLAN_ID,
 };
 

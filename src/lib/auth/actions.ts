@@ -20,10 +20,11 @@ import {
   resetPasswordSchema,
 } from "@/lib/validators/auth";
 import { emailVerificationCodes, passwordResetTokens, users } from "@/server/db/schema";
-import { sendMail, EmailTemplate } from "@/lib/email";
+// import { sendEmail, EmailTemplate } from "@/lib/email";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "../constants";
 import { env } from "@/env";
+import { sendEmail, EmailTemplate } from "../email/resend";
 
 export interface ActionResponse<T> {
   fieldError?: Partial<Record<keyof T, string | undefined>>;
@@ -50,13 +51,14 @@ export async function login(_: any, formData: FormData): Promise<ActionResponse<
     where: (table, { eq }) => eq(table.email, email),
   });
 
-  if (!existingUser || !existingUser?.hashedPassword) {
+  if (!existingUser) {
     return {
       formError: "Incorrect email or password",
     };
   }
 
-	const validPassword = await new Argon2id().verify(existingUser.hashedPassword, password);
+  // Rate limit this
+	const validPassword = await new Argon2id().verify(existingUser.hashedPassword!, password);
 
   if (!validPassword) {
     return {
@@ -114,7 +116,8 @@ export async function signup(_: any, formData: FormData): Promise<ActionResponse
   });
 
   const verificationCode = await generateEmailVerificationCode(userId, email);
-  await sendMail(email, EmailTemplate.EmailVerification, { code: verificationCode });
+
+  await sendEmail(email, EmailTemplate.EmailVerification, { fullname, code: verificationCode });
 
   const session = await lucia.createSession(userId, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
@@ -157,15 +160,16 @@ export async function resendVerificationEmail(): Promise<{
     };
   }
   const verificationCode = await generateEmailVerificationCode(user.id, user.email);
-  await sendMail(user.email, EmailTemplate.EmailVerification, { code: verificationCode });
+  await sendEmail(user.email, EmailTemplate.EmailVerification, { fullname: user.fullname, code: verificationCode });
 
   return { success: true };
 }
 
 export async function verifyEmail(_: any, formData: FormData): Promise<{ error: string } | void> {
   const code = formData.get("code");
-  if (typeof code !== "string" || code.length !== 8) {
-    return { error: "Invalid code." };
+
+  if (typeof code !== "string" || code.length !== 6) {
+    return { error: "Invalid verification code." };
   }
   const { user } = await validateRequest();
   if (!user) {
@@ -197,31 +201,38 @@ export async function verifyEmail(_: any, formData: FormData): Promise<{ error: 
   redirect(Paths.Dashboard);
 }
 
+// Rate limit this
 export async function sendPasswordResetLink(
   _: any,
   formData: FormData,
 ): Promise<{ error?: string; success?: boolean }> {
   const email = formData.get("email");
   const parsed = z.string().trim().email().safeParse(email);
+
   if (!parsed.success) {
-    return { error: "Provided email is invalid." };
+    return { success: false, error: "Please enter a valid email address." };
   }
+
   try {
     const user = await db.query.users.findFirst({
       where: (table, { eq }) => eq(table.email, parsed.data),
     });
 
-    if (!user || !user.emailVerified) return { error: "Provided email is invalid." };
+    // should we care if email is verified to reset password?
+    // if (!user || !user.emailVerified) return { error: "No account associated with this email address." };
 
+    // "if the email exists then you should get the email"
+    if (!user) return { success: true };
+  
     const verificationToken = await generatePasswordResetToken(user.id);
 
     const verificationLink = `${env.NEXT_PUBLIC_APP_URL}/reset-password/${verificationToken}`;
 
-    await sendMail(user.email, EmailTemplate.PasswordReset, { link: verificationLink });
+    await sendEmail(user.email, EmailTemplate.PasswordReset, { fullname: user.fullname, url: verificationLink });
 
     return { success: true };
   } catch (error) {
-    return { error: "Failed to send verification email." };
+    return { success: false, error: "Unable to send verification email." };
   }
 }
 
@@ -275,7 +286,7 @@ const timeFromNow = (time: Date) => {
 
 async function generateEmailVerificationCode(userId: string, email: string): Promise<string> {
   await db.delete(emailVerificationCodes).where(eq(emailVerificationCodes.userId, userId));
-  const code = generateRandomString(8, alphabet("0-9")); // 8 digit code
+  const code = generateRandomString(6, alphabet("0-9")); // 8 digit code
   await db.insert(emailVerificationCodes).values({
     userId,
     email,

@@ -8,83 +8,119 @@ import {
   Preview,
   Section,
   Text,
+  Link
 } from "@react-email/components";
 import { APP_TITLE } from "@/lib/constants";
 
 export interface ResetPasswordTemplateProps {
-  link: string;
+  fullname: string;
+  url: string;
 }
 
-export const ResetPasswordTemplate = ({ link }: ResetPasswordTemplateProps) => {
+export const ResetPasswordTemplate = ({ fullname, url }: ResetPasswordTemplateProps) => {
   return (
-    <Html>
-      <Head />
-      <Preview>Reset your password</Preview>
-      <Body style={main}>
-        <Container style={container}>
-          <Section>
-            <Text style={title}>{APP_TITLE}</Text>
-            <Text style={text}>Hi,</Text>
-            <Text style={text}>
-              Someone recently requested a password change for your {APP_TITLE} account. If this was
-              you, you can set a new password here:
-            </Text>
-            <Button style={button} href={link}>
+  <Html>
+    <Head />
+    <Preview>
+      Reset your password
+    </Preview>
+    <Body style={main}>
+      <Container style={container}>
+        {/* <Img
+          src={`${baseUrl}/static/github.png`}
+          width="32"
+          height="32"
+          alt="Github"
+        /> */}
+
+        <Text style={title}>
+          <strong>{fullname}</strong>, Reset your password
+        </Text>
+
+        <Section style={section}>
+          <Text style={text}>
+            Hey <strong>{fullname}</strong>!
+          </Text>
+          <Text style={text}>
+            Someone recently requested a password change for your account. If this was
+            you, you can set a new password here:
+          </Text>
+
+          <Button style={button} href={url}>
               Reset password
-            </Button>
-            <Text style={text}>
-              If you didn&apos;t request this, you may ignore this email.
-            </Text>
-            <Text style={text}>
-              To keep your account secure, please don&apos;t forward this email to anyone.
-            </Text>
-          </Section>
-        </Container>
-      </Body>
-    </Html>
+          </Button>
+
+        <Text style={text}>
+            If you didn&apos;t request this, you may ignore this email.
+          </Text>
+        </Section>
+        <Text style={links}>
+          <Link style={link}>Your security audit log</Link> ・{" "}
+          <Link style={link}>Contact support</Link>
+        </Text>
+
+        <Text style={footer}>
+          GitHub, Inc. ・88 Colin P Kelly Jr Street ・San Francisco, CA 94107
+        </Text>
+      </Container>
+    </Body>
+  </Html>
+
   );
 };
 
 const main = {
-  backgroundColor: "#f6f9fc",
-  padding: "10px 0",
+  backgroundColor: "#ffffff",
+  color: "#24292e",
+  fontFamily:
+    '-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji"',
 };
 
 const container = {
-  backgroundColor: "#ffffff",
-  border: "1px solid #f0f0f0",
-  padding: "45px",
-};
-
-const text = {
-  fontSize: "16px",
-  fontFamily:
-    "'Open Sans', 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif",
-  fontWeight: "300",
-  color: "#404040",
-  lineHeight: "26px",
+  maxWidth: "480px",
+  margin: "0 auto",
+  padding: "20px 0 48px",
 };
 
 const title = {
-  ...text,
-  fontSize: "22px",
-  fontWeight: "700",
-  lineHeight: "32px",
+  fontSize: "24px",
+  lineHeight: 1.25,
+};
+
+const section = {
+  padding: "24px",
+  border: "solid 1px #dedede",
+  borderRadius: "5px",
+  textAlign: "center" as const,
+};
+
+const text = {
+  margin: "0 0 10px 0",
+  textAlign: "left" as const,
 };
 
 const button = {
+  fontSize: "14px",
   backgroundColor: "#09090b",
-  borderRadius: "4px",
-  color: "#fafafa",
-  fontFamily: "'Open Sans', 'Helvetica Neue', Arial",
-  fontSize: "15px",
-  textDecoration: "none",
-  textAlign: "center" as const,
-  display: "block",
-  width: "210px",
-  padding: "14px 7px",
+  color: "#fff",
+  lineHeight: 1.5,
+  borderRadius: "0.5em",
+  padding: "12px 24px",
+  margin: "0 0 8px 0",
 };
 
-// const anchor = {
-//   textDecoration: "underline",
-// };
+const links = {
+  textAlign: "center" as const,
+};
+
+const link = {
+  color: "#0366d6",
+  fontSize: "12px",
+};
+
+const footer = {
+  color: "#6a737d",
+  fontSize: "12px",
+  textAlign: "center" as const,
+  marginTop: "60px",
+};
