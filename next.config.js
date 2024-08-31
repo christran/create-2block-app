@@ -9,6 +9,11 @@ const config = {
         ignoreDuringBuilds: true,
     },
 
+	webpack: (config) => {
+		config.externals.push("@node-rs/argon2", "@node-rs/bcrypt");
+		return config;
+	},
+
     // Add the async rewrites function
     async rewrites() {
         return [
