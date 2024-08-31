@@ -97,10 +97,18 @@ export async function signup(_: any, formData: FormData): Promise<ActionResponse
 
   const userId = generateId(21);
   const hashedPassword = await new Scrypt().hash(password);
+  
+  // Create a placeholder avatar using the user's initials
+
+  // current using email should implement first and last name
+  const initials = email.split('@')[0]?.slice(0, 2).toUpperCase() ?? 'CT';
+  const avatar = `https://ui-avatars.com/api/?name=${initials}&background=random&color=random`;
+
   await db.insert(users).values({
     id: userId,
     email,
     hashedPassword,
+    avatar,
   });
 
   const verificationCode = await generateEmailVerificationCode(userId, email);
