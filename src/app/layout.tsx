@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { TRPCReactProvider } from "@/trpc/react";
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
+import { Footer } from "./(main)/_components/footer";
 
 export const metadata: Metadata = {
   title: {

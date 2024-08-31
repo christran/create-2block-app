@@ -8,16 +8,16 @@ export const Footer = () => {
   return (
     <footer className="px-4 py-6 mt-auto">
       <div className="container flex justify-between items-center p-0">
-        <div className="flex-1" />
+        <div className="flex-1">
+          <ThemeToggle />
+        </div>
         <p className="text-xs">
           Powered by{" "}
           <a href={githubUrl}>
             {APP_TITLE}
           </a>
         </p>
-        <div className="flex-1 flex justify-end">
-          <ThemeToggle />
-        </div>
+        <div className="flex-1" />
       </div>
     </footer>
   );

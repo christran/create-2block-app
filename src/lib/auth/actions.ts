@@ -6,6 +6,7 @@ import { z } from "zod";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { generateId, Scrypt } from "lucia";
+import { hash, verify } from "@node-rs/argon2";
 import { isWithinExpirationDate, TimeSpan, createDate } from "oslo";
 import { generateRandomString, alphabet } from "oslo/crypto";
 import { eq } from "drizzle-orm";
@@ -27,6 +28,14 @@ import { env } from "@/env";
 export interface ActionResponse<T> {
   fieldError?: Partial<Record<keyof T, string | undefined>>;
   formError?: string;
+}
+
+// minimum reccomended settings
+const argon2Settings = {
+  memoryCost: 19456,
+  timeCost: 2,
+  outputLen: 32,
+  parallelism: 1
 }
 
 export async function login(_: any, formData: FormData): Promise<ActionResponse<LoginInput>> {
@@ -55,7 +64,8 @@ export async function login(_: any, formData: FormData): Promise<ActionResponse<
     };
   }
 
-  const validPassword = await new Scrypt().verify(existingUser.hashedPassword, password);
+	const validPassword = await verify(existingUser.hashedPassword, password, argon2Settings);
+
   if (!validPassword) {
     return {
       formError: "Incorrect email or password",
@@ -97,7 +107,7 @@ export async function signup(_: any, formData: FormData): Promise<ActionResponse
   }
 
   const userId = generateId(21);
-  const hashedPassword = await new Scrypt().hash(password);
+  const hashedPassword = await hash(password, argon2Settings);
   
   // Generate initials from the fullname
   const initials = fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('');
@@ -254,7 +264,13 @@ export async function resetPassword(
   if (!isWithinExpirationDate(dbToken.expiresAt)) return { error: "Password reset link expired." };
 
   await lucia.invalidateUserSessions(dbToken.userId);
-  const hashedPassword = await new Scrypt().hash(password);
+  const hashedPassword = await hash(password, {
+		// recommended minimum parameters
+		memoryCost: 19456,
+		timeCost: 2,
+		outputLen: 32,
+		parallelism: 1
+	});
   await db.update(users).set({ hashedPassword }).where(eq(users.id, dbToken.userId));
   const session = await lucia.createSession(dbToken.userId, {});
   const sessionCookie = lucia.createSessionCookie(session.id);

@@ -36,17 +36,16 @@ export default async function BillingPage() {
       <section>
         <Alert className="p-6 [&>svg]:left-6 [&>svg]:top-6 [&>svg~*]:pl-10">
           <ExclamationTriangleIcon className="h-6 w-6" />
-          <AlertTitle>This is a demo app.</AlertTitle>
+          <AlertTitle>Stripe Test Environment</AlertTitle>
           <AlertDescription>
-            {APP_TITLE} app is a demo app using a Stripe test environment. You can find a list of
-            test card numbers on the{" "}
+            Currently using Stripe test environment. Use test cards provided {" "}
             <a
-              href="https://stripe.com/docs/testing#cards"
+              href="https://docs.stripe.com/testing#cards"
               target="_blank"
               rel="noreferrer"
-              className="font-medium underline underline-offset-4"
+              className="font-medium hover:underline"
             >
-              Stripe docs
+              here
             </a>
             .
           </AlertDescription>

@@ -38,7 +38,7 @@ export function DashboardNav({ className }: Props) {
         <Link href={item.href} key={item.href}>
           <span
             className={cn(
-              "group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
+              "group flex items-center rounded-lg px-3 py-2 text-md font-medium hover:bg-accent hover:text-accent-foreground",
               path === item.href ? "bg-accent" : "transparent",
             )}
           >
