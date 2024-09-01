@@ -1,5 +1,5 @@
 import { Lucia, TimeSpan } from "lucia";
-import { Discord, GitHub } from "arctic";
+import { Google, Discord, GitHub } from "arctic";
 import { DrizzlePostgreSQLAdapter } from "@lucia-auth/adapter-drizzle";
 import { env } from "@/env.js";
 import { db } from "@/server/db";
@@ -40,6 +40,12 @@ export const lucia = new Lucia(adapter, {
     },
   },
 });
+
+export const google = new Google(
+  env.GOOGLE_CLIENT_ID as string,
+  env.GOOGLE_CLIENT_SECRET as string,
+  absoluteUrl("/login/google/callback")
+);
 
 export const discord = new Discord(
   env.DISCORD_CLIENT_ID,
