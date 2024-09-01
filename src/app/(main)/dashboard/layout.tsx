@@ -1,6 +1,8 @@
 import { DashboardNav } from "./_components/dashboard-nav";
 import { UpdateEmailWarning } from "./_components/update-email-warning";
 import { VerificiationWarning } from "./_components/verificiation-warning";
+import { Settings } from "./settings/_components/settings";
+import { SettingsNavbar } from "./_components/dashboard-navbar";
 
 interface Props {
   children: React.ReactNode;
@@ -8,15 +10,18 @@ interface Props {
 
 export default function DashboardLayout({ children }: Props) {
   return (
-    <div className="container min-h-[calc(100vh-180px)] px-2 pt-6 md:px-4">
-      <div className="flex flex-col gap-6 md:flex-row lg:gap-10">
-        <DashboardNav className="flex flex-shrink-0 gap-2 md:w-48 md:flex-col lg:w-80" />
-        <main className="w-full space-y-4">
+    <div>
+      <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-muted/40 p-4 md:gap-8 md:p-10">
+        <div className="mx-auto grid w-full max-w-6xl items-start gap-6 md:grid-cols-[180px_1fr] lg:grid-cols-[250px_1fr]">
+        <SettingsNavbar />
+        <div className="grid gap-6">
           <UpdateEmailWarning />
           <VerificiationWarning />
-          <div>{children}</div>
-        </main>
-      </div>
+          {children}
+        </div>
+       
+        </div>
+      </main>
     </div>
   );
 }

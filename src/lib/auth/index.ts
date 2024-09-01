@@ -22,6 +22,9 @@ export const lucia = new Lucia(adapter, {
       fullname: attributes.fullname,
       email: attributes.email,
       emailVerified: attributes.emailVerified,
+      googleId: attributes.googleId,
+      githubId: attributes.githubId,
+      discordId: attributes.discordId,
       avatar: attributes.avatar,
       createdAt: attributes.createdAt,
       updatedAt: attributes.updatedAt,
@@ -60,4 +63,4 @@ declare module "lucia" {
 }
 
 interface DatabaseSessionAttributes {}
-interface DatabaseUserAttributes extends Omit<DbUser, "hashedPassword"> {}
+export interface DatabaseUserAttributes extends Omit<DbUser, "hashedPassword"> {}

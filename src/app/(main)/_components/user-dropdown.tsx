@@ -16,6 +16,8 @@ import { ExclamationTriangleIcon } from "@/components/icons";
 import { logout } from "@/lib/auth/actions";;
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Paths } from "@/lib/constants";
 
 export const UserDropdown = ({
   fullname,
@@ -44,13 +46,16 @@ export const UserDropdown = ({
   };
 
   return (
+    <div className="flex items-center gap-4 md:gap-2 lg:gap-4">
     <DropdownMenu>
-      <DropdownMenuTrigger className={className}>
-        {/* eslint @next/next/no-img-element:off */}
-      <Avatar>
-        <AvatarImage src={avatar!} alt={fullname} />
-        <AvatarFallback delayMs={100}>{fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}</AvatarFallback>
-      </Avatar>
+      <DropdownMenuTrigger asChild>
+        <Button variant="secondary" size="icon" className="rounded-full">
+        <Avatar>
+          <AvatarImage src={avatar} alt={fullname} />
+          <AvatarFallback delayMs={100}>{fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}</AvatarFallback>
+        </Avatar>
+          <span className="sr-only">Toggle user menu</span>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>
@@ -58,36 +63,21 @@ export const UserDropdown = ({
           <span className="text-xs text-muted-foreground">{email}</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem
-            className="cursor-pointer text-muted-foreground"
-            asChild
-          >
-            <Link href="/dashboard">Dashboard</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="cursor-pointer text-muted-foreground"
-            asChild
-          >
-            <Link href="/dashboard/billing">Billing</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="cursor-pointer text-muted-foreground"
-            asChild
-          >
-            <Link href="/dashboard/settings">Settings</Link>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
+        <DropdownMenuItem className="cursor-pointer" asChild>
+          <Link href={Paths.Settings}>Manage Account</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer" asChild>
+          <Link href={Paths.Billing}>Billing</Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem
-            className="cursor-pointer font-semibold"
-            onSelect={handleSignout}
-          >
-            Sign out
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
+        <DropdownMenuItem
+          className="font-semibold"
+          onSelect={handleSignout}
+        >
+        Sign out
+       </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+  </div>
   );
 };

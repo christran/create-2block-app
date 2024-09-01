@@ -3,6 +3,10 @@ import { redirect } from "next/navigation";
 
 import { env } from "@/env";
 import { validateRequest } from "@/lib/auth/validate-request";
+import { Paths } from "@/lib/constants";
+import { Settings } from "./_components/settings";
+import { AccountDetails } from "./_components/account-details";
+import { getUserById } from "@/lib/auth/actions";
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
@@ -10,20 +14,18 @@ export const metadata: Metadata = {
   description: "Manage your billing and subscription",
 };
 
-export default async function BillingPage() {
+export default async function SettingsPage() {
   const { user } = await validateRequest();
 
   if (!user) {
-    redirect("/signin");
+    redirect(Paths.Login);
   }
 
+  const userData = await getUserById(user.id);
+
   return (
-    <div className="grid gap-8">
-      <div>
-        <h1 className="text-3xl font-bold md:text-4xl">Settings</h1>
-        <p className="text-sm text-muted-foreground">Manage your account settings</p>
-      </div>
-      <p>Work in progress...</p>
-    </div>
+    /* <React.Suspense fallback={<BillingSkeleton />}> */
+    <AccountDetails user={userData} />
+    /* </React.Suspense> */
   );
 }

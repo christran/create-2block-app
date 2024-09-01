@@ -15,7 +15,7 @@ class Logger {
 
   constructor(level: LogLevel = LogLevel.INFO, logFilePath = "application.log") {
     this.level = level;
-    this.logFilePath = path.resolve(logFilePath);
+    this.logFilePath = path.resolve(process.cwd(), logFilePath);
   }
 
   private getTimestamp(): string {

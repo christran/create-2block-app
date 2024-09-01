@@ -40,7 +40,6 @@ export default async function DashboardPage({ searchParams }: Props) {
     <div>
       <div className="mb-6">
         <h1 className="text-3xl font-bold md:text-4xl">Posts</h1>
-        <p className="text-sm text-muted-foreground">Manage your posts here</p>
       </div>
       <React.Suspense fallback={<PostsSkeleton />}>
         <Posts promises={promises} />

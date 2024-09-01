@@ -6,7 +6,7 @@ import { ExclamationTriangleIcon } from "@/components/icons";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { env } from "@/env";
 import { validateRequest } from "@/lib/auth/validate-request";
-import { APP_TITLE } from "@/lib/constants";
+import { APP_TITLE, Paths } from "@/lib/constants";
 import { api } from "@/trpc/server";
 import * as React from "react";
 import { Billing } from "./_components/billing";
@@ -22,7 +22,7 @@ export default async function BillingPage() {
   const { user } = await validateRequest();
 
   if (!user) {
-    redirect("/signin");
+    redirect(Paths.Login);
   }
 
   const stripePromises = Promise.all([api.stripe.getPlans.query(), api.stripe.getPlan.query()]);
@@ -31,7 +31,6 @@ export default async function BillingPage() {
     <div className="grid gap-8">
       <div>
         <h1 className="text-3xl font-bold md:text-4xl">Billing</h1>
-        <p className="text-sm text-muted-foreground">Manage your billing and subscription</p>
       </div>
       <section>
         <Alert className="p-6 [&>svg]:left-6 [&>svg]:top-6 [&>svg~*]:pl-10">

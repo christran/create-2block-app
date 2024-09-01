@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 import { generateId, Scrypt } from "lucia";
 import { isWithinExpirationDate, TimeSpan, createDate } from "oslo";
 import { generateRandomString, alphabet } from "oslo/crypto";
-import { Argon2id } from "oslo/password";
+// import { Argon2id } from "oslo/password";
 import { eq } from "drizzle-orm";
 import { lucia } from "@/lib/auth";
 import { db } from "@/server/db";
@@ -18,6 +18,10 @@ import {
   type LoginInput,
   type SignupInput,
   resetPasswordSchema,
+  updateAccountSchema,
+  type updateAccountInput,
+  type updatePasswordInput,
+  updatePasswordSchema,
 } from "@/lib/validators/auth";
 import { emailVerificationCodes, passwordResetTokens, users } from "@/server/db/schema";
 // import { sendEmail, EmailTemplate } from "@/lib/email";
@@ -25,6 +29,7 @@ import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "../constants";
 import { env } from "@/env";
 import { sendEmail, EmailTemplate } from "../email/resend";
+import { DatabaseUserAttributes } from "@/lib/auth";
 
 export interface ActionResponse<T> {
   fieldError?: Partial<Record<keyof T, string | undefined>>;
@@ -58,7 +63,7 @@ export async function login(_: any, formData: FormData): Promise<ActionResponse<
   }
 
   // Rate limit this
-	const validPassword = await new Argon2id().verify(existingUser.hashedPassword!, password);
+	const validPassword = await new Scrypt().verify(existingUser.hashedPassword!, password);
 
   if (!validPassword) {
     return {
@@ -101,18 +106,14 @@ export async function signup(_: any, formData: FormData): Promise<ActionResponse
   }
 
   const userId = generateId(21);
-  const hashedPassword = await new Argon2id().hash(password);
+  const hashedPassword = await new Scrypt().hash(password);
   
-  // Generate initials from the fullname
-  const initials = fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('');
-  const avatar = `https://ui-avatars.com/api/?name=${initials}&background=random&color=random`;
-
   await db.insert(users).values({
     id: userId,
     fullname,
     email,
     hashedPassword,
-    avatar,
+    // avatar,
   });
 
   const verificationCode = await generateEmailVerificationCode(userId, email);
@@ -239,7 +240,7 @@ export async function sendPasswordResetLink(
 export async function resetPassword(
   _: any,
   formData: FormData,
-): Promise<{ error?: string; success?: boolean }> {
+): Promise<{ success?: boolean; error?: string;}> {
   const obj = Object.fromEntries(formData.entries());
 
   const parsed = resetPasswordSchema.safeParse(obj);
@@ -267,13 +268,134 @@ export async function resetPassword(
   if (!isWithinExpirationDate(dbToken.expiresAt)) return { error: "Password reset link expired." };
 
   await lucia.invalidateUserSessions(dbToken.userId);
-  const hashedPassword = await new Argon2id().hash(password);
+  const hashedPassword = await new Scrypt().hash(password);
   await db.update(users).set({ hashedPassword }).where(eq(users.id, dbToken.userId));
   const session = await lucia.createSession(dbToken.userId, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
   
   redirect(Paths.Dashboard);
+}
+
+export async function updateUser(_: any, formData: FormData): Promise<ActionResponse<updateAccountInput>> {
+  const { user } = await validateRequest();
+
+  if (!user) {
+    return redirect(Paths.Login);
+  }
+
+  const obj = Object.fromEntries(formData.entries());
+  const parsed = updateAccountSchema.safeParse(obj);
+
+  if (!parsed.success) {
+    const err = parsed.error.flatten();
+    return {
+      fieldError: {
+        fullname: err.fieldErrors.fullname?.[0],
+        email: err.fieldErrors.email?.[0],
+      },
+    };
+  }
+
+  const { fullname, email } = parsed.data;
+
+  const existingUser = await db.query.users.findFirst({
+    where: (table, { eq }) => eq(table.email, email),
+    columns: { email: true },
+  });
+
+  if (existingUser) {
+    return {
+      error: "The email is already registered with another account.",
+    };
+  }
+
+  // Force reverify after updating email
+  try {
+    
+    await db.update(users).set({ 
+      fullname,
+      email,
+      emailVerified: email !== user?.email ? false : user.emailVerified
+    }).where(eq(users.id, user.id));
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating user:', error);
+    return { error: 'Failed to update user information' };
+  }
+}
+
+export async function updatePassword(_: any, formData: FormData): Promise<ActionResponse<updatePasswordInput>> {
+  const { user } = await validateRequest();
+
+  if (!user) {
+    return redirect(Paths.Login);
+  }
+
+  const obj = Object.fromEntries(formData.entries());
+
+  const parsed = updatePasswordSchema.safeParse(obj);
+
+  if (!parsed.success) {
+    const err = parsed.error.flatten();
+    console.log(err)
+    return {
+      fieldError: {
+        current_password: err.fieldErrors.current_password?.[0],
+        new_password: err.fieldErrors.new_password?.[0],
+        confirm_password: err.fieldErrors.confirm_password?.[0]
+      },
+    };
+  }
+
+  const { current_password, new_password, confirm_password } = parsed.data;
+
+  const userData = await db.query.users.findFirst({
+    where: (table, { eq }) => eq(table.id, user.id),
+  });
+
+
+	const validPassword = await new Scrypt().verify(userData.hashedPassword!, current_password);
+
+  if (!validPassword) {
+    return {
+      error: "Current password is invalid",
+    };
+  }
+
+  // Force reverify after updating email
+  try {
+    const newHashedPassword = await new Scrypt().hash(new_password);
+
+    await db.update(users).set({ 
+      hashedPassword: newHashedPassword
+    }).where(eq(users.id, user.id));
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating user:', error);
+    return { error: 'Failed to update user information' };
+  }
+}
+
+export async function getUserById(userId: string): Promise<DatabaseUserAttributes | null> {
+  const { user } = await validateRequest();
+
+  if (!user) {
+    return redirect(Paths.Login);
+  }
+
+  try {
+    const foundUser = await db.query.users.findFirst({
+      where: (table, { eq }) => eq(table?.id, userId),
+    });
+
+    return foundUser || null;
+  } catch (error) {
+    console.error('Error fetching user by ID:', error);
+    return null;
+  }
 }
 
 const timeFromNow = (time: Date) => {
