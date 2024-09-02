@@ -21,10 +21,10 @@ import { ExclamationTriangleIcon } from "@/components/icons"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 
-export function MultiFactorAuth() {
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+export function LinkedAccounts({ user }: { user: DatabaseUserAttributes | null }) {
+  const [googleId, setGoogleId] = useState(user?.googleId ?? "");
+  const [discordId, setdiscordId] = useState(user?.discordId ?? "");
+  const [githubId, setgithubId] = useState(user?.githubId ?? "");
   const [state, formAction] = useFormState(updatePassword, null);
   // const formRef = useRef<HTMLFormElement>(null);
 
@@ -50,22 +50,33 @@ export function MultiFactorAuth() {
       <form action={handleSubmit} className="grid gap-4">
         <Card x-chunk="dashboard-04-chunk-1">
           <CardHeader>
-            <CardTitle>Two Step Verification</CardTitle>
+            <CardTitle>Linked Accounts</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="w-full md:w-1/2 space-y-2">
-              <Label>Secret</Label>
+              <Label>Google</Label>
                   <Input
-                  required
-                  name="current_password"
-                  type="password"
-                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  disabled
+                  name="google_id"
+                  type="text"
+                  value={googleId}
+                  />
+              <Label>Discord</Label>
+                  <Input
+                  disabled
+                  name="discord_id"
+                  type="text"
+                  value={discordId}
+                  />
+              <Label>GitHub</Label>
+                  <Input
+                  disabled
+                  name="github_id"
+                  type="text"
+                  value={githubId}
                   />
               </div>
           </CardContent>
-          <CardFooter className="border-t px-6 py-4">
-            <Button>Enable 2FA</Button>
-          </CardFooter>
         </Card>
     </form>
     )

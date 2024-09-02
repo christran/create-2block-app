@@ -12,7 +12,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { updateUser } from "@/lib/auth/actions"
+import { updateAccount } from "@/lib/auth/actions"
 import { useFormState } from "react-dom"
 import { useState } from "react";
 import { type DatabaseUserAttributes } from "@/lib/auth"
@@ -26,7 +26,7 @@ export function AccountDetails({ user }: { user: DatabaseUserAttributes | null }
   const [fullname, setFullname] = useState(user?.fullname ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
 
-  const [state, formAction] = useFormState(updateUser, null);
+  const [state, formAction] = useFormState(updateAccount, null);
   // const formRef = useRef<HTMLFormElement>(null);
 
   const router = useRouter();
@@ -58,7 +58,7 @@ export function AccountDetails({ user }: { user: DatabaseUserAttributes | null }
               <CardTitle>Account Details</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
+              <div className="w-full md:w-1/2 space-y-2">
                 <Label>Full Name</Label>
                 <Input
                   required
@@ -67,16 +67,21 @@ export function AccountDetails({ user }: { user: DatabaseUserAttributes | null }
                   name="fullname"
                   type="text"
                   value={fullname}
-                  onChange={(e) => setFullname(e.target.value)} />
+                  onChange={(e) => setFullname(e.target.value)}
+                  />
                 <Label>Email</Label>
                 <Input
-                  required
+
+                  required={user?.hashedPassword !== null}
+                  // readOnly={true}
                   placeholder="hello@2bock.co"
                   autoComplete="email"
                   name="email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)} />
+                  onChange={(e) => setEmail(e.target.value)}
+                  // disabled={user?.hashedPassword === null}
+                  />
               </div>
 
             </CardContent>

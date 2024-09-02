@@ -64,10 +64,13 @@ export const UserDropdown = ({
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="cursor-pointer" asChild>
-          <Link href={Paths.Settings}>Manage Account</Link>
+          <Link href={Paths.Settings}>Profile</Link>
         </DropdownMenuItem>
         <DropdownMenuItem className="cursor-pointer" asChild>
           <Link href={Paths.Billing}>Billing</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer" asChild>
+          <Link href={Paths.Security}>Settings</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem

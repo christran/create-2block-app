@@ -1,3 +1,6 @@
+import { DesktopIcon, LockClosedIcon, PersonIcon } from "@radix-ui/react-icons";
+import { CreditCardIcon } from "lucide-react";
+
 export const APP_TITLE = "✌️BLOCK";
 export const APP_TITLE_UNSTYLED = "BLOCK"
 export const DATABASE_PREFIX = "2block";
@@ -15,3 +18,28 @@ export enum Paths {
   VerifyEmail = "/verify-email",
   ResetPassword = "/reset-password",
 }
+
+export const navbarItems = [
+  {
+    title: "Dashboard",
+    href: Paths.Dashboard,
+    icon: DesktopIcon,
+  },
+  {
+    title: "Billing",
+    href: Paths.Billing,
+    icon: CreditCardIcon,
+  },
+  {
+    title: "Profile",
+    href: Paths.Settings,
+    icon: PersonIcon,
+  },
+
+  {
+    title: "Security",
+    href: Paths.Security,
+    icon: LockClosedIcon,
+  }
+];
+

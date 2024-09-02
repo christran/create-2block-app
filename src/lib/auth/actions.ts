@@ -62,6 +62,13 @@ export async function login(_: any, formData: FormData): Promise<ActionResponse<
     };
   }
 
+  // linked account doesn't have a password set yet
+  if (existingUser.hashedPassword === null) {
+    return {
+      formError: "Incorrect email or password",
+    };
+  }
+
   // Rate limit this
 	const validPassword = await new Scrypt().verify(existingUser.hashedPassword!, password);
 
@@ -135,6 +142,7 @@ export async function logout(): Promise<{ error: string } | void> {
       error: "No session found.",
     };
   }
+
   await lucia.invalidateSession(session.id);
   const sessionCookie = lucia.createBlankSessionCookie();
   cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
@@ -150,6 +158,7 @@ export async function resendVerificationEmail(): Promise<{
   if (!user) {
     return redirect(Paths.Login);
   }
+
   const lastSent = await db.query.emailVerificationCodes.findFirst({
     where: (table, { eq }) => eq(table.userId, user.id),
     columns: { expiresAt: true },
@@ -160,6 +169,7 @@ export async function resendVerificationEmail(): Promise<{
       error: `Please wait ${timeFromNow(lastSent.expiresAt)} before resending.`,
     };
   }
+
   const verificationCode = await generateEmailVerificationCode(user.id, user.email);
   await sendEmail(user.email, EmailTemplate.EmailVerification, { fullname: user.fullname, code: verificationCode });
 
@@ -214,10 +224,66 @@ export async function sendPasswordResetLink(
     return { success: false, error: "Please enter a valid email address." };
   }
 
+  const user = await db.query.users.findFirst({
+    where: (table, { eq }) => eq(table.email, parsed.data),
+  });
+
+  if (user) {
+    try {
+      const lastSent = await db.query.passwordResetTokens.findFirst({
+        where: (table, { eq }) => eq(table.userId, user?.id),
+        columns: { expiresAt: true },
+      });
+    
+      if (lastSent && isWithinExpirationDate(lastSent.expiresAt)) {
+        return {
+          error: `Please wait ${timeFromNow(lastSent.expiresAt)} before resending.`,
+        };
+      }
+
+      // should we care if email is verified to reset password?
+      // if (!user || !user.emailVerified) return { error: "No account associated with this email address." };
+
+      // "if the email exists then you should get the email"
+      if (!user) return { success: true };
+    
+      const verificationToken = await generatePasswordResetToken(user.id);
+
+      const verificationLink = `${env.NEXT_PUBLIC_APP_URL}/reset-password/${verificationToken}`;
+
+      await sendEmail(user.email, EmailTemplate.PasswordReset, { fullname: user.fullname, url: verificationLink });
+
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: "Unable to send password reset email." };
+    }
+  } else {
+    return { success: true };
+  }
+}
+
+// Rate limit this
+export async function setupNewPasswordLink(): Promise<{
+  success?: boolean;
+  error?: string;
+}> {
+  const { user } = await validateRequest();
+
+  if (!user) {
+    return redirect(Paths.Login);
+  }
+
   try {
-    const user = await db.query.users.findFirst({
-      where: (table, { eq }) => eq(table.email, parsed.data),
+    const lastSent = await db.query.passwordResetTokens.findFirst({
+      where: (table, { eq }) => eq(table.userId, user?.id),
+      columns: { expiresAt: true },
     });
+  
+    if (lastSent && isWithinExpirationDate(lastSent.expiresAt)) {
+      return {
+        error: `Please wait ${timeFromNow(lastSent.expiresAt)} before resending.`,
+      };
+    }
 
     // should we care if email is verified to reset password?
     // if (!user || !user.emailVerified) return { error: "No account associated with this email address." };
@@ -233,7 +299,7 @@ export async function sendPasswordResetLink(
 
     return { success: true };
   } catch (error) {
-    return { success: false, error: "Unable to send verification email." };
+    return { success: false, error: "Unable to send new password setup email." };
   }
 }
 
@@ -277,7 +343,7 @@ export async function resetPassword(
   redirect(Paths.Dashboard);
 }
 
-export async function updateUser(_: any, formData: FormData): Promise<ActionResponse<updateAccountInput>> {
+export async function updateAccount(_: any, formData: FormData): Promise<ActionResponse<updateAccountInput>> {
   const { user } = await validateRequest();
 
   if (!user) {
@@ -306,17 +372,23 @@ export async function updateUser(_: any, formData: FormData): Promise<ActionResp
 
   if (existingUser) {
     return {
-      error: "The email is already registered with another account.",
+      error: "The email is already associated with another account.",
     };
   }
 
+  const userData = await db.query.users.findFirst({
+    where: (table, { eq }) => eq(table.email, user.email),
+  });
+
+  // email input disabled on client side, force on server side
+  const newEmail = (userData.hashedPassword ? email : userData.email)
+
   // Force reverify after updating email
   try {
-    
     await db.update(users).set({ 
       fullname,
-      email,
-      emailVerified: email !== user?.email ? false : user.emailVerified
+      email: newEmail,
+      emailVerified: userData.hashedPassword && email !== user.email ? false : userData.emailVerified
     }).where(eq(users.id, user.id));
 
     return { success: true };
@@ -349,7 +421,7 @@ export async function updatePassword(_: any, formData: FormData): Promise<Action
     };
   }
 
-  const { current_password, new_password, confirm_password } = parsed.data;
+  const { current_password, new_password } = parsed.data;
 
   const userData = await db.query.users.findFirst({
     where: (table, { eq }) => eq(table.id, user.id),
@@ -424,7 +496,7 @@ async function generatePasswordResetToken(userId: string): Promise<string> {
   await db.insert(passwordResetTokens).values({
     id: tokenId,
     userId,
-    expiresAt: createDate(new TimeSpan(2, "h")),
+    expiresAt: createDate(new TimeSpan(10, "m")),
   });
   return tokenId;
 }
