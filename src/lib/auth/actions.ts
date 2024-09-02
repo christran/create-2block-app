@@ -139,7 +139,7 @@ export async function logout(): Promise<{ error: string } | void> {
   const sessionCookie = lucia.createBlankSessionCookie();
   cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 
-  return redirect(Paths.Home);
+  return redirect(Paths.Login);
 }
 
 export async function resendVerificationEmail(): Promise<{

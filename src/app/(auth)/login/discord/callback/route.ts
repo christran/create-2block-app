@@ -32,12 +32,15 @@ export async function GET(request: Request): Promise<Response> {
     const discordUser = (await discordUserRes.json()) as DiscordUser;
 
     if (!discordUser.email || !discordUser.verified) {
-      return new Response(
-        JSON.stringify({
-          error: "Your Discord account must have a verified email address.",
-        }),
-        { status: 400, headers: { Location: Paths.Login } },
-      );
+      cookies().set('auth_error', 'Please verify your email on Discord before continuting', {
+        maxAge: 5, // Cookie expires after 60 seconds
+        path: '/',
+      });
+
+      return new Response(null, {
+        status: 302,
+        headers: { Location: Paths.Login },
+      });
     }
 
     const existingUser = await db.query.users.findFirst({
@@ -71,14 +74,14 @@ export async function GET(request: Request): Promise<Response> {
       });
     }
 
-    if (existingUser.discordId !== discordUser.id || existingUser.avatar !== avatar) {
+    if (existingUser.discordId !== discordUser.id) {
       await db
         .update(users)
         .set({
           discordId: discordUser.id,
-          fullname: discordUser.username,
-          emailVerified: true,
-          avatar,
+          // fullname: discordUser.username,
+          // emailVerified: true,
+          // avatar,
         })
         .where(eq(users.id, existingUser.id));
     }

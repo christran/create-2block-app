@@ -6,7 +6,7 @@ import { env } from "@/env";
 export async function GET(): Promise<Response> {
 	const state = generateState();
 	const url = await github.createAuthorizationURL(state, {
-		scopes: ["email"]
+		scopes: ["read:user", "user:email"]
 	});
 
 	cookies().set("github_oauth_state", state, {

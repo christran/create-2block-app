@@ -6,15 +6,36 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PasswordInput } from "@/components/password-input";
-import { FontAwesomeIcon, faGoogle, DiscordLogoIcon, GitHubLogoIcon } from "@/components/icons";
+import { FontAwesomeIcon, faGoogle, DiscordLogoIcon, GitHubLogoIcon, ExclamationTriangleIcon } from "@/components/icons";
 import { APP_TITLE } from "@/lib/constants";
 import { login } from "@/lib/auth/actions";
 import { Label } from "@/components/ui/label";
 import { SubmitButton } from "@/components/submit-button";
 import { Paths } from "@/lib/constants";
+import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 
 export function Login() {
   const [state, formAction] = useFormState(login, null);
+  const [authError, setAuthError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const cookies = document.cookie.split(';');
+    const authErrorCookie = cookies.find(cookie => cookie.trim().startsWith('auth_error='));
+    if (authErrorCookie) {
+      const errorMessage = decodeURIComponent(authErrorCookie.split('=')[1]);
+      setAuthError(errorMessage);
+      document.cookie = 'auth_error=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    }
+  }, []);
+
+  useEffect(() => {
+    if (authError) {
+      toast(authError, {
+        icon: <ExclamationTriangleIcon className="h-5 w-5 text-destructive" />,
+      });
+    }
+  }, [authError]);
 
   return (
     <Card className="w-full max-w-md">

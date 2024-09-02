@@ -7,6 +7,25 @@ import { db } from "@/server/db";
 import { Paths } from "@/lib/constants";
 import { users } from "@/server/db/schema";
 
+interface GitHubUserEmail {
+  email: string;
+  primary: boolean;
+  verified: boolean;
+  visibility: string | null;
+}
+
+const getUserGitHubEmail = async (accessToken: string): Promise<GitHubUserEmail | null> => {
+  const getEmail = await fetch("https://api.github.com/user/emails", {
+    headers: {
+      Accept: "application/vnd.github+json",
+      Authorization: `Bearer ${accessToken}`
+    }
+  });
+
+  const emails = await getEmail.json() as GitHubUserEmail[];
+  return emails.find(email => email.primary) ?? null;
+}
+
 export async function GET(request: Request): Promise<Response> {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
@@ -22,6 +41,7 @@ export async function GET(request: Request): Promise<Response> {
 
   try {
     const tokens = await github.validateAuthorizationCode(code);
+
     const githubUserResponse = await fetch("https://api.github.com/user", {
         headers: {
             Authorization: `Bearer ${tokens.accessToken}`
@@ -29,14 +49,24 @@ export async function GET(request: Request): Promise<Response> {
     });
 
     const githubUser = (await githubUserResponse.json()) as GitHubUser;
+    const githubUserEmail = (await getUserGitHubEmail(tokens.accessToken));
 
-    const existingUser = await db.query.users.findFirst({
-        where: (table, { eq, or }) =>
-          or(eq(table.githubId, githubUser.id), eq(table.email, githubUser.email)),
+    if (!githubUserEmail?.email || !githubUserEmail?.verified) {
+      cookies().set('auth_error', 'Please verify your email on GitHub before continuting', {
+        maxAge: 5, // Cookie expires after 60 seconds
+        path: '/',
       });
 
-    // Users can hide/private their email on GitHub
-    const userEmail = githubUser.email ?? "No Email";
+      return new Response(null, {
+        status: 302,
+        headers: { Location: Paths.Login },
+      });
+    }
+    
+    const existingUser = await db.query.users.findFirst({
+        where: (table, { eq, or }) =>
+          or(eq(table.githubId, githubUser.id), eq(table.email, githubUserEmail?.email)),
+      });
 
     const avatar = githubUser.avatar_url
     ? githubUser.avatar_url
@@ -47,7 +77,7 @@ export async function GET(request: Request): Promise<Response> {
         await db.insert(users).values({
           id: userId,
           fullname: githubUser.name,
-          email: userEmail,
+          email: githubUserEmail.email,
           emailVerified: true,
           githubId: githubUser.id,
           avatar,
@@ -64,14 +94,14 @@ export async function GET(request: Request): Promise<Response> {
         });
       }
 
-    if (existingUser.githubId !== githubUser.id || existingUser.avatar !== avatar) {
+    if (existingUser.githubId !== githubUser.id) {
     await db
         .update(users)
         .set({
         githubId: githubUser.id,
-        fullname: githubUser.name,
-        emailVerified: true,
-        avatar,
+        // fullname: githubUser.name,
+        // emailVerified: true,
+        // avatar,
         })
         .where(eq(users.id, existingUser.id));
     }

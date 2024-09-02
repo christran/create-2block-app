@@ -31,13 +31,22 @@ export async function GET(request: Request): Promise<Response> {
 
     const googleUser = (await googleUserResponse.json()) as GoogleUser;
 
+    if (!googleUser.email || !googleUser.email_verified) {
+      cookies().set('auth_error', 'Please verify your email on Google before continuting', {
+        maxAge: 5, // Cookie expires after 60 seconds
+        path: '/',
+      });
+
+      return new Response(null, {
+        status: 302,
+        headers: { Location: Paths.Login },
+      });
+    }
+
     const existingUser = await db.query.users.findFirst({
         where: (table, { eq, or }) =>
           or(eq(table.googleId, googleUser.sub), eq(table.email, googleUser.email)),
       });
-
-    // Users can hide/private their email on GitHub
-    const userEmail = googleUser.email ?? "No Email";
 
     const avatar = googleUser.picture
     ? googleUser.picture
@@ -48,8 +57,8 @@ export async function GET(request: Request): Promise<Response> {
         await db.insert(users).values({
           id: userId,
           fullname: googleUser.name,
-          email: userEmail,
-          emailVerified: googleUser.email_verified,
+          email: googleUser.email,
+          emailVerified: true,
           githubId: googleUser.sub,
           avatar,
         });
@@ -65,14 +74,14 @@ export async function GET(request: Request): Promise<Response> {
         });
       }
 
-    if (existingUser.googleId !== googleUser.sub || existingUser.avatar !== googleUser.picture) {
+    if (existingUser.googleId !== googleUser.sub) {
     await db
         .update(users)
         .set({
         googleId: googleUser.sub,
-        fullname: googleUser.name,
-        emailVerified: googleUser.email_verified,
-        avatar,
+        // fullname: googleUser.name,
+        // emailVerified: true,
+        // avatar,
         })
         .where(eq(users.id, existingUser.id));
     }
