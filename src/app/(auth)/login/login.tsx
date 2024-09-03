@@ -23,7 +23,7 @@ export function Login() {
     const cookies = document.cookie.split(';');
     const authErrorCookie = cookies.find(cookie => cookie.trim().startsWith('auth_error='));
     if (authErrorCookie) {
-      const errorMessage = decodeURIComponent(authErrorCookie.split('=')[1]);
+      const errorMessage = decodeURIComponent(authErrorCookie.split('=')[1]!);
       setAuthError(errorMessage);
       document.cookie = 'auth_error=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     }

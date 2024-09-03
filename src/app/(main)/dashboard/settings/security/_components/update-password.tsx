@@ -21,7 +21,11 @@ import { ExclamationTriangleIcon } from "@/components/icons"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 
-export function UpdatePassword({ user }: { user: DatabaseUserAttributes | null }) {
+interface UpdatePasswordProps {
+  accountPasswordless: boolean
+}
+
+export function UpdatePassword({ user }: { user: UpdatePasswordProps }) {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -75,7 +79,7 @@ export function UpdatePassword({ user }: { user: DatabaseUserAttributes | null }
 
   return (
     <div>
-    {user?.hashedPassword === null ? (
+    {user?.accountPasswordless ? (
       <Card>
       <CardHeader>
         <CardTitle>Password</CardTitle>
@@ -105,7 +109,6 @@ export function UpdatePassword({ user }: { user: DatabaseUserAttributes | null }
                 name="current_password"
                 type="password"
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                disabled={user?.hashedPassword === null}
               />
               <Label>New Password</Label>
               <Input
@@ -113,7 +116,6 @@ export function UpdatePassword({ user }: { user: DatabaseUserAttributes | null }
                 name="new_password"
                 type="password"
                 onChange={(e) => setNewPassword(e.target.value)}
-                disabled={user?.hashedPassword === null}
               />
               <Label>Confirm Password</Label>
               <Input
@@ -121,11 +123,10 @@ export function UpdatePassword({ user }: { user: DatabaseUserAttributes | null }
                 name="confirm_password"
                 type="password"
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                disabled={user?.hashedPassword === null}
               />
             </div>
           </CardContent>
-          {user?.hashedPassword !== null && (
+          {user?.accountPasswordless !== null && (
             <CardFooter className="border-t px-6 py-4">
                 <Button type="submit">Update Password</Button>
 

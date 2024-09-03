@@ -2,9 +2,9 @@ import { validateRequest } from "@/lib/auth/validate-request";
 import { LinkedAccounts } from "./_components/linked-accounts";
 import { MultiFactorAuth } from "./_components/multifactorauth";
 import { UpdatePassword } from "./_components/update-password";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Paths } from "@/lib/constants";
-import { getUserById } from "@/lib/auth/actions";
+import { api } from "@/trpc/server";
 
 export default async function SecurityPage() {
   const { user } = await validateRequest();
@@ -13,7 +13,9 @@ export default async function SecurityPage() {
     redirect(Paths.Login);
   }
 
-  const userData = await getUserById(user.id);
+  const userData = await api.user.getUser.query();
+
+  if (!userData) notFound();
 
   return (
     <div>

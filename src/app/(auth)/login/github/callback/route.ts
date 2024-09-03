@@ -78,6 +78,7 @@ export async function GET(request: Request): Promise<Response> {
           id: userId,
           fullname: githubUser.name,
           email: githubUserEmail.email,
+          accountPasswordless: true,
           emailVerified: true,
           githubId: githubUser.id,
           avatar,

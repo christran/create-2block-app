@@ -1,5 +1,5 @@
 import { generateId } from "lucia";
-import type { ProtectedTRPCContext } from "../../trpc";
+import type { ProtectedTRPCContext } from "@/server/api/trpc";
 import type {
   CreatePostInput,
   DeletePostInput,

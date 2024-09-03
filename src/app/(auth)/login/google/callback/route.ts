@@ -58,6 +58,7 @@ export async function GET(request: Request): Promise<Response> {
           id: userId,
           fullname: googleUser.name,
           email: googleUser.email,
+          accountPasswordless: true,
           emailVerified: true,
           githubId: googleUser.sub,
           avatar,

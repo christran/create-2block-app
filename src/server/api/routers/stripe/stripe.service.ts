@@ -1,5 +1,5 @@
 import { freePlan, proPlan, subscriptionPlans } from "@/config/subscriptions";
-import type { ProtectedTRPCContext } from "../../trpc";
+import type { ProtectedTRPCContext } from "@/server/api/trpc";
 import { stripe } from "@/lib/stripe";
 import { absoluteUrl, formatPrice } from "@/lib/utils";
 import type { ManageSubscriptionInput } from "./stripe.input";

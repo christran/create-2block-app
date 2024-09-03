@@ -9,20 +9,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { updateAccount } from "@/lib/auth/actions"
 import { useFormState } from "react-dom"
 import { useState } from "react";
-import { type DatabaseUserAttributes } from "@/lib/auth"
 import { useEffect } from "react"
 import { ExclamationTriangleIcon } from "@/components/icons"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import { UpdatePassword } from "../security/_components/update-password"
 
-export function AccountDetails({ user }: { user: DatabaseUserAttributes | null } ) {
+interface AccountDetailsProps {
+  fullname: string
+  email: string
+  accountPasswordless: boolean
+}
+
+export function AccountDetails({ user }: { user: AccountDetailsProps }) {
   const [fullname, setFullname] = useState(user?.fullname ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
 
@@ -72,7 +75,7 @@ export function AccountDetails({ user }: { user: DatabaseUserAttributes | null }
                 <Label>Email</Label>
                 <Input
 
-                  required={user?.hashedPassword !== null}
+                  required={user?.accountPasswordless}
                   // readOnly={true}
                   placeholder="hello@2bock.co"
                   autoComplete="email"
@@ -80,7 +83,7 @@ export function AccountDetails({ user }: { user: DatabaseUserAttributes | null }
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  // disabled={user?.hashedPassword === null}
+                  // disabled={user?.accountPasswordless === null}
                   />
               </div>
 

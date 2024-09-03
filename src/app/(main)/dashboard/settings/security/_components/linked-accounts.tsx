@@ -20,8 +20,13 @@ import { useEffect } from "react"
 import { ExclamationTriangleIcon } from "@/components/icons"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+interface LinkedAccountProps {
+  googleId: string | null
+  discordId: string | null
+  githubId: string | null
+}
 
-export function LinkedAccounts({ user }: { user: DatabaseUserAttributes | null }) {
+export function LinkedAccounts({ user }: { user: LinkedAccountProps }) {
   const [googleId, setGoogleId] = useState(user?.googleId ?? "");
   const [discordId, setdiscordId] = useState(user?.discordId ?? "");
   const [githubId, setgithubId] = useState(user?.githubId ?? "");

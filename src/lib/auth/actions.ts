@@ -24,12 +24,11 @@ import {
   updatePasswordSchema,
 } from "@/lib/validators/auth";
 import { emailVerificationCodes, passwordResetTokens, users } from "@/server/db/schema";
-// import { sendEmail, EmailTemplate } from "@/lib/email";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "../constants";
 import { env } from "@/env";
+// import { sendEmail, EmailTemplate } from "@/lib/email";
 import { sendEmail, EmailTemplate } from "../email/resend";
-import { DatabaseUserAttributes } from "@/lib/auth";
 
 export interface ActionResponse<T> {
   fieldError?: Partial<Record<keyof T, string | undefined>>;
@@ -70,7 +69,7 @@ export async function login(_: any, formData: FormData): Promise<ActionResponse<
   }
 
   // Rate limit this
-	const validPassword = await new Scrypt().verify(existingUser.hashedPassword!, password);
+	const validPassword = await new Scrypt().verify(existingUser?.hashedPassword, password);
 
   if (!validPassword) {
     return {
@@ -119,6 +118,7 @@ export async function signup(_: any, formData: FormData): Promise<ActionResponse
     id: userId,
     fullname,
     email,
+    accountPasswordless: false,
     hashedPassword,
     // avatar,
   });
@@ -155,6 +155,7 @@ export async function resendVerificationEmail(): Promise<{
   success?: boolean;
 }> {
   const { user } = await validateRequest();
+
   if (!user) {
     return redirect(Paths.Login);
   }
@@ -335,7 +336,10 @@ export async function resetPassword(
 
   await lucia.invalidateUserSessions(dbToken.userId);
   const hashedPassword = await new Scrypt().hash(password);
-  await db.update(users).set({ hashedPassword }).where(eq(users.id, dbToken.userId));
+  await db.update(users).set({ 
+    hashedPassword,
+    accountPasswordless: false
+  }).where(eq(users.id, dbToken.userId));
   const session = await lucia.createSession(dbToken.userId, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
@@ -343,7 +347,7 @@ export async function resetPassword(
   redirect(Paths.Dashboard);
 }
 
-export async function updateAccount(_: any, formData: FormData): Promise<ActionResponse<updateAccountInput>> {
+export async function updateAccount(_: any, formData: FormData): Promise<ActionResponse<updateAccountInput> & { success?: boolean; error?: string }> {
   const { user } = await validateRequest();
 
   if (!user) {
@@ -381,24 +385,26 @@ export async function updateAccount(_: any, formData: FormData): Promise<ActionR
   });
 
   // email input disabled on client side, force on server side
-  const newEmail = (userData.hashedPassword ? email : userData.email)
+  const newEmail = (userData?.hashedPassword ? email : userData?.email)
 
   // Force reverify after updating email
   try {
     await db.update(users).set({ 
       fullname,
       email: newEmail,
-      emailVerified: userData.hashedPassword && email !== user.email ? false : userData.emailVerified
+      emailVerified: userData?.hashedPassword && email !== user.email ? false : userData?.emailVerified
     }).where(eq(users.id, user.id));
 
     return { success: true };
   } catch (error) {
     console.error('Error updating user:', error);
-    return { error: 'Failed to update user information' };
+    return { 
+      error: 'Failed to update user information' 
+    };
   }
 }
 
-export async function updatePassword(_: any, formData: FormData): Promise<ActionResponse<updatePasswordInput>> {
+export async function updatePassword(_: any, formData: FormData): Promise<ActionResponse<updatePasswordInput> & { success?: boolean; error?: string }> {
   const { user } = await validateRequest();
 
   if (!user) {
@@ -427,8 +433,14 @@ export async function updatePassword(_: any, formData: FormData): Promise<Action
     where: (table, { eq }) => eq(table.id, user.id),
   });
 
+  if (userData?.hashedPassword === null) {
+    return {
+      formError: "Internal server error",
+    };
+  }
 
-	const validPassword = await new Scrypt().verify(userData.hashedPassword!, current_password);
+	// eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+	const validPassword = await new Scrypt().verify(userData?.hashedPassword!, current_password);
 
   if (!validPassword) {
     return {
@@ -448,25 +460,6 @@ export async function updatePassword(_: any, formData: FormData): Promise<Action
   } catch (error) {
     console.error('Error updating user:', error);
     return { error: 'Failed to update user information' };
-  }
-}
-
-export async function getUserById(userId: string): Promise<DatabaseUserAttributes | null> {
-  const { user } = await validateRequest();
-
-  if (!user) {
-    return redirect(Paths.Login);
-  }
-
-  try {
-    const foundUser = await db.query.users.findFirst({
-      where: (table, { eq }) => eq(table?.id, userId),
-    });
-
-    return foundUser || null;
-  } catch (error) {
-    console.error('Error fetching user by ID:', error);
-    return null;
   }
 }
 

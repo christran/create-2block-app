@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { env } from "@/env";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@/lib/constants";
-import { Settings } from "./_components/settings";
 import { AccountDetails } from "./_components/account-details";
-import { getUserById } from "@/lib/auth/actions";
+import { api } from "@/trpc/server";
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
@@ -21,11 +20,9 @@ export default async function SettingsPage() {
     redirect(Paths.Login);
   }
 
-  const userData = await getUserById(user.id);
-
   return (
     /* <React.Suspense fallback={<BillingSkeleton />}> */
-    <AccountDetails user={userData} />
+    <AccountDetails user={await api.user.getUser.query() ?? notFound()} />
     /* </React.Suspense> */
   );
 }

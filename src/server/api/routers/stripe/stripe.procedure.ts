@@ -1,11 +1,13 @@
-import { createTRPCRouter, protectedProcedure } from "../../trpc";
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import * as services from "./stripe.service";
 import * as inputs from "./stripe.input";
 
 export const stripeRouter = createTRPCRouter({
-  getPlans: protectedProcedure.query(({ ctx }) => services.getStripePlans(ctx)),
+  getPlans: protectedProcedure.
+    query(({ ctx }) => services.getStripePlans(ctx)),
 
-  getPlan: protectedProcedure.query(({ ctx }) => services.getStripePlan(ctx)),
+  getPlan: protectedProcedure.
+    query(({ ctx }) => services.getStripePlan(ctx)),
 
   managePlan: protectedProcedure
     .input(inputs.manageSubscriptionSchema)

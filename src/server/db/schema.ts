@@ -19,6 +19,7 @@ export const users = pgTable(
     fullname: varchar("fullname", { length: 255 }).notNull(),
     email: varchar("email", { length: 255 }).unique().notNull(),
     emailVerified: boolean("email_verified").default(false).notNull(),
+    accountPasswordless: boolean("account_passwordless").default(false).notNull(),
     hashedPassword: varchar("hashed_password", { length: 255 }),
     googleId: varchar("google_id", { length: 255 }).unique(),
     githubId: varchar("github_id", { length: 255 }).unique(),

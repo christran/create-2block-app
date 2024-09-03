@@ -58,6 +58,7 @@ export async function GET(request: Request): Promise<Response> {
         id: userId,
         fullname: discordUser.username,
         email: discordUser.email,
+        accountPasswordless: true,
         emailVerified: true,
         discordId: discordUser.id,
         avatar,

@@ -1,4 +1,4 @@
-import { createTRPCRouter, protectedProcedure } from "../../trpc";
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import * as inputs from "./post.input";
 import * as services from "./post.service";
 
