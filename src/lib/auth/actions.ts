@@ -5,10 +5,8 @@
 import { z } from "zod";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { generateId, Scrypt } from "lucia";
 import { isWithinExpirationDate, TimeSpan, createDate } from "oslo";
 import { generateRandomString, alphabet } from "oslo/crypto";
-// import { Argon2id } from "oslo/password";
 import { eq } from "drizzle-orm";
 import { lucia } from "@/lib/auth";
 import { db } from "@/server/db";
@@ -28,6 +26,9 @@ import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "../constants";
 import { env } from "@/env";
 import { revalidatePath } from "next/cache";
+
+import { generateId, Scrypt } from "lucia";
+// import { Argon2id } from "oslo/password";
 
 import { sendEmail, EmailTemplate } from "@/lib/email";
 // import { sendEmail, EmailTemplate } from "../email/resend";
