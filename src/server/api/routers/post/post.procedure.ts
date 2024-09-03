@@ -4,7 +4,7 @@ import * as services from "./post.service";
 import { z } from "zod";
 import { posts } from "@/server/db/schema";
 import { generateId } from "lucia";
-import { eq } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { Paths } from "@/lib/constants";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -123,6 +123,6 @@ export const postRouter = createTRPCRouter({
         .from(posts)
         .where(eq(posts.userId, ctx.user.id));
       
-      return result.count;
+      return result?.count;
   }),
 });

@@ -33,6 +33,7 @@ export default async function DashboardPage({ searchParams }: Props) {
    */
   const promises = Promise.all([
     api.post.myPosts.query({ page, perPage }),
+    api.post.countUserPosts.query(),
     api.stripe.getPlan.query(),
   ]);
 

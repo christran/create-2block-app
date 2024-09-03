@@ -14,7 +14,7 @@ export function Posts({ promises }: PostsProps) {
    * use is a React Hook that lets you read the value of a resource like a Promise or context.
    * @see https://react.dev/reference/react/use
    */
-  const [posts, subscriptionPlan] = React.use(promises);
+  const [posts, postCount, subscriptionPlan] = React.use(promises);
   
   /**
    * useOptimistic is a React Hook that lets you show a different state while an async action is underway.
@@ -47,7 +47,7 @@ export function Posts({ promises }: PostsProps) {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <NewPost
-        isEligible={(optimisticPosts.length < 2 || subscriptionPlan?.isPro) ?? false}
+        isEligible={(postCount < 2 || subscriptionPlan?.isPro) ?? false}
         setOptimisticPosts={setOptimisticPosts}
       />
       {optimisticPosts.map((post) => (
