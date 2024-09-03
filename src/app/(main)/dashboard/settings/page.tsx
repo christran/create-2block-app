@@ -25,8 +25,11 @@ export default async function SettingsPage() {
   // if (!userData) notFound();
 
   return (
-    /* <React.Suspense fallback={<BillingSkeleton />}> */
-    <AccountDetails user={user} />
-    /* </React.Suspense> */
+    <div className="grid gap-8">
+      <div>
+        <h1 className="text-3xl font-bold md:text-4xl">Profile</h1>
+      </div>
+      <AccountDetails user={user} />
+    </div>
   );
 }

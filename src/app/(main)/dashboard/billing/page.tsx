@@ -8,7 +8,7 @@ import { env } from "@/env";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { APP_TITLE, Paths } from "@/lib/constants";
 import { api } from "@/trpc/server";
-import * as React from "react";
+import { Suspense } from "react";
 import { Billing } from "./_components/billing";
 import { BillingSkeleton } from "./_components/billing-skeleton";
 
@@ -50,9 +50,9 @@ export default async function BillingPage() {
           </AlertDescription>
         </Alert>
       </section>
-      <React.Suspense fallback={<BillingSkeleton />}>
+      <Suspense fallback={<BillingSkeleton />}>
         <Billing stripePromises={stripePromises} />
-      </React.Suspense>
+      </Suspense>
     </div>
   );
 }

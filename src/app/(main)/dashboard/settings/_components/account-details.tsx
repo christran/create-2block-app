@@ -12,13 +12,12 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { updateAccount } from "@/lib/auth/actions"
+import { useState, useEffect, useMemo, Suspense } from "react"
 import { useFormState } from "react-dom"
-import { useState } from "react";
-import { useEffect } from "react"
 import { ExclamationTriangleIcon } from "@/components/icons"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import { useMemo } from "react"
+import { AccountDetailsSkeleton } from "./account-details-skeleton"
 
 interface AccountDetailsProps {
   fullname: string
@@ -51,47 +50,41 @@ export function AccountDetails({ user }: { user: AccountDetailsProps }) {
     }
   }, [state]);
 
-  const handleSubmit = (formData: FormData) => {
-    formAction(formData);
-  };
-
     return (
-    <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold md:text-4xl">Profile</h1>
-      </div>
-      <form action={handleSubmit}>
+      <form action={formAction}>
           <Card>
             <CardHeader>
               <CardTitle>Account Details</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="w-full md:w-1/2 space-y-2">
-                <Label>Full Name</Label>
-                <Input
-                  required
-                  placeholder="Jeon Jungkook"
-                  autoComplete="name"
-                  name="fullname"
-                  type="text"
-                  value={fullname}
-                  onChange={(e) => setFullname(e.target.value)}
-                  />
-                <Label>Email</Label>
-                <Input
+            <Suspense fallback={<AccountDetailsSkeleton />}>
+              <CardContent>
+                <div className="w-full md:w-1/2 space-y-2">
+                  <Label>Full Name</Label>
+                  <Input
+                    required
+                    placeholder="Jeon Jungkook"
+                    autoComplete="name"
+                    name="fullname"
+                    type="text"
+                    value={fullname}
+                    onChange={(e) => setFullname(e.target.value)}
+                    />
+                  <Label>Email</Label>
+                  <Input
 
-                  required={user?.accountPasswordless}
-                  // readOnly={true}
-                  placeholder="hello@2bock.co"
-                  autoComplete="email"
-                  name="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  // disabled={user?.accountPasswordless === null}
-                  />
-              </div>
-            </CardContent>
+                    required={user?.accountPasswordless}
+                    // readOnly={true}
+                    placeholder="hello@2bock.co"
+                    autoComplete="email"
+                    name="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    // disabled={user?.accountPasswordless === null}
+                    />
+                </div>
+              </CardContent>
+            </Suspense>
           <CardContent>
             {state?.fieldError ? (
               <ul className="w-full md:w-1/2 list-disc space-y-1 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
@@ -112,6 +105,5 @@ export function AccountDetails({ user }: { user: AccountDetailsProps }) {
             </CardFooter>
           </Card>
         </form>
-      </div>
     )
 }

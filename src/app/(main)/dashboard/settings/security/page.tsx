@@ -20,8 +20,8 @@ export default async function SecurityPage() {
   const isPasswordLess = await api.user.isPasswordLess.query();
 
   return (
-    <div>
-      <div className="mb-6">
+    <div className="grid gap-8">
+      <div>
         <h1 className="text-3xl font-bold md:text-4xl">Security</h1>
       </div>
       <div className="grid gap-8">

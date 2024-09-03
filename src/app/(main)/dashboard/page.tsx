@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { env } from "@/env";
 import { api } from "@/trpc/server";
 import { type Metadata } from "next";
-import * as React from "react";
+import { Suspense } from "react";
 import { Posts } from "./_components/posts";
 import { PostsSkeleton } from "./_components/posts-skeleton";
 import { validateRequest } from "@/lib/auth/validate-request";
@@ -38,13 +38,13 @@ export default async function DashboardPage({ searchParams }: Props) {
   ]);
 
   return (
-    <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold md:text-4xl">Posts</h1>
+    <div className="grid gap-8">
+      <div>
+        <h1 className="text-3xl font-bold md:text-4xl">Dashboard</h1>
       </div>
-      <React.Suspense fallback={<PostsSkeleton />}>
+      <Suspense fallback={<PostsSkeleton />}>
         <Posts promises={promises} />
-      </React.Suspense>
+      </Suspense>
     </div>
   );
 }
