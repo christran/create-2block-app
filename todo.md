@@ -1,0 +1,1 @@
+[ ] send email verify with code and a button that automatically confirms the user's email (magic link?)

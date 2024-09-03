@@ -18,6 +18,7 @@ import { useEffect } from "react"
 import { ExclamationTriangleIcon } from "@/components/icons"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import { useMemo } from "react"
 
 interface AccountDetailsProps {
   fullname: string
@@ -31,6 +32,10 @@ export function AccountDetails({ user }: { user: AccountDetailsProps }) {
 
   const [state, formAction] = useFormState(updateAccount, null);
   // const formRef = useRef<HTMLFormElement>(null);
+
+  const isDirty = useMemo(() => {
+    return fullname !== user?.fullname || email !== user?.email;
+  }, [fullname, email]);
 
   const router = useRouter();
 
@@ -86,10 +91,24 @@ export function AccountDetails({ user }: { user: AccountDetailsProps }) {
                   // disabled={user?.accountPasswordless === null}
                   />
               </div>
-
             </CardContent>
+          <CardContent>
+            {state?.fieldError ? (
+              <ul className="w-full md:w-1/2 list-disc space-y-1 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
+                {Object.values(state.fieldError).map((err) => (
+                  <li className="ml-4" key={err}>
+                    {err}
+                  </li>
+                ))}
+              </ul>
+            ) : state?.formError ? (
+              <p className="rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
+                {state?.formError}
+              </p>
+            ) : null}
+          </CardContent>
             <CardFooter className="border-t px-6 py-4">
-              <Button>Update Account</Button>
+              <Button disabled={!isDirty}>Update Account</Button>
             </CardFooter>
           </Card>
         </form>

@@ -1,5 +1,6 @@
 import { Body, Container, Head, Html, Preview, Section, Text, Button, Link } from "@react-email/components";
-import { APP_TITLE } from "@/lib/constants";
+import { APP_TITLE, Paths } from "@/lib/constants";
+import { env } from "@/env";
 
 export interface EmailVerificationTemplateProps {
   fullname: string;
@@ -38,6 +39,10 @@ export const EmailVerificationTemplate = ({ fullname, code }: EmailVerificationT
             <Section style={codeBox}>
               <Text style={confirmationCodeText}>{code}</Text>
             </Section>
+
+            <Button style={button} href={env.NEXT_PUBLIC_APP_URL + Paths.VerifyEmail}>
+              Verify Email
+            </Button>
           </Section>
           <Text style={links}>
             <Link style={link}>Your security audit log</Link> ・{" "}
@@ -95,6 +100,17 @@ const confirmationCodeText = {
   textAlign: "center" as const,
   verticalAlign: "middle",
 };
+
+const button = {
+  fontSize: "14px",
+  backgroundColor: "#09090b",
+  color: "#fff",
+  lineHeight: 1.5,
+  borderRadius: "0.5em",
+  padding: "12px 24px",
+  margin: "0 0 8px 0",
+};
+
 
 const links = {
   textAlign: "center" as const,

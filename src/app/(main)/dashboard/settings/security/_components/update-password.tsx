@@ -14,8 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { setupNewPasswordLink, updatePassword } from "@/lib/auth/actions"
 import { useFormState } from "react-dom"
-import { useState } from "react";
-import { useEffect } from "react"
+import { useState, useEffect, useMemo } from "react";
 import { ExclamationTriangleIcon } from "@/components/icons"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
@@ -30,6 +29,10 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
   const [state, formAction] = useFormState(updatePassword, null);
 
   const router = useRouter();
+
+  const isDirty = useMemo(() => {
+    return currentPassword !== '' || newPassword !== '' || confirmPassword !== '';
+  }, [currentPassword, newPassword, confirmPassword]);
 
   useEffect(() => {
     if (state?.success) {
@@ -128,9 +131,24 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
               />
             </div>
           </CardContent>
+          <CardContent>
+            {state?.fieldError ? (
+              <ul className="w-full md:w-1/2 list-disc space-y-1 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
+                {Object.values(state.fieldError).map((err) => (
+                  <li className="ml-4" key={err}>
+                    {err}
+                  </li>
+                ))}
+              </ul>
+            ) : state?.formError ? (
+              <p className="w-full md:w-1/2 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
+                {state?.formError}
+              </p>
+            ) : null}
+          </CardContent>
           {user.isPasswordLess !== null && (
             <CardFooter className="border-t px-6 py-4">
-                <Button type="submit">Update Password</Button>
+                <Button type="submit" disabled={!isDirty}>Update Password</Button>
 
             </CardFooter>
           )}

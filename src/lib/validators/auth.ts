@@ -24,17 +24,13 @@ export type updateAccountInput = z.infer<typeof updateAccountSchema>;
 
 export const updatePasswordSchema = z.object({
   current_password: z
-    .string()
-    .min(8, "Password is too short. Minimum 8 characters required.")
-    .max(255),
+    .string(),
   new_password: z
     .string()
-    .min(8, "Password is too short. Minimum 8 characters required.")
+    .min(8, "New password is too short. Minimum 8 characters required.")
     .max(255),
   confirm_password: z
-    .string()
-    .min(8, "Password is too short. Minimum 8 characters required.")
-    .max(255),
+    .string(),
 });
 export type updatePasswordInput = z.infer<typeof updatePasswordSchema>;
 
