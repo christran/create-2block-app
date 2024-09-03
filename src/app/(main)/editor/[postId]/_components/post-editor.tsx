@@ -22,6 +22,7 @@ import { LoadingButton } from "@/components/loading-button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createPostSchema } from "@/server/api/routers/post/post.input";
+import { Paths } from "@/lib/constants";
 
 const markdownlink = "https://remarkjs.github.io/react-markdown/";
 
@@ -45,7 +46,7 @@ export const PostEditor = ({ post }: Props) => {
   const onSubmit = form.handleSubmit(async (values) => {
     updatePost.mutate({ id: post.id, ...values });
 
-    router.push('/dashboard');
+    router.push(Paths.Dashboard);
     router.refresh(); // resets cache? wrong way to do it?
   });
 

@@ -2,6 +2,7 @@
 
 import { FilePlusIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
+import { Paths } from "@/lib/constants";
 import { api } from "@/trpc/react";
 import { type RouterOutputs } from "@/trpc/shared";
 import { useRouter } from "next/navigation";
@@ -31,7 +32,7 @@ export const NewPost = ({ isEligible, setOptimisticPosts }: NewPostProps) => {
     startCreateTransaction(async () => {
       await post.mutateAsync(
         {
-          title: "Untitled Post",
+          title: "Untitled",
           content: "Write your content here",
           excerpt: "untitled post",
         },
@@ -51,6 +52,7 @@ export const NewPost = ({ isEligible, setOptimisticPosts }: NewPostProps) => {
           onSuccess: ({ id }) => {
             toast.success("Post created");
             router.refresh();
+            // router.push(`/editor/${id}`);
             // This is a workaround for a bug in navigation because of router.refresh()
             setTimeout(() => {
               router.push(`/editor/${id}`);

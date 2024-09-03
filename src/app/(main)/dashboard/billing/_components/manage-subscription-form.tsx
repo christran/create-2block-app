@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import type { ManageSubscriptionInput } from "@/server/api/routers/stripe/stripe.input";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
+import { Paths } from "@/lib/constants";
 
 export function ManageSubscriptionForm({
   isPro,
@@ -31,8 +32,9 @@ export function ManageSubscriptionForm({
         });
 
         if (session) {
-          window.location.href = session.url ?? "/dashboard/billing";
+          window.location.href = session.url ?? Paths.Billing;
         }
+        
       } catch (err) {
         err instanceof Error
           ? toast.error(err.message)

@@ -4,6 +4,7 @@ import { stripe } from "@/lib/stripe";
 import { absoluteUrl, formatPrice } from "@/lib/utils";
 import type { ManageSubscriptionInput } from "./stripe.input";
 import { env } from "@/env";
+import { Paths } from "@/lib/constants";
 
 export const getStripePlans = async (ctx: ProtectedTRPCContext) => {
   try {
@@ -87,7 +88,7 @@ export const manageSubscription = async (
   ctx: ProtectedTRPCContext,
   input: ManageSubscriptionInput,
 ) => {
-  const billingUrl = absoluteUrl("/dashboard/billing");
+  const billingUrl = absoluteUrl(Paths.Billing);
 
   const user = await ctx.db.query.users.findFirst({
     where: (table, { eq }) => eq(table.id, ctx.user.id),
@@ -143,7 +144,7 @@ export const manageSubscription = async (
 export async function createBillingPortalSession(customerId: string) {
   const session = await stripe.billingPortal.sessions.create({
     customer: customerId,
-    return_url: `${env.NEXT_PUBLIC_APP_URL}/dashboard/billing`,
+    return_url: `${env.NEXT_PUBLIC_APP_URL + Paths.Billing}`,
   })
   
   return session.url

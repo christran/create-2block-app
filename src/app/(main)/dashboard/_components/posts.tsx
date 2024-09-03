@@ -15,7 +15,7 @@ export function Posts({ promises }: PostsProps) {
    * @see https://react.dev/reference/react/use
    */
   const [posts, subscriptionPlan] = React.use(promises);
-
+  
   /**
    * useOptimistic is a React Hook that lets you show a different state while an async action is underway.
    * It accepts some state as an argument and returns a copy of that state that can be different during the duration of an async action such as a network request.
