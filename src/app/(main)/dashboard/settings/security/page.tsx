@@ -13,9 +13,11 @@ export default async function SecurityPage() {
     redirect(Paths.Login);
   }
 
-  const userData = await api.user.getUser.query();
+  // const userData = await api.user.getUser.query();
 
-  if (!userData) notFound();
+  // if (!userData) notFound();
+
+  const isPasswordLess = await api.user.isPasswordLess.query();
 
   return (
     <div>
@@ -23,8 +25,8 @@ export default async function SecurityPage() {
         <h1 className="text-3xl font-bold md:text-4xl">Security</h1>
       </div>
       <div className="grid gap-8">
-        <LinkedAccounts user={userData} />
-        <UpdatePassword user={userData} />
+        <LinkedAccounts user={user} />
+        <UpdatePassword isPasswordLess={isPasswordLess} />
         <MultiFactorAuth />
       </div>
     </div>

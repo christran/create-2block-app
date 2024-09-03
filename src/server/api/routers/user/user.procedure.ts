@@ -5,4 +5,6 @@ import * as services from "./user.service";
 export const userRouter = createTRPCRouter({
   getUser: protectedProcedure
     .query(({ ctx }) => services.getUserById(ctx)),
+  isPasswordLess: protectedProcedure
+    .query(({ ctx }) => services.isAccountPasswordless(ctx)),
 });

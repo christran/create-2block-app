@@ -51,7 +51,7 @@ const smtpConfig = {
 
 const transporter = createTransport(smtpConfig as TransportOptions);
 
-export const sendMail = async <T extends EmailTemplate>(
+export const sendEmail = async <T extends EmailTemplate>(
   to: string,
   template: T,
   props: PropsMap[NoInfer<T>],

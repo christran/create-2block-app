@@ -12,9 +12,11 @@ import { Label } from "@/components/ui/label";
 import { signup } from "@/lib/auth/actions";
 import { SubmitButton } from "@/components/submit-button";
 import { Paths } from "@/lib/constants";
+import { useState } from "react";
 
 export function Signup() {
   const [state, formAction] = useFormState(signup, null);
+  const [currentPassword, setCurrentPassword] = useState('');
 
   return (
     <Card className="w-full max-w-md">
@@ -28,22 +30,22 @@ export function Signup() {
             <Label htmlFor="fullname">Full Name</Label>
             <Input
               id="fullname"
-              required
               placeholder="Jeon Jungkook"
               autoComplete="name"
               name="fullname"
               type="text"
+              required
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
-              required
               placeholder="email@example.com"
               autoComplete="email"
               name="email"
               type="email"
+              required
             />
           </div>
           <div className="space-y-2">
@@ -51,9 +53,11 @@ export function Signup() {
             <PasswordInput
               id="password"
               name="password"
-              required
+              value={currentPassword}
               autoComplete="current-password"
+              onChange={(e) => setCurrentPassword(e.target.value)}
               placeholder="********"
+              required
             />
           </div>
 

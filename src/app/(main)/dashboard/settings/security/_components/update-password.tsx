@@ -15,30 +15,28 @@ import { Label } from "@/components/ui/label"
 import { setupNewPasswordLink, updatePassword } from "@/lib/auth/actions"
 import { useFormState } from "react-dom"
 import { useState } from "react";
-import { type DatabaseUserAttributes } from "@/lib/auth"
 import { useEffect } from "react"
 import { ExclamationTriangleIcon } from "@/components/icons"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import { Paths } from "@/lib/constants"
+import { PasswordInput } from "@/components/password-input"
 
-interface UpdatePasswordProps {
-  accountPasswordless: boolean
-}
-
-export function UpdatePassword({ user }: { user: UpdatePasswordProps }) {
+export function UpdatePassword(user: { isPasswordLess: boolean }) {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [setupPasswordState, setupPasswordAction] = useFormState(setupNewPasswordLink, null);
   const [state, formAction] = useFormState(updatePassword, null);
-  // const formRef = useRef<HTMLFormElement>(null);
 
   const router = useRouter();
 
   useEffect(() => {
     if (state?.success) {
       toast("Password updated");
-      router.refresh();
+
+      // router.push(Paths.Security);
+      // window.location.reload()
     }
     if (state?.error) {
       toast(state?.error, {
@@ -50,7 +48,7 @@ export function UpdatePassword({ user }: { user: UpdatePasswordProps }) {
   useEffect(() => {
     if (setupPasswordState?.success) {
       toast("Please check your email for a link to set a password");
-      router.refresh();
+      // router.refresh();
     }
     if (setupPasswordState?.error) {
       toast(setupPasswordState?.error, {
@@ -74,12 +72,16 @@ export function UpdatePassword({ user }: { user: UpdatePasswordProps }) {
       return;
     }
 
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+
     formAction(formData);
   };
 
   return (
     <div>
-    {user?.accountPasswordless ? (
+    {user.isPasswordLess ? (
       <Card>
       <CardHeader>
         <CardTitle>Password</CardTitle>
@@ -104,29 +106,29 @@ export function UpdatePassword({ user }: { user: UpdatePasswordProps }) {
           <CardContent>
             <div className="w-full md:w-1/2 space-y-2">
               <Label>Current Password</Label>
-              <Input
-                required
+              <PasswordInput
                 name="current_password"
-                type="password"
+                value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
+                autoComplete="current-password"
               />
               <Label>New Password</Label>
-              <Input
-                required
+              <PasswordInput
                 name="new_password"
-                type="password"
+                value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
+                autoComplete="new-password"
               />
               <Label>Confirm Password</Label>
-              <Input
-                required
+              <PasswordInput
                 name="confirm_password"
-                type="password"
+                value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                autoComplete="new-password"
               />
             </div>
           </CardContent>
-          {user?.accountPasswordless !== null && (
+          {user.isPasswordLess !== null && (
             <CardFooter className="border-t px-6 py-4">
                 <Button type="submit">Update Password</Button>
 

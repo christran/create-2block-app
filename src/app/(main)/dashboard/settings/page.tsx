@@ -20,9 +20,13 @@ export default async function SettingsPage() {
     redirect(Paths.Login);
   }
 
+  // const userData = await api.user.getUser.query();
+
+  // if (!userData) notFound();
+
   return (
     /* <React.Suspense fallback={<BillingSkeleton />}> */
-    <AccountDetails user={await api.user.getUser.query() ?? notFound()} />
+    <AccountDetails user={user} />
     /* </React.Suspense> */
   );
 }

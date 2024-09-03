@@ -18,6 +18,7 @@ import { toast } from 'sonner';
 export function Login() {
   const [state, formAction] = useFormState(login, null);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [currentPassword, setCurrentPassword] = useState('');
 
   useEffect(() => {
     const cookies = document.cookie.split(';');
@@ -85,9 +86,11 @@ export function Login() {
         <div className="space-y-2">
           {/* <Label htmlFor="password">Password</Label> */}
           <PasswordInput
+            required
             id="password"
             name="password"
-            required
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
             autoComplete="current-password"
             placeholder="Password"
           />

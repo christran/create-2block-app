@@ -25,7 +25,7 @@ interface AccountDetailsProps {
   accountPasswordless: boolean
 }
 
-export function AccountDetails({ user }: { user: AccountDetailsProps }) {
+export function AccountDetails({ user }: { user: AccountDetailsProps }) {  
   const [fullname, setFullname] = useState(user?.fullname ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
 

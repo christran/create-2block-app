@@ -23,3 +23,14 @@ export const getUserById = async (ctx: ProtectedTRPCContext) => {
 
   return user;
 };
+
+export const isAccountPasswordless = async (ctx: ProtectedTRPCContext): Promise<boolean> => {
+  const user = await ctx.db.query.users.findFirst({
+    where: (table, { eq }) => eq(table.id, ctx.user.id),
+    columns: {
+      hashedPassword: true,
+    },
+  });
+
+  return user?.hashedPassword === null;
+};

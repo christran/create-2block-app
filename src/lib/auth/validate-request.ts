@@ -11,7 +11,9 @@ export const uncachedValidateRequest = async (): Promise<
   if (!sessionId) {
     return { user: null, session: null };
   }
+
   const result = await lucia.validateSession(sessionId);
+  
   // next.js throws when you attempt to set cookie when rendering page
   try {
     if (result.session && result.session.fresh) {

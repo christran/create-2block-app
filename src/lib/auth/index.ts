@@ -22,6 +22,7 @@ export const lucia = new Lucia(adapter, {
       fullname: attributes.fullname,
       email: attributes.email,
       emailVerified: attributes.emailVerified,
+      accountPasswordless: attributes.accountPasswordless,
       googleId: attributes.googleId,
       githubId: attributes.githubId,
       discordId: attributes.discordId,
@@ -42,8 +43,8 @@ export const lucia = new Lucia(adapter, {
 });
 
 export const google = new Google(
-  env.GOOGLE_CLIENT_ID as string,
-  env.GOOGLE_CLIENT_SECRET as string,
+  env.GOOGLE_CLIENT_ID,
+  env.GOOGLE_CLIENT_SECRET,
   absoluteUrl("/login/google/callback")
 );
 

@@ -27,8 +27,10 @@ import { emailVerificationCodes, passwordResetTokens, users } from "@/server/db/
 import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "../constants";
 import { env } from "@/env";
-// import { sendEmail, EmailTemplate } from "@/lib/email";
-import { sendEmail, EmailTemplate } from "../email/resend";
+import { revalidatePath } from "next/cache";
+
+import { sendEmail, EmailTemplate } from "@/lib/email";
+// import { sendEmail, EmailTemplate } from "../email/resend";
 
 export interface ActionResponse<T> {
   fieldError?: Partial<Record<keyof T, string | undefined>>;
@@ -395,6 +397,9 @@ export async function updateAccount(_: any, formData: FormData): Promise<ActionR
       emailVerified: userData?.hashedPassword && email !== user.email ? false : userData?.emailVerified
     }).where(eq(users.id, user.id));
 
+    // revalidatePath(Paths.Settings);
+    // redirect(Paths.Settings);
+
     return { success: true };
   } catch (error) {
     console.error('Error updating user:', error);
@@ -456,11 +461,25 @@ export async function updatePassword(_: any, formData: FormData): Promise<Action
       hashedPassword: newHashedPassword
     }).where(eq(users.id, user.id));
 
+    // revalidatePath(Paths.Security);
+    // redirect(Paths.Security);
     return { success: true };
   } catch (error) {
     console.error('Error updating user:', error);
     return { error: 'Failed to update user information' };
   }
+}
+
+export async function updateTwoFactorAuth(_: any, formData: FormData): Promise<ActionResponse<updatePasswordInput> & { success?: boolean; error?: string }> {
+  const { user } = await validateRequest();
+
+  if (!user) {
+    return redirect(Paths.Login);
+  }
+
+  // revalidatePath(Paths.Security)
+  // redirect(Paths.Security);
+  return { success: true };
 }
 
 const timeFromNow = (time: Date) => {
