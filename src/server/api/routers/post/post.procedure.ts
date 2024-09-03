@@ -123,6 +123,6 @@ export const postRouter = createTRPCRouter({
         .from(posts)
         .where(eq(posts.userId, ctx.user.id));
       
-      return result?.count;
+      return result?.count ?? 0;
   }),
 });

@@ -6,7 +6,7 @@ import { NewPost } from "./new-post";
 import { PostCard } from "./post-card";
 
 interface PostsProps {
-  promises: Promise<[RouterOutputs["post"]["myPosts"], RouterOutputs["stripe"]["getPlan"]]>;
+  promises: Promise<[RouterOutputs["post"]["myPosts"], RouterOutputs["post"]["countUserPosts"], RouterOutputs["stripe"]["getPlan"]]>;
 }
 
 export function Posts({ promises }: PostsProps) {
