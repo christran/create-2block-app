@@ -9,8 +9,8 @@ export async function VerificiationWarning() {
   const { user } = await validateRequest();
 
   return user?.emailVerified === false ? (
-    <Alert className="rounded-lg bg-yellow-50 text-yellow-700 dark:bg-gray-800 dark:text-yellow-400">
-      <ExclamationTriangleIcon className="h-5 w-5 !text-yellow-700 dark:!text-yellow-400" />
+    <Alert className="p-6 [&>svg]:left-6 [&>svg]:top-6 [&>svg~*]:pl-10">
+      <ExclamationTriangleIcon className="h-6 w-6 !text-yellow-500" />
       <div className="flex lg:items-center">
         <div className="w-full">
           <AlertTitle>Account verification required</AlertTitle>

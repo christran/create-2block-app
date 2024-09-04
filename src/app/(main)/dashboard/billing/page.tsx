@@ -34,7 +34,7 @@ export default async function BillingPage() {
       </div>
       <section>
         <Alert className="p-6 [&>svg]:left-6 [&>svg]:top-6 [&>svg~*]:pl-10">
-          <ExclamationTriangleIcon className="h-6 w-6" />
+          <ExclamationTriangleIcon className="h-6 w-6 !text-red-500" />
           <AlertTitle>Stripe Test Environment</AlertTitle>
           <AlertDescription>
             Currently using Stripe test environment. Use test cards provided {" "}
