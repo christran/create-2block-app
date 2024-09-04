@@ -5,7 +5,14 @@
 # Add private key to GitHub repo secrets - $SSH_PRIVATE_KEY
 
 # PM2
-# pm2 start npm --name 2block -- start --port 3000
+# pm2 start npm --name 2block -- start --port=3000
+# pm2 save
+# pm2 startup
+# create .next folder in project root
+# create .env (github actions should create or replace it)
+# npm i or pnpm install?
+
+# allow port 5432 on hetzner firewall
 
 # If using NVM to manage node versions
 # sudo ln -s "$NVM_DIR/versions/node/$(nvm version)/bin/node" "/usr/local/bin/node"
@@ -68,8 +75,11 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/github-action
           chmod 600 ~/.ssh/github-action
           echo -e "Host vps\n\tUser $USER\n\tHostname $HOST\n\tIdentityFile ~/.ssh/github-action\n\tStrictHostKeyChecking No" > ~/.ssh/config
-  
+
       - name: Deploy to server
         run: |
+          ssh vps "mkdir -p $APP_DIR/.next"
           rsync -re ssh ./.next/ vps:$APP_DIR
+          scp .env vps:$APP_DIR/.env
+          ssh vps "cd $APP_DIR && npm ci"
           ssh vps "pm2 restart $PM2_APP_NAME"
