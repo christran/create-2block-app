@@ -37,19 +37,54 @@ jobs:
         node-version: [v20.x]
     env:
       SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
-      ENV_PROD: ${{secrets.ENV_PROD}}
       USER: root
       HOST: "5.78.42.187"
-      APP_DIR: "/root/SaaS/.next"
+      APP_DIR: "/root/SaaS"
+      NEXT_FOLDER: "/root/SaaS/.next"
       PM2_APP_NAME: "2block"
     steps:
+      - name: Checkout main branch
+        uses: actions/checkout@main
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4.0.3
+        with:
+          node-version: ${{ matrix.node-version }}
+          # cache: "npm" # enable for self hosted runner?
+      
+      - name: Cache Next.js and ~/.npm
+        uses: actions/cache@v4.0.2
+        with:
+          path: |
+            ~/.npm
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+
+      - name: Create .env file
+        run: |
+          touch .env
+          echo "${{secrets.ENV_PROD}}" > .env
+
+      - name: Install dependencies
+        run: npm i
+  
+      - name: Build Next.js app
+        run: npm run build
+  
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/github-action
           chmod 600 ~/.ssh/github-action
           echo -e "Host vps\n\tUser $USER\n\tHostname $HOST\n\tIdentityFile ~/.ssh/github-action\n\tStrictHostKeyChecking No" > ~/.ssh/config
+
       - name: Deploy to server
         run: |
-          ssh vps "cd "$APP_DIR" && rm .env && touch .env"
-          ssh vps "cd "$APP_DIR" echo $ENV_PROD > .env"
+          echo "${{secrets.ENV_PROD}}" > .env
+          scp .env vps:$APP_DIR/.env
+          ssh vps "mkdir -p $NEXT_FOLDER/.next"
+          rsync -re ssh ./.next/ vps:$NEXT_FOLDER
+          ssh vps "cd $APP_DIR && pnpm install"
+          ssh vps "pm2 restart $PM2_APP_NAME"
