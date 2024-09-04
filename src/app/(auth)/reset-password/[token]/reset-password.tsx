@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
 import { toast } from "sonner";
 import { ExclamationTriangleIcon } from "@/components/icons";
@@ -11,6 +11,7 @@ import { resetPassword } from "@/lib/auth/actions";
 
 export function ResetPassword({ token }: { token: string }) {
   const [state, formAction] = useFormState(resetPassword, null);
+  const [password, setPassword] = useState('');
 
   useEffect(() => {
     if (state?.error) {
@@ -26,9 +27,12 @@ export function ResetPassword({ token }: { token: string }) {
       <div className="space-y-2">
         {/* <Label>Password</Label> */}
         <PasswordInput
-          name="password"
           required
+          id="password"
+          name="password"
+          value={password}
           autoComplete="new-password"
+          onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
         />
       </div>

@@ -1,13 +1,11 @@
 import { Body, Container, Head, Html, Preview, Section, Text, Button, Link } from "@react-email/components";
-import { APP_TITLE, Paths } from "@/lib/constants";
-import { env } from "@/env";
 
-export interface EmailVerificationTemplateProps {
-  fullname: string;
-  code: string;
-}
+const APP_TITLE = "✌️BLOCK"
+const fullname = "Chris Tran"
+const code = "1234567"
+const url = "#"
 
-export const EmailVerificationTemplate = ({ fullname, code }: EmailVerificationTemplateProps) => {
+export default function EmailVerificationTemplate() {
   return (
     <Html>
       <Head />
@@ -43,7 +41,7 @@ export const EmailVerificationTemplate = ({ fullname, code }: EmailVerificationT
               <Text style={confirmationCodeText}>{code}</Text>
             </Section>
 
-            <Button style={button} href={env.NEXT_PUBLIC_APP_URL + Paths.VerifyEmail}>
+            <Button style={button} href={url}>
               Verify Email
             </Button>
           </Section>

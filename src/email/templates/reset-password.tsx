@@ -10,16 +10,19 @@ import {
   Text,
   Link
 } from "@react-email/components";
-import { APP_TITLE } from "@/lib/constants";
 
 export interface ResetPasswordTemplateProps {
   fullname: string;
   url: string;
 }
 
-export const ResetPasswordTemplate = ({ fullname, url }: ResetPasswordTemplateProps) => {
+const APP_TITLE = "✌️BLOCK"
+const fullname = "Chris Tran"
+const url = "#"
+
+export default function ResetPasswordTemplate() {
   return (
-    <Html>
+  <Html>
     <Head />
     <Preview>
       Reset your password
