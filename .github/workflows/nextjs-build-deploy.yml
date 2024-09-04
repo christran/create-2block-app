@@ -1,0 +1,67 @@
+# cd .ssh
+# ssh-keygen -t ed25519 -f "/root/.ssh/github-actions" -C "github-actions"
+# Add generated .pub to auth keys
+# nano authorized_keys
+# Add private key to GitHub repo secrets - $SSH_PRIVATE_KEY
+
+# If using NVM to manage node versions
+# sudo ln -s "$NVM_DIR/versions/node/$(nvm version)/bin/node" "/usr/local/bin/node"
+# sudo ln -s "$NVM_DIR/versions/node/$(nvm version)/bin/npm" "/usr/local/bin/npm"
+# sudo ln -s "$NVM_DIR/versions/node/$(nvm version)/bin/pm2" "/usr/local/bin/pm2"
+
+name: Build and Deploy Next.js App
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # runs-on: self-hosted
+    strategy:
+      matrix:
+        node-version: [v20.x]
+    env:
+      SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+      USER: root
+      HOST: "5.78.42.187"
+      APP_DIR: "/root/2block/.next"
+      PM2_APP_NAME: "2block-app"
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@main
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4.0.3
+        with:
+          node-version: ${{ matrix.node-version }}
+          # cache: "npm" # enable for self hosted runner?
+      
+      - name: Cache Next.js and ~/.npm
+        uses: actions/cache@v4.0.2
+        with:
+          path: |
+            ~/.npm
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+
+      - name: Install dependencies
+        run: npm ci
+  
+      - name: Build Next.js app
+        run: npm run build
+  
+      - name: Set up SSH
+        run: |
+            mkdir -p ~/.ssh
+            echo "$SSH_PRIVATE_KEY" > ~/.ssh/github-action
+            chmod 600 ~/.ssh/github-action
+            echo -e "Host vps\n\tUser $USER\n\tHostname $HOST\n\tIdentityFile ~/.ssh/github-action\n\tStrictHostKeyChecking No" > ~/.ssh/config
+  
+      - name: Deploy to server
+        run: |
+          rsync -re ssh ./.next/ vps:$APP_DIR
+          ssh vps "pm2 restart $PM2_APP_NAME"
