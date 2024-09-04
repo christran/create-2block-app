@@ -60,7 +60,7 @@ export async function GET(request: Request): Promise<Response> {
           email: googleUser.email,
           accountPasswordless: true,
           emailVerified: true,
-          githubId: googleUser.sub,
+          googleId: googleUser.sub,
           avatar,
         });
 

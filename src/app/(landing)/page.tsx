@@ -4,21 +4,15 @@ import { DesktopIcon } from "@radix-ui/react-icons";
 
 import { Paths } from "@/lib/constants";
 
-import {
-  NextjsLight,
-  NextjsDark,
-} from "./_components/feature-icons";
-
 export const metadata: Metadata = {
   title: "✌️BLOCK",
-  description:
-    "✌️BLOCK",
+  description: "✌️BLOCK",
 };
 
 const HomePage = () => {
   return (
     <>
-      <section className="mx-auto grid min-h-[calc(100vh-300px)] max-w-5xl flex-col  items-center justify-center gap-4 py-10 text-center  md:py-12">
+      <section className="mx-auto grid min-h-[calc(100vh-300px)] max-w-5xl flex-col items-center justify-center gap-4 py-10 text-center md:py-12">
         <div className="p-4">
           {/* <div className="mb-10 flex items-center justify-center font-bold">
             <PiHandPeaceLight className="h-5 w-5" />BLOCK
@@ -44,12 +38,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
-function NextjsIcon({ className }: { className?: string }) {
-  return (
-    <>
-      <NextjsLight className={className + " dark:hidden"} />
-      <NextjsDark className={className + " hidden dark:block"} />
-    </>
-  );
-}

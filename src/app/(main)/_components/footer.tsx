@@ -6,7 +6,7 @@ const githubUrl = "https://github.com/christran";
 
 export const Footer = () => {
   return (
-    <footer className="px-4 py-6 mt-auto">
+    <footer className="px-4 py-6 dark:bg-neutral-950">
       <div className="container flex justify-between items-center p-0">
         <div className="flex-1">
           <ThemeToggle />
