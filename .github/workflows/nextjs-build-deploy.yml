@@ -43,6 +43,12 @@ jobs:
       APP_DIR: "/root/SaaS/.next"
       PM2_APP_NAME: "2block"
     steps:
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/github-action
+          chmod 600 ~/.ssh/github-action
+          echo -e "Host vps\n\tUser $USER\n\tHostname $HOST\n\tIdentityFile ~/.ssh/github-action\n\tStrictHostKeyChecking No" > ~/.ssh/config
       - name: Deploy to server
         run: |
           ssh vps "cd $APP_DIR && rm .env && touch .env"
