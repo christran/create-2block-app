@@ -21,7 +21,7 @@ const HomePage = () => {
             ✌️BLOCK
           </h1>
           <p className="text-balance mb-10 mt-4 text-center text-muted-foreground md:text-lg lg:text-xl">
-            The quick brown box jumped over the lazy
+            The quick brown fox jumped over the lazy dog.
           </p>
           <div className="flex justify-center gap-4">
             <Button size="lg" variant="outline" asChild>

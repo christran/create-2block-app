@@ -45,8 +45,7 @@ export function ManageSubscriptionForm({
 
   return (
     <form className="w-full" onSubmit={onSubmit}>
-      {/* <Button className="w-full" disabled={isPending}> */}
-      <Button className="w-full" disabled>
+      <Button className="w-full" disabled={isPending}>
         {isPending
           ? "Loading..."
           : isCanceled
