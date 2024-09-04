@@ -19,19 +19,19 @@ export type PropsMap = {
   [EmailTemplate.PasswordReset]: ComponentProps<typeof ResetPasswordTemplate>;
 };
 
-const getEmailTemplate = <T extends EmailTemplate>(template: T, props: PropsMap[NoInfer<T>]) => {
+const getEmailTemplate = async <T extends EmailTemplate>(template: T, props: PropsMap[NoInfer<T>]) => {
   switch (template) {
     case EmailTemplate.EmailVerification:
       return {
         subject: "Verify your account",
-        body: render(
+        body: await render(
           <EmailVerificationTemplate {...(props as PropsMap[EmailTemplate.EmailVerification])} />,
         ),
       };
     case EmailTemplate.PasswordReset:
       return {
         subject: "Password reset",
-        body: render(
+        body: await render(
           <ResetPasswordTemplate {...(props as PropsMap[EmailTemplate.PasswordReset])} />,
         ),
       };
@@ -61,7 +61,7 @@ export const sendEmail = async <T extends EmailTemplate>(
     return;
   }
 
-  const { subject, body } = getEmailTemplate(template, props);
+  const { subject, body } = await getEmailTemplate(template, props);
 
   return transporter.sendMail({ from: EMAIL_SENDER, to, subject, html: body });
 };
