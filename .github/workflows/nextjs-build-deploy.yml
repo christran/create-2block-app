@@ -51,5 +51,5 @@ jobs:
           echo -e "Host vps\n\tUser $USER\n\tHostname $HOST\n\tIdentityFile ~/.ssh/github-action\n\tStrictHostKeyChecking No" > ~/.ssh/config
       - name: Deploy to server
         run: |
-          ssh vps "cd $APP_DIR && rm .env && touch .env"
-          ssh vps "cd $APP_DIR echo $ENV_PROD > .env"
+          ssh vps "cd "$APP_DIR" && rm .env && touch .env"
+          ssh vps "cd "$APP_DIR" echo $ENV_PROD > .env"
