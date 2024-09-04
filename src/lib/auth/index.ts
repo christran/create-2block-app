@@ -55,8 +55,8 @@ export const discord = new Discord(
 );
 
 export const github = new GitHub(
-  env.AUTH_GITHUB_CLIENT_ID,
-  env.AUTH_GITHUB_CLIENT_SECRET,
+  env.GITHUB_CLIENT_ID,
+  env.GITHUB_CLIENT_SECRET,
   {
     redirectURI: absoluteUrl("/login/github/callback")
   }
