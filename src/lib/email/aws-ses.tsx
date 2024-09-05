@@ -1,11 +1,10 @@
 import "server-only";
-
+import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import { EmailVerificationTemplate } from "./templates/email-verification";
 import { ResetPasswordTemplate } from "./templates/reset-password";
 import { render } from "@react-email/render";
 import { env } from "@/env";
 import { EMAIL_SENDER } from "@/lib/constants";
-import { createTransport, type TransportOptions } from "nodemailer";
 import type { ComponentProps } from "react";
 import { logger } from "../logger";
 
@@ -18,6 +17,14 @@ export type PropsMap = {
   [EmailTemplate.EmailVerification]: ComponentProps<typeof EmailVerificationTemplate>;
   [EmailTemplate.PasswordReset]: ComponentProps<typeof ResetPasswordTemplate>;
 };
+
+const sesClient = new SESClient({ 
+  region: 'us-west-1',
+  credentials: {
+    accessKeyId: env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+  },
+});
 
 const getEmailTemplate = async <T extends EmailTemplate>(template: T, props: PropsMap[NoInfer<T>]) => {
   switch (template) {
@@ -40,17 +47,6 @@ const getEmailTemplate = async <T extends EmailTemplate>(template: T, props: Pro
   }
 };
 
-const smtpConfig = {
-  host: env.SMTP_HOST,
-  port: env.SMTP_PORT,
-  auth: {
-    user: env.SMTP_USER,
-    pass: env.SMTP_PASSWORD,
-  },
-};
-
-const transporter = createTransport(smtpConfig as TransportOptions);
-
 export const sendEmail = async <T extends EmailTemplate>(
   to: string,
   template: T,
@@ -64,13 +60,35 @@ export const sendEmail = async <T extends EmailTemplate>(
 
     const { subject, body } = await getEmailTemplate(template, props);
 
-    const result = await transporter.sendMail({ from: EMAIL_SENDER, to, subject, html: body });
-    logger.info(`📨 Email sent successfully to: ${to}`);
+    const params = {
+      Destination: {
+        ToAddresses: [to],
+      },
+      Message: {
+        Body: {
+          Html: {
+            Charset: "UTF-8",
+            Data: body,
+          },
+        },
+        Subject: {
+          Charset: "UTF-8",
+          Data: subject,
+        },
+      },
+      Source: '2BLOCK <christophertran714@gmail.com>', // Change this to EMAIL_SENDER after SES prod approval
+    };
 
+    const command = new SendEmailCommand(params);
+
+    const result = await sesClient.send(command);
+    
+    logger.info(`📨 Email sent successfully to: ${to}`);
+    
     return result;
   } catch (error) {
     logger.error(`Failed to send email to ${to}:`, error);
-    
-    throw error; // Re-throw the error for the caller to handle if needed
+
+    throw error;
   }
 };

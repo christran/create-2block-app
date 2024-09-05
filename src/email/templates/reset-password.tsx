@@ -66,7 +66,7 @@ export default function ResetPasswordTemplate() {
         </Text>
 
         <Text style={footer}>
-          GitHub, Inc. ・88 Colin P Kelly Jr Street ・San Francisco, CA 94107
+          2BLOCK Co. ・1337 Legit Sreet ・Los Angeles, CA 90015
         </Text>
       </Container>
     </Body>

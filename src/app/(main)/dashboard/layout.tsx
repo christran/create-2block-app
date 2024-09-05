@@ -1,6 +1,5 @@
 import { DashboardNavbar } from "./_components/dashboard-navbar";
-import { UpdateEmailWarning } from "./_components/update-email-warning";
-import { VerificiationWarning } from "./_components/verificiation-warning";
+import { EmailVerificationWarning } from "./_components/email-verification-warning";
 
 interface Props {
   children: React.ReactNode;
@@ -13,8 +12,7 @@ export default function DashboardLayout({ children }: Props) {
         <div className="mx-auto grid w-full max-w-6xl items-start gap-6 md:grid-cols-[180px_1fr] lg:grid-cols-[250px_1fr]">
         <DashboardNavbar />
         <div className="grid gap-6">
-          <UpdateEmailWarning />
-          <VerificiationWarning />
+          <EmailVerificationWarning />
           {children}
         </div>
        

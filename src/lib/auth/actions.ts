@@ -30,8 +30,11 @@ import { revalidatePath } from "next/cache";
 import { generateId, Scrypt } from "lucia";
 // import { Argon2id } from "oslo/password";
 
-import { sendEmail, EmailTemplate } from "@/lib/email";
-// import { sendEmail, EmailTemplate } from "../email/resend";
+import { sendEmail as sendEmailDefault, EmailTemplate as EmailTemplateDefault } from "@/lib/email";
+import { sendEmail as sendEmailResend, EmailTemplate as EmailTemplateResend } from "@/lib/email/resend";
+
+const sendEmail = env.NODE_ENV === "production" ? sendEmailResend : sendEmailDefault;
+const EmailTemplate = env.NODE_ENV === "production" ? EmailTemplateResend : EmailTemplateDefault;
 
 export interface ActionResponse<T> {
   fieldError?: Partial<Record<keyof T, string | undefined>>;
@@ -174,10 +177,17 @@ export async function resendVerificationEmail(): Promise<{
     };
   }
 
-  const verificationCode = await generateEmailVerificationCode(user.id, user.email);
-  await sendEmail(user.email, EmailTemplate.EmailVerification, { fullname: user.fullname, code: verificationCode });
+  try {
+    const verificationCode = await generateEmailVerificationCode(user.id, user.email);
+    await sendEmail(user.email, EmailTemplate.EmailVerification, { fullname: user.fullname, code: verificationCode });
+    return { success: true };
+  } catch (error) {
+    // Delete the code from the database if there's an error sending the email
+    await db.delete(emailVerificationCodes).where(eq(emailVerificationCodes.userId, user.id));
+    console.error("Error sending verification email:", error);
 
-  return { success: true };
+    return { error: "We couldn't send a verification email. Please try again later." };
+  }
 }
 
 export async function verifyEmail(_: any, formData: FormData): Promise<{ error: string } | void> {
@@ -259,7 +269,10 @@ export async function sendPasswordResetLink(
 
       return { success: true };
     } catch (error) {
-      return { success: false, error: "Unable to send password reset email." };
+      await db.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, user.id));
+      console.error("Error sending password reset email:", error);
+
+      return { success: false, error: "We couldn't send a password reset email. Please try again later." };
     }
   } else {
     return { success: true };
@@ -303,7 +316,10 @@ export async function setupNewPasswordLink(): Promise<{
 
     return { success: true };
   } catch (error) {
-    return { success: false, error: "Unable to send new password setup email." };
+    await db.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, user.id));
+    console.error("Error sending password reset email:", error);
+
+    return { success: false, error: "We couldn't send a new password setup email. Please try again later" };
   }
 }
 

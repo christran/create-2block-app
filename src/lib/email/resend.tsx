@@ -8,7 +8,7 @@ import { EMAIL_SENDER } from "@/lib/constants";
 import type { ComponentProps } from "react";
 import { logger } from "../logger";
 
-const resend = new Resend(env.RESEND_API_KEY as string);
+const resend = new Resend(env.RESEND_API_KEY);
 
 export enum EmailTemplate {
   EmailVerification = "EmailVerification",
@@ -20,7 +20,7 @@ export type PropsMap = {
   [EmailTemplate.PasswordReset]: ComponentProps<typeof ResetPasswordTemplate>;
 };
 
-const getEmailTemplate = <T extends EmailTemplate>(template: T, props: PropsMap[NoInfer<T>]) => {
+const getEmailTemplate = async <T extends EmailTemplate>(template: T, props: PropsMap[NoInfer<T>]) => {
   switch (template) {
     case EmailTemplate.EmailVerification:
       return {
@@ -47,7 +47,7 @@ export const sendEmail = async <T extends EmailTemplate>(
     return;
   }
 
-  const { subject, react } = getEmailTemplate(template, props);
+  const { subject, react } = await getEmailTemplate(template, props);
 
   try {
     const { data, error } = await resend.emails.send({
@@ -58,13 +58,16 @@ export const sendEmail = async <T extends EmailTemplate>(
     });
 
     if (error) {
-      console.error('Error sending email:', error);
+      console.error('Error sending email: ', error);
       throw error;
     }
 
+    logger.info(`📨 Email sent successfully to: ${to}`);
+
     return data;
   } catch (error) {
-    console.error('Unexpected error:', error);
+    logger.error(`Failed to send email to ${to}:`, error);
+
     throw error;
   }
 };
