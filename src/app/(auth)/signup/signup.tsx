@@ -72,7 +72,7 @@ export function Signup() {
                 value={currentPassword}
                 autoComplete="current-password"
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="********"
+                placeholder="••••••••"
               />
             </div>
 

@@ -396,7 +396,7 @@ export async function updateAccount(_: any, formData: FormData): Promise<ActionR
 
   if (existingUser) {
     return {
-      error: "The email is already associated with another account.",
+      error: "This email address is already associated with another account.",
     };
   }
 

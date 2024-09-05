@@ -31,7 +31,7 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
   const router = useRouter();
 
   const isDirty = useMemo(() => {
-    return currentPassword !== '' || newPassword !== '' || confirmPassword !== '';
+    return currentPassword !== '' && newPassword !== '' && confirmPassword !== '';
   }, [currentPassword, newPassword, confirmPassword]);
 
   useEffect(() => {
@@ -109,6 +109,7 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
                 className="bg-secondary/30"
                 required
                 name="current_password"
+                placeholder="••••••••"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 autoComplete="current-password"
@@ -118,6 +119,7 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
                 className="bg-secondary/30"
                 required
                 name="new_password"
+                placeholder="••••••••"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 autoComplete="new-password"
@@ -127,6 +129,7 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
                 className="bg-secondary/30"
                 required
                 name="confirm_password"
+                placeholder="••••••••"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 autoComplete="new-password"

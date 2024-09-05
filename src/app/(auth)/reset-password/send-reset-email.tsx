@@ -45,7 +45,7 @@ export function SendResetEmail() {
         <Input
           className="bg-secondary/30"
           required
-          placeholder="hello@2bock.co"
+          placeholder="hello@2block.co"
           autoComplete="email"
           name="email"
           type="email"
