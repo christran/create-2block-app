@@ -1,10 +1,9 @@
 "use client";
 
 import { Label } from "@radix-ui/react-label";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { useFormState } from "react-dom";
 import { toast } from "sonner";
-import { ExclamationTriangleIcon } from "@/components/icons";
 import { logout, verifyEmail, resendVerificationEmail as resendEmail } from "@/lib/auth/actions";
 import { SubmitButton } from "@/components/submit-button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"
@@ -15,6 +14,10 @@ export const VerifyCode = () => {
   const codeFormRef = useRef<HTMLFormElement>(null);
   const inputOTPRef = useRef<HTMLInputElement>(null);
   const [otpValue, setOtpValue] = useState("");
+
+  const isDirty = useMemo(() => {
+    return otpValue.length === 6;
+  }, [otpValue]);
 
   useEffect(() => {
     if (verifyEmailState?.error) {
@@ -53,7 +56,7 @@ export const VerifyCode = () => {
         {/* Remove the Input component */}
         {/* <Input className="mt-2" type="text" id="code" name="code" required /> */}
         <div className="flex justify-center mt-2">
-          <InputOTP 
+          <InputOTP
             ref={inputOTPRef} 
             id="code" 
             name="code" 
@@ -63,7 +66,7 @@ export const VerifyCode = () => {
             onChange={setOtpValue}
           >
             <InputOTPGroup>
-              <InputOTPSlot index={0} />
+              <InputOTPSlot index={0} className="bg-secondary/30" />
               <InputOTPSlot index={1} />
               <InputOTPSlot index={2} />
               <InputOTPSlot index={3} />
@@ -72,7 +75,11 @@ export const VerifyCode = () => {
             </InputOTPGroup>
           </InputOTP>
         </div>
-        <SubmitButton className="mt-4 w-full" aria-label="submit-btn">
+        <SubmitButton 
+          className="mt-4 w-full" 
+          aria-label="submit-btn"
+          disabled={!isDirty}
+        >
           Verify
         </SubmitButton>
       </form>

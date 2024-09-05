@@ -54,7 +54,7 @@ export function Signup() {
                 className="bg-secondary/30"
                 required
                 id="email"
-                placeholder="email@example.com"
+                placeholder="hello@2block.co"
                 autoComplete="email"
                 name="email"
                 type="email"

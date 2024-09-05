@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { useFormState } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -18,6 +18,11 @@ import { Paths } from "@/lib/constants";
 export function SendResetEmail() {
   const [state, formAction] = useFormState(sendPasswordResetLink, null);
   const formRef = useRef<HTMLFormElement>(null);
+  const [email, setEmail] = useState('');
+
+  const isDirty = useMemo(() => {
+    return email.trim() !== '';
+  }, [email]);
 
   useEffect(() => {
     if (state?.success) {
@@ -38,11 +43,14 @@ export function SendResetEmail() {
       <div className="space-y-2">
         <Label>Email</Label>
         <Input
+          className="bg-secondary/30"
           required
           placeholder="hello@2bock.co"
           autoComplete="email"
           name="email"
           type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
       </div>
 
@@ -55,7 +63,9 @@ export function SendResetEmail() {
             </div>
       </div>
 
-      <SubmitButton className="mt-4 w-full">Reset Password</SubmitButton>
+      <SubmitButton className="mt-4 w-full" disabled={!isDirty}>
+        Reset Password
+      </SubmitButton>
       {/* <Button variant="outline" className="w-full" asChild>
         <Link href={Paths.Login}>Cancel</Link>
       </Button> */}
