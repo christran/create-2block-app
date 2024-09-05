@@ -18,7 +18,7 @@ export function ThemeToggle() {
   };
 
   return (
-    <TooltipProvider delayDuration={400}>
+    <TooltipProvider delayDuration={600}>
       <Tooltip>
         <TooltipTrigger asChild>
           <Button variant="ghost" size="icon" onClick={toggleTheme}>

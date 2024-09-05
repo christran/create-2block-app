@@ -12,10 +12,10 @@ import { DesktopIcon, HamburgerMenuIcon, PersonIcon } from "@radix-ui/react-icon
 import { validateRequest } from "@/lib/auth/validate-request";
 
 const routes = [
-  // { 
-  //   name: "Home", 
-  //   href: "/" 
-  // },
+  { 
+    name: "Home", 
+    href: "/" 
+  },
   // { 
   //   name: "Team", 
   //   href: "/#features" 
@@ -63,7 +63,7 @@ export const Header = async () => {
           >
             <PiHandPeaceLight className="h-5 w-5" />{APP_TITLE_UNSTYLED}
           </Link>
-          <nav className="ml-8 hidden gap-4 sm:gap-6 md:flex">
+          {/* <nav className="ml-8 hidden gap-4 sm:gap-6 md:flex">
             {routes.map(({ name, href }) => (
               <Link
                 key={name}
@@ -73,7 +73,7 @@ export const Header = async () => {
                 {name}
               </Link>
             ))}
-          </nav>
+          </nav> */}
         </div>
           <Button size="sm" variant="outline" asChild>
             {user ? (
