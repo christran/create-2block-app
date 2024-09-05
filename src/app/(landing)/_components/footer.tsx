@@ -1,4 +1,3 @@
-import { PiHandPeaceThin } from "@/components/icons";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { APP_TITLE, Paths } from "@/lib/constants";
 import Link from "next/link";
@@ -39,7 +38,7 @@ export const Footer = () => {
           <div className="flex items-center space-x-2">
             <Link href={Paths.PrivacyPolicy} className="hover:underline hover:text-teal-500">Privacy</Link>
             <Separator orientation="vertical" className="h-4" />
-            <Link href={Paths.TermsOfService} className="hover:underline hover:text-teal-500">Terms of Use</Link>
+            <Link href={Paths.TermsOfService} className="hover:underline hover:text-teal-500">Terms of Service</Link>
             <Separator orientation="vertical" className="h-4" />
             <Link href={Paths.AcceptableUsePolicy} className="hover:underline hover:text-teal-500">Acceptable Use</Link>
           </div>

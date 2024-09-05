@@ -11,7 +11,8 @@ const TermsOfServicePage = () => {
       <h1 className="mb-2 text-3xl font-bold text-center">Terms of Service</h1>
       <p className="mb-8 text-sm text-muted-foreground text-center">Last updated: August 18th, 2024</p>
       <div className="space-y-6 text-muted-foreground">
-        <p>Welcome to ✌️BLOCK. By using our service, you agree to these terms:</p>
+        <p>Welcome to ✌️BLOCK.</p>
+        <p>By using our service, you agree to these terms:</p>
         
         <h2 className="mt-6 text-xl font-semibold text-foreground">1. Acceptance of Terms</h2>
         <p>By accessing or using ✌️BLOCK, you agree to be bound by these Terms of Service.</p>
