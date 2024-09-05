@@ -59,6 +59,7 @@ export function AccountDetails({ user }: { user: AccountDetailsProps }) {
                 <div className="w-full md:w-1/2 space-y-2">
                   <Label>Full Name</Label>
                   <Input
+                    className="bg-secondary/30"
                     required
                     placeholder="Jeon Jungkook"
                     autoComplete="name"
@@ -69,7 +70,7 @@ export function AccountDetails({ user }: { user: AccountDetailsProps }) {
                     />
                   <Label>Email</Label>
                   <Input
-
+                    className="bg-secondary/30"
                     required={user?.accountPasswordless}
                     // readOnly={true}
                     placeholder="hello@2bock.co"

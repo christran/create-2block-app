@@ -106,6 +106,8 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
             <div className="w-full md:w-1/2 space-y-2">
               <Label>Current Password</Label>
               <PasswordInput
+                className="bg-secondary/30"
+                required
                 name="current_password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
@@ -113,6 +115,8 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
               />
               <Label>New Password</Label>
               <PasswordInput
+                className="bg-secondary/30"
+                required
                 name="new_password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
@@ -120,6 +124,8 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
               />
               <Label>Confirm Password</Label>
               <PasswordInput
+                className="bg-secondary/30"
+                required
                 name="confirm_password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}

@@ -59,6 +59,7 @@ export function LinkedAccounts({ user }: { user: LinkedAccountProps }) {
             <div className="w-full md:w-1/2 space-y-2">
               <Label>Google</Label>
                   <Input
+                  className="bg-secondary/30"
                   disabled
                   name="google_id"
                   type="text"
@@ -66,6 +67,7 @@ export function LinkedAccounts({ user }: { user: LinkedAccountProps }) {
                   />
               <Label>Discord</Label>
                   <Input
+                  className="bg-secondary/30"
                   disabled
                   name="discord_id"
                   type="text"
@@ -73,6 +75,7 @@ export function LinkedAccounts({ user }: { user: LinkedAccountProps }) {
                   />
               <Label>GitHub</Label>
                   <Input
+                  className="bg-secondary/30"
                   disabled
                   name="github_id"
                   type="text"

@@ -52,6 +52,7 @@ export function MultiFactorAuth() {
             <div className="w-full md:w-1/2 space-y-2">
               <Label htmlFor="one-time-code">Secret</Label>
                   <Input
+                  className="bg-secondary/30"
                   required
                   name="one-time-code"
                   type="text"
