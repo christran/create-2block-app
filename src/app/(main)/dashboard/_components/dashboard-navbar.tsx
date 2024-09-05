@@ -15,7 +15,7 @@ export function DashboardNavbar() {
         <Link key={item.href} href={item.href}>
           <span
             className={cn(
-              "group flex items-center rounded-lg px-3 py-2 text-md font-medium hover:bg-accent/70 hover:text-blue-500",
+              "group flex items-center rounded-lg px-3 py-2 text-md font-medium hover:bg-accent/70 hover:text-secondary-foreground",
               path === item.href ? "font-semibold text-primary" : "",
             )}
           >

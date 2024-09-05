@@ -16,7 +16,7 @@ export const CopyToClipboard = ({ text }: { text: string }) => {
        setCopied(false)
     } , 2000)
     await navigator.clipboard.writeText(text);
-    toast("Copied to clipboard", {
+    toast.success("Copied to clipboard", {
       icon: <CopyIcon className="h-4 w-4" />,
     });
   };

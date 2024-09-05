@@ -18,9 +18,7 @@ export const VerifyCode = () => {
 
   useEffect(() => {
     if (verifyEmailState?.error) {
-      toast(verifyEmailState.error, {
-        icon: <ExclamationTriangleIcon className="h-5 w-5 text-destructive" />,
-      });
+      toast.error(verifyEmailState.error);
 
       setOtpValue(""); // Reset OTP value
       inputOTPRef?.current?.focus();
@@ -29,12 +27,10 @@ export const VerifyCode = () => {
 
   useEffect(() => {
     if (resendState?.success) {
-      toast("A new verification code has been sent to your email.");
+      toast.success("A new verification code has been sent to your email.");
     }
     if (resendState?.error) {
-      toast(resendState.error, {
-        icon: <ExclamationTriangleIcon className="h-5 w-5 text-destructive" />,
-      });
+      toast.error(resendState.error);
     }
   }, [resendState?.error, resendState?.success]);
 

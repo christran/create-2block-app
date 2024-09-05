@@ -46,7 +46,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <TRPCReactProvider>{children}</TRPCReactProvider>
-          <Toaster />
+          <Toaster position="bottom-right" duration={3500} />
         </ThemeProvider>
 
       {/* 

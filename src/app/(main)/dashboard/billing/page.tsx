@@ -42,7 +42,7 @@ export default async function BillingPage() {
               href="https://docs.stripe.com/testing#cards"
               target="_blank"
               rel="noreferrer"
-              className="font-medium hover:underline dark:text-blue-500"
+              className="font-medium hover:underline dark:text-teal-500"
             >
               here
             </a>

@@ -15,9 +15,7 @@ export function ResetPassword({ token }: { token: string }) {
 
   useEffect(() => {
     if (state?.error) {
-      toast(state.error, {
-        icon: <ExclamationTriangleIcon className="h-5 w-5 text-destructive" />,
-      });
+      toast.error(state.error);
     }
   }, [state?.error]);
 

@@ -1,5 +1,11 @@
 import { PiHandPeaceThin } from "@/components/icons";
 import { ThemeToggle } from "@/components/theme-toggle";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { APP_TITLE } from "@/lib/constants";
 
 const githubUrl = "https://github.com/christran";
@@ -11,12 +17,21 @@ export const Footer = () => {
         <div className="flex-1">
           <ThemeToggle />
         </div>
-        <p className="text-xs">
-          Powered by{" "}
-          <a href={githubUrl} className="hover:text-blue-500">
-            {APP_TITLE}
-          </a>
-        </p>
+        <TooltipProvider delayDuration={400}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <p className="text-xs">
+                Powered by{" "}
+                <a href={githubUrl} className="hover:text-teal-500">
+                  {APP_TITLE}
+                </a>
+              </p>
+              </TooltipTrigger>
+              <TooltipContent className="font-bold text-sm">
+                ✌️BLOCK
+              </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
         <div className="flex-1" />
       </div>
     </footer>

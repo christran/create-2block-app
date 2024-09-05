@@ -33,14 +33,10 @@ export const UserDropdown = ({
   const handleSignout = async () => {
     try {
       await logout();
-      toast("You have been signed out.");
+      toast.success("You have been successfully signed out.");
     } catch (error) {
       if (error instanceof Error) {
-        toast(error.message, {
-          icon: (
-            <ExclamationTriangleIcon className="h-4 w-4 text-destructive" />
-          ),
-        });
+        toast.error(error.message);
       }
     }
   };

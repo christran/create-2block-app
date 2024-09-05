@@ -40,13 +40,11 @@ export function AccountDetails({ user }: { user: AccountDetailsProps }) {
 
   useEffect(() => {
     if (state?.success) {
-      toast("Account updated");
+      toast.success("Account updated");
       router.refresh();
     }
     if (state?.error) {
-      toast(state?.error, {
-        icon: <ExclamationTriangleIcon className="h-5 w-5 text-destructive" />,
-      });
+      toast.error(state?.error);
     }
   }, [state]);
 

@@ -29,6 +29,10 @@ const routes = [
 export const Header = async () => {
   const { user } = await validateRequest();
 
+  // Generate a random color for hover effect
+  const colors = ['blue', 'teal'];
+  const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
   return (
     <header className="sticky top-0 flex h-16 items-center justify-between border-b bg-background px-4 md:px-10">
       <div className="container flex items-center justify-between gap-2 px-2 py-2 lg:px-4">
@@ -53,7 +57,10 @@ export const Header = async () => {
               </div>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Link className="flex items-center justify-center text-xs font-bold" href="/">
+          <Link 
+            className={`flex items-center justify-center text-xs font-bold hover:text-${randomColor}-500`} 
+            href="/"
+          >
             <PiHandPeaceLight className="h-5 w-5" />{APP_TITLE_UNSTYLED}
           </Link>
           <nav className="ml-8 hidden gap-4 sm:gap-6 md:flex">

@@ -37,13 +37,11 @@ export function LinkedAccounts({ user }: { user: LinkedAccountProps }) {
 
   useEffect(() => {
     if (state?.success) {
-      toast("Two factor updated");
+      toast.success("Account linked");
       router.refresh();
     }
     if (state?.error) {
-      toast(state?.error, {
-        icon: <ExclamationTriangleIcon className="h-5 w-5 text-destructive" />,
-      });
+      toast.error(state?.error);
     }
   }, [state]);
 

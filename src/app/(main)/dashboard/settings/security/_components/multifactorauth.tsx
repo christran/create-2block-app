@@ -29,12 +29,10 @@ export function MultiFactorAuth() {
 
   useEffect(() => {
     if (state?.success) {
-      toast("Two factor authentication updated");
+      toast.success("Two factor authentication updated");
     }
     if (state?.error) {
-      toast(state?.error, {
-        icon: <ExclamationTriangleIcon className="h-5 w-5 text-destructive" />,
-      });
+      toast.error(state?.error);
     }
   }, [state, router]);
 
@@ -52,7 +50,7 @@ export function MultiFactorAuth() {
           </CardHeader>
           <CardContent>
             <div className="w-full md:w-1/2 space-y-2">
-              <Label htmlFor="one-time-code">One-Time Code</Label>
+              <Label htmlFor="one-time-code">Secret</Label>
                   <Input
                   required
                   name="one-time-code"

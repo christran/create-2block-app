@@ -12,13 +12,14 @@ import { login } from "@/lib/auth/actions";
 import { Label } from "@/components/ui/label";
 import { SubmitButton } from "@/components/submit-button";
 import { Paths } from "@/lib/constants";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { toast } from 'sonner';
 import { ArrowRightIcon } from "@radix-ui/react-icons";
 
 export function Login() {
   const [state, formAction] = useFormState(login, null);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [email, setEmail] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
 
   useEffect(() => {
@@ -31,11 +32,13 @@ export function Login() {
     }
   }, []);
 
+  const isDirty = useMemo(() => {
+    return email.trim() !== '' && currentPassword.trim() !== '';
+  }, [email, currentPassword]);
+
   useEffect(() => {
     if (authError) {
-      toast(authError, {
-        icon: <ExclamationTriangleIcon className="h-5 w-5 text-destructive" />,
-      });
+      toast.error(authError);
     }
   }, [authError]);
 
@@ -48,19 +51,19 @@ export function Login() {
         </CardHeader>
         <CardContent>
         <CardContent className="space-y-2">
-        <Button variant="outline" className="w-full" asChild>
+        <Button variant="outline" className="w-full bg-secondary/30" asChild>
             <Link href="/login/google" prefetch={false}>
               <FontAwesomeIcon icon={faGoogle} className="mr-2 h-5 w-5" />
               Log in with Google
             </Link>
           </Button>
-          <Button variant="outline" className="w-full" asChild>
+          <Button variant="outline" className="w-full bg-secondary/30" asChild>
             <Link href="/login/discord" prefetch={false}>
               <DiscordLogoIcon className="mr-2 h-5 w-5" />
               Log in with Discord
             </Link>
           </Button>
-          <Button variant="outline" className="w-full" asChild>
+          <Button variant="outline" className="w-full bg-secondary/30" asChild>
             <Link href="/login/github" prefetch={false}>
               <GitHubLogoIcon className="mr-2 h-5 w-5" />
               Log in with GitHub
@@ -76,18 +79,22 @@ export function Login() {
           <div className="space-y-2">
             {/* <Label htmlFor="email">Email</Label> */}
             <Input
+              className="bg-secondary/30"
               required
               id="email"
               placeholder="Email"
               autoComplete="email"
               name="email"
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
           <div className="space-y-2">
             {/* <Label htmlFor="password">Password</Label> */}
             <PasswordInput
+              className="bg-secondary/30"
               required
               id="password"
               name="password"
@@ -123,7 +130,7 @@ export function Login() {
               {state?.formError}
             </p>
           ) : null}
-          <SubmitButton className="w-full" aria-label="submit-btn">
+          <SubmitButton className="w-full" aria-label="submit-btn" disabled={!isDirty}>
             <span className="inline-flex items-center justify-center gap-1 truncate">
               Continue
               <ArrowRightIcon className="h-5 w-5" />

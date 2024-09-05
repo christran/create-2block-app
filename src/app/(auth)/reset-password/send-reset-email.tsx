@@ -21,13 +21,11 @@ export function SendResetEmail() {
 
   useEffect(() => {
     if (state?.success) {
-      toast("A link to reset your password has been sent to your email.");
+      toast.success("A link to reset your password has been sent to your email.");
       // formRef.current?.reset();
     }
     if (state?.error) {
-      toast(state.error, {
-        icon: <ExclamationTriangleIcon className="h-5 w-5 text-destructive" />,
-      });
+      toast.error(state.error);
     }
   }, [state]);
 

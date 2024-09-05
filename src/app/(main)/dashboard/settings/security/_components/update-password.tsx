@@ -36,40 +36,36 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
 
   useEffect(() => {
     if (state?.success) {
-      toast("Password updated");
+      toast.success("Password updated");
 
       // router.push(Paths.Security);
       // window.location.reload()
     }
     if (state?.error) {
-      toast(state?.error, {
-        icon: <ExclamationTriangleIcon className="h-5 w-5 text-destructive" />,
-      });
+      toast.error(state?.error);
     }
   }, [state]);
 
   useEffect(() => {
     if (setupPasswordState?.success) {
-      toast("Please check your email for a link to set a password");
+      toast.success("Please check your email for a link to set a password");
       // router.refresh();
     }
     if (setupPasswordState?.error) {
-      toast(setupPasswordState?.error, {
-        icon: <ExclamationTriangleIcon className="h-5 w-5 text-destructive" />,
-      });
+      toast.error(setupPasswordState?.error);
     }
   }, [setupPasswordState, router]);
 
   const handleSubmit = (formData: FormData) => {
     if (newPassword === currentPassword) {
-      toast("Your new password can not be the same as your current password", {
+      toast.error("Your new password can not be the same as your current password", {
         icon: <ExclamationTriangleIcon className="h-5 w-5 text-destructive" />,
       });
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      toast("Passwords do not match", {
+      toast.error("Passwords do not match", {
         icon: <ExclamationTriangleIcon className="h-5 w-5 text-destructive" />,
       });
       return;
