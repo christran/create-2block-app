@@ -2,18 +2,17 @@ import "@/styles/globals.css";
 
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
-import { APP_TITLE } from "@/lib/constants";
+import { APP_TITLE, APP_TITLE_PLAIN } from "@/lib/constants";
 import { fontSans } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 import { TRPCReactProvider } from "@/trpc/react";
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import { Footer } from "./(main)/_components/footer";
 
 export const metadata: Metadata = {
   title: {
     default: APP_TITLE,
-    template: `%s | ${APP_TITLE}`,
+    template: `%s - ${APP_TITLE_PLAIN}`,
   },
   description: "✌️BLOCK",
   icons: [{ rel: "icon", url: "/favicon.ico" }],

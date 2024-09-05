@@ -5,6 +5,14 @@ import { UpdatePassword } from "./_components/update-password";
 import { notFound, redirect } from "next/navigation";
 import { Paths } from "@/lib/constants";
 import { api } from "@/trpc/server";
+import { env } from "@/env";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
+  title: "Security",
+  description: "Manage your account security details",
+};
 
 export default async function SecurityPage() {
   const { user } = await validateRequest();

@@ -1,8 +1,10 @@
+import { env } from "@/env";
 import { type Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "✌️BLOCK - Acceptable Use Policy",
-  description: "Acceptable Use Policy for ✌️BLOCK",
+  metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
+  title: "Acceptable Use Policy",
+  description: "Acceptable Use Policy",
 };
 
 const AcceptableUsePolicyPage = () => {

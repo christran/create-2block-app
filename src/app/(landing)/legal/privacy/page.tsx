@@ -1,8 +1,10 @@
+import { env } from "@/env";
 import { type Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "✌️BLOCK - Privacy Policy",
-  description: "Privacy Policy for ✌️BLOCK",
+  metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
+  title: "Privacy Policy",
+  description: "Privacy Policy",
 };
 
 const PrivacyPolicyPage = () => {

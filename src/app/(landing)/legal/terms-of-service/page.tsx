@@ -1,8 +1,10 @@
+import { env } from "@/env";
 import { type Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "✌️BLOCK - Terms of Service",
-  description: "Terms of Service for ✌️BLOCK",
+  metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
+  title: "Terms of Service",
+  description: "Terms of Service",
 };
 
 const TermsOfServicePage = () => {

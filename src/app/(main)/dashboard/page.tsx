@@ -11,8 +11,8 @@ import { myPostsSchema } from "@/server/api/routers/post/post.input";
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
-  title: "Posts",
-  description: "Manage your posts here",
+  title: "Dashboard",
+  description: "View your dashboard here",
 };
 
 interface Props {

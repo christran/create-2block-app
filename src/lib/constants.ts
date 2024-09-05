@@ -3,6 +3,7 @@ import { CreditCardIcon } from "lucide-react";
 
 export const APP_TITLE = "✌️BLOCK";
 export const APP_DESCRIPTION = "2BLOCK"
+export const APP_TITLE_PLAIN = "2BLOCK"
 export const APP_TITLE_UNSTYLED = "BLOCK"
 export const DATABASE_PREFIX = "2block";
 export const TEST_DB_PREFIX = "test_2block";

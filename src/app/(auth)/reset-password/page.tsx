@@ -11,8 +11,8 @@ import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@/lib/constants";
 
 export const metadata = {
-  title: "Forgot Password",
-  description: "Forgot Password Page",
+  title: "Reset Password",
+  description: "Reset Password Page",
 };
 
 export default async function ForgotPasswordPage() {

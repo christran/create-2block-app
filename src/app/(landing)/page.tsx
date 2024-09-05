@@ -5,8 +5,8 @@ import { DesktopIcon } from "@radix-ui/react-icons";
 import { Paths } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "✌️BLOCK",
-  description: "✌️BLOCK",
+  title: "Home",
+  description: "Welcome to ✌️BLOCK",
 };
 
 const HomePage = () => {
