@@ -4,13 +4,10 @@ import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { setupNewPasswordLink, updatePassword } from "@/lib/auth/actions"
 import { useFormState } from "react-dom"
@@ -18,7 +15,6 @@ import { useState, useEffect, useMemo } from "react";
 import { ExclamationTriangleIcon } from "@/components/icons"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import { Paths } from "@/lib/constants"
 import { PasswordInput } from "@/components/password-input"
 
 export function UpdatePassword(user: { isPasswordLess: boolean }) {

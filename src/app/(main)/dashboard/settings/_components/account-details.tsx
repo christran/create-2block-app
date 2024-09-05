@@ -14,7 +14,6 @@ import { Label } from "@/components/ui/label"
 import { updateAccount } from "@/lib/auth/actions"
 import { useState, useEffect, useMemo, Suspense } from "react"
 import { useFormState } from "react-dom"
-import { ExclamationTriangleIcon } from "@/components/icons"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { AccountDetailsSkeleton } from "./account-details-skeleton"
@@ -53,6 +52,9 @@ export function AccountDetails({ user }: { user: AccountDetailsProps }) {
           <Card>
             <CardHeader>
               <CardTitle>Account Details</CardTitle>
+              <CardDescription>
+                Update your profile information
+              </CardDescription>
             </CardHeader>
             <Suspense fallback={<AccountDetailsSkeleton />}>
               <CardContent>
