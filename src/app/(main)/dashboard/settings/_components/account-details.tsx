@@ -17,14 +17,13 @@ import { useFormState } from "react-dom"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { AccountDetailsSkeleton } from "./account-details-skeleton"
-
+import { DatabaseUserAttributes } from "@/lib/auth"
 interface AccountDetailsProps {
   fullname: string
   email: string
-  accountPasswordless: boolean
 }
 
-export function AccountDetails({ user }: { user: AccountDetailsProps }) {  
+export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsProps; isPasswordLess: boolean }) {  
   const [fullname, setFullname] = useState(user?.fullname ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
 
@@ -73,15 +72,14 @@ export function AccountDetails({ user }: { user: AccountDetailsProps }) {
                   <Label>Email</Label>
                   <Input
                     className="bg-secondary/30"
-                    required={user?.accountPasswordless}
-                    // readOnly={true}
+                    // required={isPasswordLess}
                     placeholder="hello@2block.co"
                     autoComplete="email"
                     name="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    // disabled={user?.accountPasswordless === null}
+                    disabled={isPasswordLess}
                     />
                 </div>
               </CardContent>

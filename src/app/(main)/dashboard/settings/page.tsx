@@ -5,11 +5,12 @@ import { env } from "@/env";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@/lib/constants";
 import { AccountDetails } from "./_components/account-details";
+import { api } from "@/trpc/server";
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
-  title: "Billing",
-  description: "Manage your billing and subscription",
+  title: "Profile",
+  description: "Manage your profile details",
 };
 
 export default async function SettingsPage() {
@@ -23,12 +24,14 @@ export default async function SettingsPage() {
 
   // if (!userData) notFound();
 
+  const isPasswordLess = await api.user.isPasswordLess.query();
+
   return (
     <div className="grid gap-8">
       <div>
         <h1 className="text-3xl font-bold md:text-4xl">Profile</h1>
       </div>
-      <AccountDetails user={user} />
+      <AccountDetails user={user} isPasswordLess={isPasswordLess} />
     </div>
   );
 }
