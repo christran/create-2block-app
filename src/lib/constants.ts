@@ -18,6 +18,9 @@ export enum Paths {
   Security = "/dashboard/settings/security",
   VerifyEmail = "/verify-email",
   ResetPassword = "/reset-password",
+  TermsOfService = "/legal/terms-of-service",
+  PrivacyPolicy = "/legal/privacy",
+  AcceptableUsePolicy = "/legal/acceptable-use",
 }
 
 export const navbarItems = [

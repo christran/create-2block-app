@@ -13,7 +13,7 @@ export const Footer = () => {
         </div>
         <p className="text-xs">
           Powered by{" "}
-          <a href={githubUrl}>
+          <a href={githubUrl} className="hover:text-blue-500">
             {APP_TITLE}
           </a>
         </p>

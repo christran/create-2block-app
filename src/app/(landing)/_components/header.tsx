@@ -12,12 +12,18 @@ import { DesktopIcon, HamburgerMenuIcon, PersonIcon } from "@radix-ui/react-icon
 import { validateRequest } from "@/lib/auth/validate-request";
 
 const routes = [
-  { name: "Home", href: "/" },
-  { name: "Team", href: "/#features" },
-  {
-    name: "Jobs",
-    href: "https://google.com",
-  },
+  // { 
+  //   name: "Home", 
+  //   href: "/" 
+  // },
+  // { 
+  //   name: "Team", 
+  //   href: "/#features" 
+  // },
+  // {
+  //   name: "Jobs",
+  //   href: "https://google.com",
+  // },
 ] as const;
 
 export const Header = async () => {

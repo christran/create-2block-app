@@ -13,7 +13,7 @@ const SubmitButton = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         {...props}
         loading={pending}
-        className={className}
+        className={`inline-flex items-center justify-center ${className}`}
       >
         {children}
       </LoadingButton>

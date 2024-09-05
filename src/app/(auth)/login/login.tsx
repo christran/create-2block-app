@@ -14,6 +14,7 @@ import { SubmitButton } from "@/components/submit-button";
 import { Paths } from "@/lib/constants";
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import { ArrowRightIcon } from "@radix-ui/react-icons";
 
 export function Login() {
   const [state, formAction] = useFormState(login, null);
@@ -39,96 +40,114 @@ export function Login() {
   }, [authError]);
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader className="text-center">
-        <CardTitle>{APP_TITLE}</CardTitle>
-        {/* <CardDescription>Log in to your account to access your dashboard</CardDescription> */}
-      </CardHeader>
-      <CardContent>
-      <CardContent className="space-y-2">
-      <Button variant="outline" className="w-full" asChild>
-          <Link href="/login/google" prefetch={false}>
-            <FontAwesomeIcon icon={faGoogle} className="mr-2 h-5 w-5" />
-            Log in with Google
-          </Link>
-        </Button>
+    <>
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <CardTitle>{APP_TITLE}</CardTitle>
+          {/* <CardDescription>Log in to your account to access your dashboard</CardDescription> */}
+        </CardHeader>
+        <CardContent>
+        <CardContent className="space-y-2">
         <Button variant="outline" className="w-full" asChild>
-          <Link href="/login/discord" prefetch={false}>
-            <DiscordLogoIcon className="mr-2 h-5 w-5" />
-            Log in with Discord
-          </Link>
-        </Button>
-        <Button variant="outline" className="w-full" asChild>
-          <Link href="/login/github" prefetch={false}>
-            <GitHubLogoIcon className="mr-2 h-5 w-5" />
-            Log in with GitHub
-          </Link>
-        </Button>
-      </CardContent>
-      <div className="my-2 mt-2 mb-8 flex items-center">
-        <div className="flex-grow border-t border-muted" />
-        <div className="mx-2 text-sm text-muted-foreground">or continue with</div>
-        <div className="flex-grow border-t border-muted" />
-      </div>
-      <form action={formAction} className="grid gap-4">
-        <div className="space-y-2">
-          {/* <Label htmlFor="email">Email</Label> */}
-          <Input
-            required
-            id="email"
-            placeholder="Email"
-            autoComplete="email"
-            name="email"
-            type="email"
-          />
+            <Link href="/login/google" prefetch={false}>
+              <FontAwesomeIcon icon={faGoogle} className="mr-2 h-5 w-5" />
+              Log in with Google
+            </Link>
+          </Button>
+          <Button variant="outline" className="w-full" asChild>
+            <Link href="/login/discord" prefetch={false}>
+              <DiscordLogoIcon className="mr-2 h-5 w-5" />
+              Log in with Discord
+            </Link>
+          </Button>
+          <Button variant="outline" className="w-full" asChild>
+            <Link href="/login/github" prefetch={false}>
+              <GitHubLogoIcon className="mr-2 h-5 w-5" />
+              Log in with GitHub
+            </Link>
+          </Button>
+        </CardContent>
+        <div className="my-2 mt-2 mb-8 flex items-center">
+          <div className="flex-grow border-t border-muted" />
+          <div className="mx-2 text-sm text-muted-foreground">or continue with</div>
+          <div className="flex-grow border-t border-muted" />
         </div>
+        <form action={formAction} className="grid gap-4">
+          <div className="space-y-2">
+            {/* <Label htmlFor="email">Email</Label> */}
+            <Input
+              required
+              id="email"
+              placeholder="Email"
+              autoComplete="email"
+              name="email"
+              type="email"
+            />
+          </div>
 
-        <div className="space-y-2">
-          {/* <Label htmlFor="password">Password</Label> */}
-          <PasswordInput
-            required
-            id="password"
-            name="password"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            autoComplete="current-password"
-            placeholder="Password"
-          />
-        </div>
+          <div className="space-y-2">
+            {/* <Label htmlFor="password">Password</Label> */}
+            <PasswordInput
+              required
+              id="password"
+              name="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              autoComplete="current-password"
+              placeholder="Password"
+            />
+          </div>
 
-        <div className="mb-2 flex flex-wrap items-center justify-between text-xs">
-          <div>
-            Don't have an account?{" "}
+          <div className="mb-2 flex flex-wrap items-center justify-between text-xs">
+            <div>
+              Don't have an account?{" "}
+              <Button variant="link" size="sm" className="p-0 h-auto" asChild>
+                <Link href={Paths.Signup}>Sign up</Link>
+              </Button>
+            </div>
             <Button variant="link" size="sm" className="p-0 h-auto" asChild>
-              <Link href={Paths.Signup}>Sign up</Link>
+              <Link href={Paths.ResetPassword}>Forgot password?</Link>
             </Button>
           </div>
-          <Button variant="link" size="sm" className="p-0 h-auto" asChild>
-            <Link href={Paths.ResetPassword}>Forgot password?</Link>
-          </Button>
-        </div>
 
-        {state?.fieldError ? (
-          <ul className="list-disc space-y-1 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
-            {Object.values(state.fieldError).map((err) => (
-              <li className="ml-4" key={err}>
-                {err}
-              </li>
-            ))}
-          </ul>
-        ) : state?.formError ? (
-          <p className="rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
-            {state?.formError}
-          </p>
-        ) : null}
-        <SubmitButton className="w-full" aria-label="submit-btn">
-          Log In
-        </SubmitButton>
-        <Button variant="outline" className="w-full" asChild>
-          {/* <Link href={Paths.Home}>Cancel</Link> */}
-        </Button>
-      </form>
-      </CardContent>
-    </Card>
+          {state?.fieldError ? (
+            <ul className="list-disc space-y-1 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
+              {Object.values(state.fieldError).map((err) => (
+                <li className="ml-4" key={err}>
+                  {err}
+                </li>
+              ))}
+            </ul>
+          ) : state?.formError ? (
+            <p className="rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
+              {state?.formError}
+            </p>
+          ) : null}
+          <SubmitButton className="w-full" aria-label="submit-btn">
+            <span className="inline-flex items-center justify-center gap-1 truncate">
+              Continue
+              <ArrowRightIcon className="h-5 w-5" />
+            </span>
+          </SubmitButton>
+          <Button variant="outline" className="w-full" asChild>
+            {/* <Link href={Paths.Home}>Cancel</Link> */}
+          </Button>
+        </form>
+        </CardContent>
+      </Card>
+      <div className="text-center text-xs text-muted-foreground mt-4 px-6 pb-6">
+        By signing in, you agree to our{" "}
+        <Link href={Paths.TermsOfService} className="hover:underline dark:text-blue-500">
+          terms of service
+        </Link>
+        {" "}
+        and
+        {" "}
+        <Link href={Paths.PrivacyPolicy} className="hover:underline dark:text-blue-500">
+          privacy policy
+        </Link>
+        .
+      </div>
+    </>
   );
 }
