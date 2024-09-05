@@ -1,5 +1,5 @@
 import "server-only";
-import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
+import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
 import { EmailVerificationTemplate } from "./templates/email-verification";
 import { ResetPasswordTemplate } from "./templates/reset-password";
 import { render } from "@react-email/render";
@@ -18,15 +18,15 @@ export type PropsMap = {
   [EmailTemplate.PasswordReset]: ComponentProps<typeof ResetPasswordTemplate>;
 };
 
-const sesClient = new SESClient({ 
+const sesClient = new SESv2Client({ 
   region: 'us-west-1',
   credentials: {
-    accessKeyId: env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+    accessKeyId: env.AWS_ACCESS_KEY_ID as string,
+    secretAccessKey: env.AWS_SECRET_ACCESS_KEY as string
   },
 });
 
-const getEmailTemplate = async <T extends EmailTemplate>(template: T, props: PropsMap[NoInfer<T>]) => {
+const getEmailTemplate = async <T extends EmailTemplate>(template: T, props: PropsMap[T]) => {
   switch (template) {
     case EmailTemplate.EmailVerification:
       return {
@@ -61,22 +61,24 @@ export const sendEmail = async <T extends EmailTemplate>(
     const { subject, body } = await getEmailTemplate(template, props);
 
     const params = {
+      FromEmailAddress: '2BLOCK <christophertran714@gmail.com>', // Change this to EMAIL_SENDER after SES prod approval
       Destination: {
         ToAddresses: [to],
       },
-      Message: {
-        Body: {
-          Html: {
+      Content: {
+        Simple: {
+          Subject: {
             Charset: "UTF-8",
-            Data: body,
+            Data: subject,
           },
-        },
-        Subject: {
-          Charset: "UTF-8",
-          Data: subject,
-        },
-      },
-      Source: '2BLOCK <christophertran714@gmail.com>', // Change this to EMAIL_SENDER after SES prod approval
+          Body: {
+            Html: {
+              Charset: "UTF-8",
+              Data: body,
+            },
+          },
+        }
+      }
     };
 
     const command = new SendEmailCommand(params);

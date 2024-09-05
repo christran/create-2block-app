@@ -30,11 +30,12 @@ import { revalidatePath } from "next/cache";
 import { generateId, Scrypt } from "lucia";
 // import { Argon2id } from "oslo/password";
 
-import { sendEmail as sendEmailDefault, EmailTemplate as EmailTemplateDefault } from "@/lib/email";
+import { sendEmail as sendEmailSMTP, EmailTemplate as EmailTemplateSMTP } from "@/lib/email/smtp";
+import { sendEmail as sendEmailSES, EmailTemplate as EmailTemplateSES } from "@/lib/email/aws-ses";
 import { sendEmail as sendEmailResend, EmailTemplate as EmailTemplateResend } from "@/lib/email/resend";
 
-const sendEmail = env.NODE_ENV === "production" ? sendEmailResend : sendEmailDefault;
-const EmailTemplate = env.NODE_ENV === "production" ? EmailTemplateResend : EmailTemplateDefault;
+const sendEmail = env.NODE_ENV === "production" ? sendEmailResend : sendEmailSMTP;
+const EmailTemplate = env.NODE_ENV === "production" ? EmailTemplateResend : EmailTemplateSMTP;
 
 export interface ActionResponse<T> {
   fieldError?: Partial<Record<keyof T, string | undefined>>;
