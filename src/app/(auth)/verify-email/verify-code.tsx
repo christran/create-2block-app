@@ -65,8 +65,8 @@ export const VerifyCode = () => {
             value={otpValue}
             onChange={setOtpValue}
           >
-            <InputOTPGroup>
-              <InputOTPSlot index={0} className="bg-secondary/30" />
+            <InputOTPGroup className="bg-secondary/30">
+              <InputOTPSlot index={0} />
               <InputOTPSlot index={1} />
               <InputOTPSlot index={2} />
               <InputOTPSlot index={3} />
