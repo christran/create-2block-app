@@ -49,6 +49,7 @@ export function MultiFactorAuth() {
               <div className="space-y-2">
                 <Label htmlFor="one-time-code">Secret</Label>
                 <Input
+                disabled
                 className="bg-secondary/30"
                 required
                 name="one-time-code"
@@ -75,7 +76,7 @@ export function MultiFactorAuth() {
               ) : null}
           </CardContent>
           <CardFooter className="border-t px-6 py-4">
-            <Button type="submit">Enable 2FA</Button>
+            <Button disabled type="submit">Enable 2FA</Button>
           </CardFooter>
         </Card>
     </form>
