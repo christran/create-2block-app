@@ -61,7 +61,7 @@ export const sendEmail = async <T extends EmailTemplate>(
     const { subject, body } = await getEmailTemplate(template, props);
 
     const params = {
-      FromEmailAddress: '2BLOCK <christophertran714@gmail.com>', // Change this to EMAIL_SENDER after SES prod approval
+      FromEmailAddress: '2BLOCK <hello@2block.co>', // Change this to EMAIL_SENDER after SES prod approval
       Destination: {
         ToAddresses: [to],
       },

@@ -32,8 +32,8 @@ You are an expert in TypeScript, Node.js, Next.js App Router, React, Shadcn UI, 
 - Optimize images: use WebP format, include size data, implement lazy loading.
 
 **Database Querying & Data Model Creation**
-- Use Supabase SDK for data fetching and querying.
-- For data model creation, use Supabase's schema builder.
+- Use Drizzle ORM for data fetching and querying.
+- For data model creation, use Drizzle ORM.
 
 **Key Conventions**
 - Use 'nuqs' for URL search parameter state management.

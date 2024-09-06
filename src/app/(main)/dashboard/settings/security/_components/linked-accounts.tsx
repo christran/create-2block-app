@@ -45,37 +45,43 @@ export function LinkedAccounts({ user }: { user: LinkedAccountProps }) {
 
     return (
       <form action={handleSubmit} className="grid gap-4">
-        <Card x-chunk="dashboard-04-chunk-1">
+        <Card>
           <CardHeader>
             <CardTitle>Linked Accounts</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="w-full md:w-1/2 space-y-2">
-              <Label>Google</Label>
-                  <Input
-                  className="bg-secondary/30"
-                  disabled
-                  name="google_id"
-                  type="text"
-                  value={googleId}
-                  />
-              <Label>Discord</Label>
-                  <Input
-                  className="bg-secondary/30"
-                  disabled
-                  name="discord_id"
-                  type="text"
-                  value={discordId}
-                  />
-              <Label>GitHub</Label>
-                  <Input
-                  className="bg-secondary/30"
-                  disabled
-                  name="github_id"
-                  type="text"
-                  value={githubId}
-                  />
+              <div className="space-y-2">
+                <Label>Google</Label>
+                <Input
+                className="bg-secondary/30"
+                disabled
+                name="google_id"
+                type="text"
+                value={googleId}
+                />
               </div>
+              <div className="space-y-2">
+                <Label>Discord</Label>
+                <Input
+                className="bg-secondary/30"
+                disabled
+                name="discord_id"
+                type="text"
+                value={discordId}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>GitHub</Label>
+                <Input
+                className="bg-secondary/30"
+                disabled
+                name="github_id"
+                type="text"
+                value={githubId}
+                />
+              </div>
+            </div>
           </CardContent>
         </Card>
     </form>

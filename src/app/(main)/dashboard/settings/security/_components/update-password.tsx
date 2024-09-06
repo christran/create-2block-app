@@ -100,41 +100,46 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
           </CardHeader>
           <CardContent>
             <div className="w-full md:w-1/2 space-y-2">
-              <Label>Current Password</Label>
-              <PasswordInput
-                className="bg-secondary/30"
-                required
-                name="current_password"
-                placeholder="••••••••"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                autoComplete="current-password"
-              />
-              <Label>New Password</Label>
-              <PasswordInput
-                className="bg-secondary/30"
-                required
-                name="new_password"
-                placeholder="••••••••"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                autoComplete="new-password"
-              />
-              <Label>Confirm Password</Label>
-              <PasswordInput
-                className="bg-secondary/30"
-                required
-                name="confirm_password"
-                placeholder="••••••••"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                autoComplete="new-password"
-              />
+              <div className="space-y-2">
+                <Label>Current Password</Label>
+                <PasswordInput
+                  className="bg-secondary/30"
+                  required
+                  name="current_password"
+                  placeholder="••••••••"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  autoComplete="current-password"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>New Password</Label>
+                <PasswordInput
+                  className="bg-secondary/30"
+                  required
+                  name="new_password"
+                  placeholder="••••••••"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  autoComplete="new-password"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Confirm Password</Label>
+                <PasswordInput
+                  className="bg-secondary/30"
+                  required
+                  name="confirm_password"
+                  placeholder="••••••••"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  autoComplete="new-password"
+                />
+              </div>
             </div>
-          </CardContent>
-          <CardContent>
+
             {state?.fieldError ? (
-              <ul className="w-full md:w-1/2 list-disc space-y-1 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
+              <ul className="w-full md:w-1/2 mt-4 list-disc space-y-1 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
                 {Object.values(state.fieldError).map((err) => (
                   <li className="ml-4" key={err}>
                     {err}
@@ -142,7 +147,7 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
                 ))}
               </ul>
             ) : state?.formError ? (
-              <p className="w-full md:w-1/2 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
+              <p className="w-full md:w-1/2 mt-4 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
                 {state?.formError}
               </p>
             ) : null}

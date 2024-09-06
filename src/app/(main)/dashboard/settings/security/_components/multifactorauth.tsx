@@ -46,17 +46,33 @@ export function MultiFactorAuth() {
           </CardHeader>
           <CardContent>
             <div className="w-full md:w-1/2 space-y-2">
-              <Label htmlFor="one-time-code">Secret</Label>
-                  <Input
-                  className="bg-secondary/30"
-                  required
-                  name="one-time-code"
-                  type="text"
-                  value={oneTimeCode}
-                  onChange={(e) => setOneTimeCode(e.target.value)}
-                  autoComplete="one-time-code"
-                  />
+              <div className="space-y-2">
+                <Label htmlFor="one-time-code">Secret</Label>
+                <Input
+                className="bg-secondary/30"
+                required
+                name="one-time-code"
+                type="text"
+                value={oneTimeCode}
+                onChange={(e) => setOneTimeCode(e.target.value)}
+                autoComplete="one-time-code"
+                />
               </div>
+            </div>
+
+            {state?.fieldError ? (
+                <ul className="w-full md:w-1/2 mt-4 list-disc space-y-1 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
+                  {Object.values(state.fieldError).map((err) => (
+                    <li className="ml-4" key={err}>
+                      {err}
+                    </li>
+                  ))}
+                </ul>
+              ) : state?.formError ? (
+                <p className="w-full md:w-1/2 mt-4 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
+                  {state?.formError}
+                </p>
+              ) : null}
           </CardContent>
           <CardFooter className="border-t px-6 py-4">
             <Button type="submit">Enable 2FA</Button>

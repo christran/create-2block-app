@@ -34,8 +34,8 @@ import { sendEmail as sendEmailSMTP, EmailTemplate as EmailTemplateSMTP } from "
 import { sendEmail as sendEmailSES, EmailTemplate as EmailTemplateSES } from "@/lib/email/aws-ses";
 import { sendEmail as sendEmailResend, EmailTemplate as EmailTemplateResend } from "@/lib/email/resend";
 
-const sendEmail = env.NODE_ENV === "production" ? sendEmailResend : sendEmailSMTP;
-const EmailTemplate = env.NODE_ENV === "production" ? EmailTemplateResend : EmailTemplateSMTP;
+const sendEmail = env.NODE_ENV === "production" ? sendEmailResend : sendEmailSES;
+const EmailTemplate = env.NODE_ENV === "production" ? EmailTemplateResend : EmailTemplateSES;
 
 export interface ActionResponse<T> {
   fieldError?: Partial<Record<keyof T, string | undefined>>;

@@ -84,7 +84,7 @@ export const VerifyCode = () => {
         </SubmitButton>
       </form>
       <form action={resendAction}>
-        <SubmitButton className="w-full" variant="secondary">
+        <SubmitButton className="w-full w-full bg-secondary/30" variant="outline">
           Resend Code
         </SubmitButton>
       </form>

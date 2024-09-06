@@ -1,6 +1,7 @@
 import { protectedProcedure, createTRPCRouter } from "@/server/api/trpc";
-import * as inputs from "./user.input";
-import * as services from "./user.service";
+import { emailVerificationCodes, passwordResetTokens, sessions, users } from "@/server/db/schema";
+import { eq } from "drizzle-orm";
+import { z } from "zod";
 
 export const userRouter = createTRPCRouter({
   getUser: protectedProcedure
@@ -33,5 +34,17 @@ export const userRouter = createTRPCRouter({
       });
     
       return user?.hashedPassword === null;
+    }),
+
+  deleteAccountByUserId: protectedProcedure
+    .input(z.object({
+      userId: z.string(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const [user] = await ctx.db.delete(users).where(eq(users.id, input.userId));
+      await ctx.db.delete(sessions).where(eq(sessions.userId, input.userId));
+      await ctx.db.delete(emailVerificationCodes).where(eq(emailVerificationCodes.userId, input.userId));
+      await ctx.db.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, input.userId));
+      return user;
     }),
 });
