@@ -51,20 +51,20 @@ export function Login() {
         </CardHeader>
         <CardContent>
         <CardContent className="space-y-2">
-        <Button variant="outline" className="w-full bg-secondary/30" asChild>
-            <Link href="/login/google" prefetch={false}>
+          <Button variant="outline" className="w-full bg-secondary/30">
+            <Link href="/login/google" prefetch={false} className="flex items-center justify-center">
               <FontAwesomeIcon icon={faGoogle} className="mr-2 h-5 w-5" />
               Log in with Google
             </Link>
           </Button>
-          <Button variant="outline" className="w-full bg-secondary/30" asChild>
-            <Link href="/login/discord" prefetch={false}>
+          <Button variant="outline" className="w-full bg-secondary/30">
+            <Link href="/login/discord" prefetch={false} className="flex items-center justify-center">
               <DiscordLogoIcon className="mr-2 h-5 w-5" />
               Log in with Discord
             </Link>
           </Button>
-          <Button variant="outline" className="w-full bg-secondary/30" asChild>
-            <Link href="/login/github" prefetch={false}>
+          <Button variant="outline" className="w-full bg-secondary/30">
+            <Link href="/login/github" prefetch={false} className="flex items-center justify-center">
               <GitHubLogoIcon className="mr-2 h-5 w-5" />
               Log in with GitHub
             </Link>

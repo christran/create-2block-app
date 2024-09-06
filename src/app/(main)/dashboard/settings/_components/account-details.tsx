@@ -31,7 +31,7 @@ import { api } from "@/trpc/react"
 import { Paths } from "@/lib/constants"
 import { LoadingButton } from "@/components/loading-button";
 interface AccountDetailsProps {
-  userId: string
+  id: string
   fullname: string
   email: string
 }
@@ -57,7 +57,7 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
   const accountDelete = async () => {
     setIsLoading(true);
     try {
-      await userMutation.mutateAsync({ userId: user.id })
+      await userMutation.mutateAsync({ id: user.id })
       router.push(Paths.Login);
       toast.success("You account has been successfully deleted")
     } catch (error) {

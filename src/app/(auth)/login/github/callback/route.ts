@@ -52,7 +52,7 @@ export async function GET(request: Request): Promise<Response> {
     const githubUserEmail = (await getUserGitHubEmail(tokens.accessToken));
 
     if (!githubUserEmail?.email || !githubUserEmail?.verified) {
-      cookies().set('auth_error', 'Please verify your email on GitHub before continuting', {
+      cookies().set('auth_error', 'Please verify your email on GitHub before continuing', {
         maxAge: 5, // Cookie expires after 60 seconds
         path: '/',
       });

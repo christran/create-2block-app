@@ -32,7 +32,7 @@ export async function GET(request: Request): Promise<Response> {
     const googleUser = (await googleUserResponse.json()) as GoogleUser;
 
     if (!googleUser.email || !googleUser.email_verified) {
-      cookies().set('auth_error', 'Please verify your email on Google before continuting', {
+      cookies().set('auth_error', 'Please verify your email on Google before continuing', {
         maxAge: 5, // Cookie expires after 60 seconds
         path: '/',
       });

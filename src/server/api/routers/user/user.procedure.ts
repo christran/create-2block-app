@@ -38,14 +38,14 @@ export const userRouter = createTRPCRouter({
 
   deleteAccountByUserId: protectedProcedure
     .input(z.object({
-      userId: z.string(),
+      id: z.string(),
     }))
     .mutation(async ({ ctx, input }) => {
-      const [user] = await ctx.db.delete(users).where(eq(users.id, input.userId));
+      const [user] = await ctx.db.delete(users).where(eq(users.id, input.id)).returning();
       
-      await ctx.db.delete(sessions).where(eq(sessions.userId, input.userId));
-      await ctx.db.delete(emailVerificationCodes).where(eq(emailVerificationCodes.userId, input.userId));
-      await ctx.db.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, input.userId));
+      await ctx.db.delete(sessions).where(eq(sessions.userId, input.id));
+      await ctx.db.delete(emailVerificationCodes).where(eq(emailVerificationCodes.userId, input.id));
+      await ctx.db.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, input.id));
 
       return user;
     }),

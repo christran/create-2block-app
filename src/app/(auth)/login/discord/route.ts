@@ -3,7 +3,7 @@ import { discord } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { env } from "@/env";
 
-export async function GET(): Promise<Response> {
+export async function GET(request: Request): Promise<Response> {
   const state = generateState();
   const url = await discord.createAuthorizationURL(state, {
     scopes: ["identify", "email"],

@@ -6,6 +6,62 @@ import { discord, lucia } from "@/lib/auth";
 import { db } from "@/server/db";
 import { Paths } from "@/lib/constants";
 import { users } from "@/server/db/schema";
+import { validateRequest } from "@/lib/auth/validate-request";
+
+// ... existing DiscordUser interface ...
+
+async function getDiscordUser(code: string): Promise<DiscordUser> {
+  const tokens = await discord.validateAuthorizationCode(code);
+  const discordUserRes = await fetch("https://discord.com/api/users/@me", {
+    headers: { Authorization: `Bearer ${tokens.accessToken}` },
+  });
+  return await discordUserRes.json() as DiscordUser;
+}
+
+function redirectWithError(path: string, error: string): Response {
+  cookies().set('auth_error', error, { maxAge: 5, path: '/' });
+  return new Response(null, { status: 302, headers: { Location: path } });
+}
+
+async function handleAccountLinking(discordUser: DiscordUser, userId: string): Promise<Response> {
+  await db.update(users)
+    .set({ discordId: discordUser.id })
+    .where(eq(users.id, userId));
+
+  return new Response(null, { status: 302, headers: { Location: Paths.Security } });
+}
+
+async function handleLogin(discordUser: DiscordUser, userId: string): Promise<Response> {
+  const session = await lucia.createSession(userId, {});
+  const sessionCookie = lucia.createSessionCookie(session.id);
+
+  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+
+  return new Response(null, { status: 302, headers: { Location: Paths.Dashboard } });
+}
+
+async function createNewUser(discordUser: DiscordUser): Promise<Response> {
+  const userId = generateId(21);
+  const avatar = discordUser.avatar
+    ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.webp`
+    : null;
+
+  await db.insert(users).values({
+    id: userId,
+    fullname: discordUser.username,
+    email: discordUser.email ?? '',
+    accountPasswordless: true,
+    emailVerified: true,
+    discordId: discordUser.id,
+    avatar,
+  });
+
+  const session = await lucia.createSession(userId, {});
+  const sessionCookie = lucia.createSessionCookie(session.id);
+  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+
+  return new Response(null, { status: 302, headers: { Location: Paths.Dashboard } });
+}
 
 export async function GET(request: Request): Promise<Response> {
   const url = new URL(request.url);
@@ -14,101 +70,41 @@ export async function GET(request: Request): Promise<Response> {
   const storedState = cookies().get("discord_oauth_state")?.value ?? null;
 
   if (!code || !state || !storedState || state !== storedState) {
-    return new Response(null, {
-      status: 400,
-      headers: { Location: Paths.Login },
-    });
+    return new Response(null, { status: 400, headers: { Location: Paths.Login } });
   }
 
   try {
-    const tokens = await discord.validateAuthorizationCode(code);
-
-    const discordUserRes = await fetch("https://discord.com/api/users/@me", {
-      headers: {
-        Authorization: `Bearer ${tokens.accessToken}`,
-      },
-    });
-
-    const discordUser = (await discordUserRes.json()) as DiscordUser;
+    const { user } = await validateRequest();
+    const discordUser = await getDiscordUser(code);
 
     if (!discordUser.email || !discordUser.verified) {
-      cookies().set('auth_error', 'Please verify your email on Discord before continuting', {
-        maxAge: 5, // Cookie expires after 60 seconds
-        path: '/',
-      });
-
-      return new Response(null, {
-        status: 302,
-        headers: { Location: Paths.Login },
-      });
+      return redirectWithError(user ? Paths.Security : Paths.Login, 'Please verify your email on Discord before continuing');
     }
 
     const existingUser = await db.query.users.findFirst({
-      where: (table, { eq, or }) =>
-        or(eq(table.discordId, discordUser.id), eq(table.email, discordUser.email!)),
+      where: (table, { eq, or }) => or(
+        eq(table.discordId, discordUser.id),
+        eq(table.email, discordUser.email!)
+      ),
     });
 
-    const avatar = discordUser.avatar
-      ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.webp`
-      : null;
-
-    if (!existingUser) {
-      const userId = generateId(21);
-      await db.insert(users).values({
-        id: userId,
-        fullname: discordUser.username,
-        email: discordUser.email,
-        accountPasswordless: true,
-        emailVerified: true,
-        discordId: discordUser.id,
-        avatar,
-      });
-
-      const session = await lucia.createSession(userId, {});
-      const sessionCookie = lucia.createSessionCookie(session.id);
-
-      cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-
-      return new Response(null, {
-        status: 302,
-        headers: { Location: Paths.Dashboard },
-      });
+    if (user) {
+      // User is logged in and wants to link account
+      return existingUser
+        ? redirectWithError(Paths.Security, 'Discord account is already linked with another account')
+        : handleAccountLinking(discordUser, user.id);
+    } else {
+      // User is not logged in
+      return existingUser
+        ? handleLogin(discordUser, existingUser.id)
+        : createNewUser(discordUser);
     }
-
-    if (existingUser.discordId !== discordUser.id) {
-      await db
-        .update(users)
-        .set({
-          discordId: discordUser.id,
-          // fullname: discordUser.username,
-          // emailVerified: true,
-          // avatar,
-        })
-        .where(eq(users.id, existingUser.id));
-    }
-
-    const session = await lucia.createSession(existingUser.id, {});
-    const sessionCookie = lucia.createSessionCookie(session.id);
-
-    cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-
-    return new Response(null, {
-      status: 302,
-      headers: { Location: Paths.Dashboard },
-    });
   } catch (e) {
-    // the specific error message depends on the provider
-    if (e instanceof OAuth2RequestError) {
-      // invalid code
-      return new Response(JSON.stringify({ message: "Invalid code" }), {
-        status: 400,
-      });
-    }
     console.error(e);
-
-    return new Response(JSON.stringify({ message: "Internal server error" }), {
-      status: 500,
-    });
+    if (e instanceof OAuth2RequestError) {
+      return new Response(JSON.stringify({ message: "Invalid code" }), { status: 400 });
+    }
+    return new Response(JSON.stringify({ message: "Internal server error" }), { status: 500 });
   }
 }
 
