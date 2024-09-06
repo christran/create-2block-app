@@ -13,6 +13,7 @@ import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogDescription,
+  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
@@ -121,7 +122,7 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
                   />
                 </div>
               </div>
-              
+
               {state?.fieldError ? (
                 <ul className="w-full md:w-1/2 mt-4 list-disc space-y-1 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
                   {Object.values(state.fieldError).map((err) => (
@@ -146,7 +147,7 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
             </AlertDialogTrigger>
             <AlertDialogContent className="max-w">
               <AlertDialogHeader>
-                <AlertDialogTitle className="text-center">
+                <AlertDialogTitle>
                   Are you absolutely sure?
                 </AlertDialogTitle>
                 <AlertDialogDescription>
@@ -154,14 +155,14 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
                   account and remove your data from our servers.
                 </AlertDialogDescription>
               </AlertDialogHeader>
-              <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-center">
+              <AlertDialogFooter>
                 <Button variant="outline" onClick={() => setOpen(false)}>
                   Cancel
                 </Button>
                 <LoadingButton disabled variant="destructive" loading={isLoading} onClick={accountDelete}>
                   Delete Account
                 </LoadingButton>
-              </div>
+              </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
             </CardFooter>
