@@ -72,7 +72,7 @@ jobs:
           echo "${{secrets.ENV_PROD}}" > .env
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
   
       - name: Build Next.js app
         run: npm run build
