@@ -125,7 +125,6 @@ export async function signup(_: any, formData: FormData): Promise<ActionResponse
     id: userId,
     fullname,
     email,
-    accountPasswordless: false,
     hashedPassword,
     // avatar,
   });
@@ -358,7 +357,6 @@ export async function resetPassword(
   const hashedPassword = await new Scrypt().hash(password);
   await db.update(users).set({ 
     hashedPassword,
-    accountPasswordless: false
   }).where(eq(users.id, dbToken.userId));
   const session = await lucia.createSession(dbToken.userId, {});
   const sessionCookie = lucia.createSessionCookie(session.id);

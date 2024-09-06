@@ -73,7 +73,6 @@ async function createNewUser(githubUser: GitHubUser, githubUserEmail: GitHubUser
     id: userId,
     fullname: githubUser.name,
     email: githubUserEmail.email,
-    accountPasswordless: true,
     emailVerified: true,
     githubId: githubUser.id,
     avatar: githubUser.avatar_url,

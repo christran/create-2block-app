@@ -49,7 +49,7 @@ async function createNewUser(googleUser: GoogleUser): Promise<Response> {
     where: (table, { eq, or }) =>
       or(
         // eq(table.discordId, discordUser.id),
-        eq(table.email, googleUser.email!)
+        eq(table.email, googleUser.email)
       )
   });
 
@@ -57,18 +57,15 @@ async function createNewUser(googleUser: GoogleUser): Promise<Response> {
     return redirectWithError(Paths.Login, 'Please log in with your existing account and link your Google account in the security settings.');
   }
 
-
   const userId = generateId(21);
-  const avatar = googleUser.picture || null;
 
   await db.insert(users).values({
     id: userId,
     fullname: googleUser.name,
     email: googleUser.email,
-    accountPasswordless: true,
     emailVerified: true,
     googleId: googleUser.sub,
-    avatar,
+    avatar: googleUser.picture,
   });
 
   const session = await lucia.createSession(userId, {});
@@ -83,10 +80,13 @@ export async function GET(request: Request): Promise<Response> {
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
   const storedState = cookies().get("google_oauth_state")?.value ?? null;
-  const storedCodeVerifier = cookies().get("google_code_verifier")?.value ?? null;
+  const storedCodeVerifier = cookies().get("google_code_verifier")?.value ?? '';
+  const googleError = url.searchParams.get("error");
 
-  if (!code || !state || !storedState || state !== storedState || !storedCodeVerifier) {
-    return new Response(null, { status: 400, headers: { Location: Paths.Login } });
+  if (!code || !state || !storedState || state !== storedState || googleError) {
+    console.log(googleError);
+
+    return new Response(null, { status: 302, headers: { Location: Paths.Login } });
   }
 
   try {
@@ -125,4 +125,11 @@ export async function GET(request: Request): Promise<Response> {
   }
 }
 
-// ... existing GoogleUser interface ...
+interface GoogleUser {
+  sub: string,
+  name: string,
+  given_name: string,
+  picture: string | null,
+  email: string,
+  email_verified: boolean
+}

@@ -13,7 +13,6 @@ export const userRouter = createTRPCRouter({
           fullname: true,
           email: true,
           emailVerified: true,
-          accountPasswordless: true,
           googleId: true,
           discordId: true,
           githubId: true,

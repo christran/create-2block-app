@@ -1,5 +1,5 @@
 {
-  "id": "136b86e7-c6fd-4ca7-a4af-a89982bce522",
+  "id": "668bee90-c506-4e28-9445-f771a50e8d52",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -309,14 +309,14 @@
           "primaryKey": false,
           "notNull": false
         },
-        "github_id": {
-          "name": "github_id",
+        "discord_id": {
+          "name": "discord_id",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false
         },
-        "discord_id": {
-          "name": "discord_id",
+        "github_id": {
+          "name": "github_id",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false
@@ -381,11 +381,41 @@
           "method": "btree",
           "with": {}
         },
+        "user_google_idx": {
+          "name": "user_google_idx",
+          "columns": [
+            {
+              "expression": "google_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
         "user_discord_idx": {
           "name": "user_discord_idx",
           "columns": [
             {
               "expression": "discord_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "user_githubId_idx": {
+          "name": "user_githubId_idx",
+          "columns": [
+            {
+              "expression": "github_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -414,18 +444,18 @@
             "google_id"
           ]
         },
-        "2block_users_github_id_unique": {
-          "name": "2block_users_github_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "github_id"
-          ]
-        },
         "2block_users_discord_id_unique": {
           "name": "2block_users_discord_id_unique",
           "nullsNotDistinct": false,
           "columns": [
             "discord_id"
+          ]
+        },
+        "2block_users_github_id_unique": {
+          "name": "2block_users_github_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "github_id"
           ]
         }
       }

@@ -19,11 +19,10 @@ export const users = pgTable(
     fullname: varchar("fullname", { length: 255 }).notNull(),
     email: varchar("email", { length: 255 }).unique().notNull(),
     emailVerified: boolean("email_verified").default(false).notNull(),
-    accountPasswordless: boolean("account_passwordless").default(false).notNull(),
     hashedPassword: varchar("hashed_password", { length: 255 }),
     googleId: varchar("google_id", { length: 255 }).unique(),
-    githubId: varchar("github_id", { length: 255 }).unique(),
     discordId: varchar("discord_id", { length: 255 }).unique(),
+    githubId: varchar("github_id", { length: 255 }).unique(),
     avatar: varchar("avatar", { length: 255 }),
     stripeSubscriptionId: varchar("stripe_subscription_id", { length: 191 }),
     stripePriceId: varchar("stripe_price_id", { length: 191 }),
@@ -34,7 +33,9 @@ export const users = pgTable(
   },
   (t) => ({
     emailIdx: index("user_email_idx").on(t.email),
+    googleIdx: index("user_google_idx").on(t.googleId),
     discordIdx: index("user_discord_idx").on(t.discordId),
+    githubIdx: index("user_githubId_idx").on(t.githubId),
   }),
 );
 

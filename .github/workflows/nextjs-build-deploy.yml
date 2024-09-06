@@ -68,7 +68,7 @@ jobs:
           echo "${{secrets.ENV_PROD}}" > .env
 
       - name: Install dependencies
-        run: npm i # should cache node_modules so this command runs faster
+        run: npm ci # should cache node_modules so this command runs faster
   
       - name: Build Next.js app
         run: npm run build

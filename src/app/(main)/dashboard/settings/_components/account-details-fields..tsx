@@ -29,8 +29,7 @@ export async function AccountDetailsFields() {
         />
       <Label>Email</Label>
       <Input
-
-        // required={user?.accountPasswordless}
+        // required={user?.accountPasswordless === null}
         // readOnly={true}
         placeholder="hello@2block.co"
         autoComplete="email"

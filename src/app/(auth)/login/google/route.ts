@@ -19,10 +19,15 @@ export async function GET(request: Request): Promise<Response> {
     
     if (!user.googleId) redirect(Paths.Security);
 
-    // const isPasswordLess = await api.user.isPasswordLess.query()
-    if (await api.user.isPasswordLess.query()) redirect(Paths.Security);
+    const isPasswordLess = await api.user.isPasswordLess.query();
+    const connectedAccountsCount = ['googleId', 'discordId', 'githubId'].filter(id => user[id as keyof typeof user]).length;
+
+		// todo: send message for toast.error
+    if (isPasswordLess && connectedAccountsCount <= 1) redirect(Paths.Security);
 
     await api.user.removeSocialAccounts.mutate({ google: true });
+    // revalidatePath(Paths.Security);
+    // redirect(Paths.Security);
   }
 
 	const state = generateState();

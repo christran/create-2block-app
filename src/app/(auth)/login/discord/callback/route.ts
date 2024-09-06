@@ -54,7 +54,7 @@ async function createNewUser(discordUser: DiscordUser): Promise<Response> {
     where: (table, { eq, or }) =>
       or(
         // eq(table.discordId, discordUser.id),
-        eq(table.email, discordUser.email!)
+        eq(table.email, discordUser.email)
       )
   });
 
@@ -65,8 +65,7 @@ async function createNewUser(discordUser: DiscordUser): Promise<Response> {
   await db.insert(users).values({
     id: userId,
     fullname: discordUser.username,
-    email: discordUser.email ?? '',
-    accountPasswordless: true,
+    email: discordUser.email,
     emailVerified: true,
     discordId: discordUser.id,
     avatar,
@@ -84,9 +83,12 @@ export async function GET(request: Request): Promise<Response> {
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
   const storedState = cookies().get("discord_oauth_state")?.value ?? null;
+  const discordError = url.searchParams.get("error");
 
-  if (!code || !state || !storedState || state !== storedState) {
-    return new Response(null, { status: 400, headers: { Location: Paths.Login } });
+  if (!code || !state || !storedState || state !== storedState || discordError) {
+    console.log(discordError);
+
+    return new Response(null, { status: 302, headers: { Location: Paths.Login } });
   }
 
   try {
@@ -134,6 +136,6 @@ interface DiscordUser {
   banner_color: string | null;
   mfa_enabled: boolean;
   locale: string;
-  email: string | null;
+  email: string;
   verified: boolean;
 }

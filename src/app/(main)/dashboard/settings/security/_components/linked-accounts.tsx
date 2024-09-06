@@ -6,16 +6,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { updatePassword } from "@/lib/auth/actions"
-import { useFormState } from "react-dom"
 import { useState } from "react";
 import { useEffect } from "react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import Link from "next/link"
 import { DiscordLogoIcon, faGoogle, FontAwesomeIcon, GitHubLogoIcon } from "@/components/icons"
 interface LinkedAccountProps {
   googleId: string | null
@@ -46,8 +41,10 @@ export function LinkedAccounts({ user, isPasswordLess }: { user: LinkedAccountPr
   }, [authError]);
 
   function handleSocial(provider: 'google' | 'discord' | 'github') {
-    if (isPasswordLess && user[`${provider}Id`]) {
-      toast.error(`You can't remove this account without setting a password first.`);
+    const connectedAccountsCount = ['googleId', 'discordId', 'githubId'].filter(id => user[id as keyof LinkedAccountProps]).length;
+    
+    if (isPasswordLess && user[`${provider}Id`] && connectedAccountsCount <= 1) {
+      toast.error(`You can't remove this account without setting a password or connecting another account.`);
       return;
     }
     const url = user[`${provider}Id`] ? `/login/${provider}?disconnect=1` : `/login/${provider}`;
