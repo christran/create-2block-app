@@ -38,9 +38,8 @@ jobs:
     env:
       SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
       USER: root
-      HOST: "5.78.42.187"
+      HOST: ${{vars.SERVER_IP}}
       APP_DIR: "/root/SaaS"
-      NEXT_FOLDER: "/root/SaaS/.next"
       PM2_APP_NAME: "2block"
     steps:
       - name: Checkout main branch
@@ -88,7 +87,7 @@ jobs:
         run: |
           echo "${{secrets.ENV_PROD}}" > .env
           scp .env vps:$APP_DIR/.env
-          ssh vps "mkdir -p $NEXT_FOLDER/.next"
-          rsync -re ssh ./.next/ vps:$NEXT_FOLDER
+          ssh vps "mkdir -p $APP_DIR/.next"
+          rsync -re ssh ./.next/ vps:$APP_DIR
           ssh vps "cd $APP_DIR && pnpm install"
           ssh vps "pm2 restart $PM2_APP_NAME"
