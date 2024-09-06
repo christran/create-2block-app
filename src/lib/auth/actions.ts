@@ -32,10 +32,11 @@ import { generateId, Scrypt } from "lucia";
 
 import { sendEmail as sendEmailSMTP, EmailTemplate as EmailTemplateSMTP } from "@/lib/email/smtp";
 import { sendEmail as sendEmailSES, EmailTemplate as EmailTemplateSES } from "@/lib/email/aws-ses";
+import { sendEmail as sendEmailPlunk, EmailTemplate as EmailTemplatePlunk } from "@/lib/email/plunk";
 import { sendEmail as sendEmailResend, EmailTemplate as EmailTemplateResend } from "@/lib/email/resend";
 
-const sendEmail = env.NODE_ENV === "production" ? sendEmailResend : sendEmailSES;
-const EmailTemplate = env.NODE_ENV === "production" ? EmailTemplateResend : EmailTemplateSES;
+const sendEmail = env.NODE_ENV === "production" ? sendEmailResend : sendEmailPlunk;
+const EmailTemplate = env.NODE_ENV === "production" ? EmailTemplateResend : EmailTemplatePlunk;
 
 export interface ActionResponse<T> {
   fieldError?: Partial<Record<keyof T, string | undefined>>;

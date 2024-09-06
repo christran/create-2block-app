@@ -30,7 +30,7 @@ export const Footer = () => {
                 </p>
               </TooltipTrigger>
               <TooltipContent className="font-bold text-sm">
-                  ✌️BLOCK
+                  ✌️BLOCK!
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
