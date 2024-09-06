@@ -21,8 +21,8 @@ export type PropsMap = {
 const sesClient = new SESv2Client({ 
   region: 'us-west-1',
   credentials: {
-    accessKeyId: env.AWS_ACCESS_KEY_ID as string,
-    secretAccessKey: env.AWS_SECRET_ACCESS_KEY as string
+    accessKeyId: env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: env.AWS_SECRET_ACCESS_KEY
   },
 });
 
@@ -61,7 +61,7 @@ export const sendEmail = async <T extends EmailTemplate>(
     const { subject, body } = await getEmailTemplate(template, props);
 
     const params = {
-      FromEmailAddress: '2BLOCK <hello@2block.co>', // Change this to EMAIL_SENDER after SES prod approval
+      FromEmailAddress: EMAIL_SENDER,
       Destination: {
         ToAddresses: [to],
       },
