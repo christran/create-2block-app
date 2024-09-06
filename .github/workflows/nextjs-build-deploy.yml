@@ -88,6 +88,6 @@ jobs:
           echo "${{secrets.ENV_PROD}}" > .env
           scp .env vps:$APP_DIR/.env
           ssh vps "mkdir -p $APP_DIR/.next"
-          rsync -re ssh ./.next/ vps:$APP_DIR
+          rsync -re ssh ./.next/ vps:$APP_DIR/.next
           ssh vps "cd $APP_DIR && pnpm install"
           ssh vps "pm2 restart $PM2_APP_NAME"
