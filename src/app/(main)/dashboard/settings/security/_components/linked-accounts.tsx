@@ -24,10 +24,6 @@ interface LinkedAccountProps {
 }
 
 export function LinkedAccounts({ user }: { user: LinkedAccountProps }) {
-  const [googleId, setGoogleId] = useState(user?.googleId ?? "");
-  const [discordId, setdiscordId] = useState(user?.discordId ?? "");
-  const [githubId, setgithubId] = useState(user?.githubId ?? "");
-  const [state, formAction] = useFormState(updatePassword, null);
   const [authError, setAuthError] = useState<string | null>(null);
   // const formRef = useRef<HTMLFormElement>(null);
 
@@ -49,49 +45,44 @@ export function LinkedAccounts({ user }: { user: LinkedAccountProps }) {
     }
   }, [authError]);
 
-  useEffect(() => {
-    if (state?.success) {
-      toast.success("Account linked");
-      router.refresh();
-    }
-    if (state?.error) {
-      toast.error(state?.error);
-    }
-  }, [state]);
-
-  const handleSubmit = (formData: FormData) => {
-    formAction(formData);
-  };
+  function handleSocial(provider: 'google' | 'discord' | 'github') {
+    const url = user[`${provider}Id`] ? `/login/${provider}?disconnect=1` : `/login/${provider}`;
+    router.push(url);
+  }
 
   return (
-    <form action={handleSubmit} className="grid gap-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>Linked Accounts</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="w-full md:w-1/2 space-y-2">
-            <Button disabled variant="outline" className="w-full bg-secondary/30">
-              <Link href={googleId ? "/unlink/google" : "/link/google"} prefetch={false} className="flex items-center justify-center">
-                <FontAwesomeIcon icon={faGoogle} className="mr-2 h-5 w-5" />
-                {googleId ? "Remove Google Account" : "Connect Google Account"}
-              </Link>
-            </Button>
-              <Button variant="outline" className="w-full bg-secondary/30">
-                <Link href={discordId ? "/unlink/discord" : "/login/discord?linking=true"} prefetch={false} className="flex items-center justify-center">
-                  <DiscordLogoIcon className="mr-2 h-5 w-5" />
-                  {discordId ? "Remove Discord Account" : "Connect Discord Account"}
-                </Link>
-              </Button>
-            <Button disabled variant="outline" className="w-full bg-secondary/30">
-              <Link href={githubId ? "/unlink/github" : "/link/github"} prefetch={false} className="flex items-center justify-center">
-                <GitHubLogoIcon className="mr-2 h-5 w-5" />
-                {githubId ? "Remove GitHub Account" : "Connect GitHub Account"}
-              </Link>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </form>
+    <Card>
+      <CardHeader>
+        <CardTitle>Linked Accounts</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="w-full md:w-1/2 space-y-2">
+          <Button
+            variant="outline"
+            onClick={() => handleSocial('google')}
+            className="w-full bg-secondary/30"
+          >
+            <FontAwesomeIcon icon={faGoogle} className="mr-2 h-5 w-5" />
+            {user?.googleId ? "Remove Google Account" : "Connect Google Account"}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => handleSocial('discord')}
+            className="w-full bg-secondary/30"
+          >
+            <DiscordLogoIcon className="mr-2 h-5 w-5" />
+            {user?.discordId ? "Remove Discord Account" : "Connect Discord Account"}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => handleSocial('github')}
+            className="w-full bg-secondary/30"
+          >
+            <GitHubLogoIcon className="mr-2 h-5 w-5" />
+            {user?.githubId ? "Remove GitHub Account" : "Connect GitHub Account"}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   )
 }

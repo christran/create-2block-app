@@ -36,6 +36,45 @@ export const userRouter = createTRPCRouter({
       return user?.hashedPassword === null;
     }),
 
+  removeDiscordAccount: protectedProcedure
+    .query(async ({ ctx }) => {
+      const [discord] = await ctx.db
+      .update(users)
+      .set({
+        discordId: null,
+      })
+      .where(eq(users.id, ctx.user.id))
+      .returning();
+    
+    return discord;
+    }),
+
+  removeSocialAccounts: protectedProcedure
+    .input(z.object({
+      google: z.boolean().optional(),
+      discord: z.boolean().optional(),
+      github: z.boolean().optional(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const updateData: Partial<typeof users.$inferSelect> = {};
+      
+      if (input.google) updateData.googleId = null;
+      if (input.discord) updateData.discordId = null;
+      if (input.github) updateData.githubId = null;
+
+      if (Object.keys(updateData).length === 0) {
+        throw new Error("At least one social account must be selected for removal");
+      }
+
+      const [updatedUser] = await ctx.db
+        .update(users)
+        .set(updateData)
+        .where(eq(users.id, ctx.user.id))
+        .returning();
+
+      return updatedUser;
+    }),
+
   deleteAccountByUserId: protectedProcedure
     .input(z.object({
       id: z.string(),

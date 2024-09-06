@@ -31,8 +31,12 @@ async function handleAccountLinking(discordUser: DiscordUser, userId: string): P
   return new Response(null, { status: 302, headers: { Location: Paths.Security } });
 }
 
-async function handleLogin(discordUser: DiscordUser, userId: string): Promise<Response> {
-  const session = await lucia.createSession(userId, {});
+async function handleLogin(discordUser: DiscordUser, existingUser: { id: string; discordId: string | null }): Promise<Response> {
+  if (existingUser.discordId === null) {
+    return redirectWithError(Paths.Login, 'Please log in with your existing account and link your Discord account in the security settings.');
+  }
+
+  const session = await lucia.createSession(existingUser.id, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
 
   cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
@@ -45,6 +49,18 @@ async function createNewUser(discordUser: DiscordUser): Promise<Response> {
   const avatar = discordUser.avatar
     ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.webp`
     : null;
+
+  const existingUser = await db.query.users.findFirst({
+    where: (table, { eq, or }) =>
+      or(
+        // eq(table.discordId, discordUser.id),
+        eq(table.email, discordUser.email!)
+      )
+  });
+
+  if (existingUser) {
+    return redirectWithError(Paths.Login, 'Please log in with your existing account and link your Discord account in the security settings.');
+  }
 
   await db.insert(users).values({
     id: userId,
@@ -82,21 +98,22 @@ export async function GET(request: Request): Promise<Response> {
     }
 
     const existingUser = await db.query.users.findFirst({
-      where: (table, { eq, or }) => or(
-        eq(table.discordId, discordUser.id),
-        eq(table.email, discordUser.email!)
-      ),
+      where: (table, { eq, or }) =>
+        or(
+          eq(table.discordId, discordUser.id),
+          // eq(table.email, discordUser.email!)
+        )
     });
 
     if (user) {
       // User is logged in and wants to link account
-      return existingUser
+      return existingUser && existingUser.id !== user.id
         ? redirectWithError(Paths.Security, 'Discord account is already linked with another account')
         : handleAccountLinking(discordUser, user.id);
     } else {
       // User is not logged in
       return existingUser
-        ? handleLogin(discordUser, existingUser.id)
+        ? handleLogin(discordUser, { id: existingUser.id, discordId: existingUser.discordId })
         : createNewUser(discordUser);
     }
   } catch (e) {

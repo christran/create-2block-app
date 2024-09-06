@@ -6,6 +6,77 @@ import { google, lucia } from "@/lib/auth";
 import { db } from "@/server/db";
 import { Paths } from "@/lib/constants";
 import { users } from "@/server/db/schema";
+import { validateRequest } from "@/lib/auth/validate-request";
+
+// ... existing GoogleUser interface ...
+
+async function getGoogleUser(code: string, codeVerifier: string): Promise<GoogleUser> {
+  const tokens = await google.validateAuthorizationCode(code, codeVerifier);
+  const googleUserRes = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
+    headers: { Authorization: `Bearer ${tokens.accessToken}` },
+  });
+  return await googleUserRes.json() as GoogleUser;
+}
+
+function redirectWithError(path: string, error: string): Response {
+  cookies().set('auth_error', error, { maxAge: 5, path: '/' });
+  return new Response(null, { status: 302, headers: { Location: path } });
+}
+
+async function handleAccountLinking(googleUser: GoogleUser, userId: string): Promise<Response> {
+  await db.update(users)
+    .set({ googleId: googleUser.sub })
+    .where(eq(users.id, userId));
+
+  return new Response(null, { status: 302, headers: { Location: Paths.Security } });
+}
+
+async function handleLogin(googleUser: GoogleUser, existingUser: { id: string; googleId: string | null }): Promise<Response> {
+  if (existingUser.googleId === null) {
+    return redirectWithError(Paths.Login, 'Please log in with your existing account and link your Google account in the security settings.');
+  }
+
+  const session = await lucia.createSession(existingUser.id, {});
+  const sessionCookie = lucia.createSessionCookie(session.id);
+
+  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+
+  return new Response(null, { status: 302, headers: { Location: Paths.Dashboard } });
+}
+
+async function createNewUser(googleUser: GoogleUser): Promise<Response> {
+  const existingUser = await db.query.users.findFirst({
+    where: (table, { eq, or }) =>
+      or(
+        // eq(table.discordId, discordUser.id),
+        eq(table.email, googleUser.email!)
+      )
+  });
+
+  if (existingUser) {
+    return redirectWithError(Paths.Login, 'Please log in with your existing account and link your Google account in the security settings.');
+  }
+
+
+  const userId = generateId(21);
+  const avatar = googleUser.picture || null;
+
+  await db.insert(users).values({
+    id: userId,
+    fullname: googleUser.name,
+    email: googleUser.email,
+    accountPasswordless: true,
+    emailVerified: true,
+    googleId: googleUser.sub,
+    avatar,
+  });
+
+  const session = await lucia.createSession(userId, {});
+  const sessionCookie = lucia.createSessionCookie(session.id);
+  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+
+  return new Response(null, { status: 302, headers: { Location: Paths.Dashboard } });
+}
 
 export async function GET(request: Request): Promise<Response> {
   const url = new URL(request.url);
@@ -15,108 +86,43 @@ export async function GET(request: Request): Promise<Response> {
   const storedCodeVerifier = cookies().get("google_code_verifier")?.value ?? null;
 
   if (!code || !state || !storedState || state !== storedState || !storedCodeVerifier) {
-    return new Response(null, {
-      status: 400,
-      headers: { Location: Paths.Login },
-    });
+    return new Response(null, { status: 400, headers: { Location: Paths.Login } });
   }
 
   try {
-    const tokens = await google.validateAuthorizationCode(code, storedCodeVerifier);
-    const googleUserResponse = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
-        headers: {
-            Authorization: `Bearer ${tokens.accessToken}`
-        }
-    });
-
-    const googleUser = (await googleUserResponse.json()) as GoogleUser;
+    const { user } = await validateRequest();
+    const googleUser = await getGoogleUser(code, storedCodeVerifier);
 
     if (!googleUser.email || !googleUser.email_verified) {
-      cookies().set('auth_error', 'Please verify your email on Google before continuing', {
-        maxAge: 5, // Cookie expires after 60 seconds
-        path: '/',
-      });
-
-      return new Response(null, {
-        status: 302,
-        headers: { Location: Paths.Login },
-      });
+      return redirectWithError(user ? Paths.Security : Paths.Login, 'Please verify your email on Google before continuing');
     }
 
     const existingUser = await db.query.users.findFirst({
-        where: (table, { eq, or }) =>
-          or(eq(table.googleId, googleUser.sub), eq(table.email, googleUser.email)),
-      });
-
-    const avatar = googleUser.picture
-    ? googleUser.picture
-    : null;
-
-    if (!existingUser) {
-        const userId = generateId(21);
-        await db.insert(users).values({
-          id: userId,
-          fullname: googleUser.name,
-          email: googleUser.email,
-          accountPasswordless: true,
-          emailVerified: true,
-          googleId: googleUser.sub,
-          avatar,
-        });
-
-        const session = await lucia.createSession(userId, {});
-        const sessionCookie = lucia.createSessionCookie(session.id);
-
-        cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-
-        return new Response(null, {
-          status: 302,
-          headers: { Location: Paths.Dashboard },
-        });
-      }
-
-    if (existingUser.googleId !== googleUser.sub) {
-    await db
-        .update(users)
-        .set({
-        googleId: googleUser.sub,
-        // fullname: googleUser.name,
-        // emailVerified: true,
-        // avatar,
-        })
-        .where(eq(users.id, existingUser.id));
-    }
-
-    const session = await lucia.createSession(existingUser.id, {});
-    const sessionCookie = lucia.createSessionCookie(session.id);
-
-    cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-    
-      return new Response(null, {
-        status: 302,
-        headers: { Location: Paths.Dashboard },
-      });
-  } catch (e) {
-    // the specific error message depends on the provider
-    if (e instanceof OAuth2RequestError) {
-      // invalid code
-      return new Response(JSON.stringify({ message: "Invalid code" }), {
-        status: 400,
-      });
-    }
-    console.error(e);
-
-    return new Response(JSON.stringify({ message: "Internal server error" }), {
-      status: 500,
+      where: (table, { eq, or }) => 
+        or(
+          eq(table.googleId, googleUser.sub), 
+          // eq(table.email, googleUser.email)
+        )
     });
+
+    if (user) {
+      // User is logged in and wants to link account
+      return existingUser && existingUser.id !== user.id
+        ? redirectWithError(Paths.Security, 'Google account is already linked with another account')
+        : handleAccountLinking(googleUser, user.id);
+    } else {
+      // User is not logged in
+      return existingUser
+        ? handleLogin(googleUser, { id: existingUser.id, googleId: existingUser.googleId })
+        : createNewUser(googleUser);
+    }
+  } catch (e) {
+    console.error(e);
+    if (e instanceof OAuth2RequestError) {
+      return new Response(JSON.stringify({ message: "Invalid code" }), { status: 400 });
+    }
+    return new Response(JSON.stringify({ message: "Internal server error" }), { status: 500 });
   }
 }
 
-interface GoogleUser {
-  sub: string,
-  name: string,
-  given_name: string,
-  picture: string,
-  email: string,
-  email_verified: boolean
-}
+// ... existing GoogleUser interface ...

@@ -2,8 +2,26 @@ import { generateCodeVerifier, generateState } from "arctic";
 import { google } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { env } from "@/env";
+import { validateRequest } from "@/lib/auth/validate-request";
+import { Paths } from "@/lib/constants";
+import { redirect } from "next/navigation";
+import { api } from "@/trpc/server";
+import { revalidatePath } from "next/cache";
 
-export async function GET(): Promise<Response> {
+export async function GET(request: Request): Promise<Response> {
+  const { searchParams } = new URL(request.url);
+  const disconnectGoogle = searchParams.get("disconnect") === "1";
+
+  if (disconnectGoogle) {
+    const { user } = await validateRequest();
+
+    if (!user) redirect(Paths.Login);
+    
+    if (!user.googleId) redirect(Paths.Security);
+
+    await api.user.removeSocialAccounts.mutate({ google: true });
+  }
+
 	const state = generateState();
   const codeVerifier = generateCodeVerifier();
 	const url = await google.createAuthorizationURL(state, codeVerifier, {
