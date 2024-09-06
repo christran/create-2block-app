@@ -33,7 +33,7 @@ export default async function SecurityPage() {
         <h1 className="text-3xl font-bold md:text-4xl">Security</h1>
       </div>
       <div className="grid gap-8">
-        <LinkedAccounts user={user} />
+        <LinkedAccounts user={user} isPasswordLess={isPasswordLess} />
         <UpdatePassword isPasswordLess={isPasswordLess} />
         <MultiFactorAuth />
       </div>

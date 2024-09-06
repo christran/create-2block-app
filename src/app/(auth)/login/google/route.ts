@@ -19,6 +19,9 @@ export async function GET(request: Request): Promise<Response> {
     
     if (!user.googleId) redirect(Paths.Security);
 
+    // const isPasswordLess = await api.user.isPasswordLess.query()
+    if (await api.user.isPasswordLess.query()) redirect(Paths.Security);
+
     await api.user.removeSocialAccounts.mutate({ google: true });
   }
 

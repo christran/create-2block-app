@@ -23,7 +23,7 @@ interface LinkedAccountProps {
   githubId: string | null
 }
 
-export function LinkedAccounts({ user }: { user: LinkedAccountProps }) {
+export function LinkedAccounts({ user, isPasswordLess }: { user: LinkedAccountProps; isPasswordLess: boolean }) {
   const [authError, setAuthError] = useState<string | null>(null);
   // const formRef = useRef<HTMLFormElement>(null);
 
@@ -46,6 +46,10 @@ export function LinkedAccounts({ user }: { user: LinkedAccountProps }) {
   }, [authError]);
 
   function handleSocial(provider: 'google' | 'discord' | 'github') {
+    if (isPasswordLess && user[`${provider}Id`]) {
+      toast.error(`You can't remove this account without setting a password first.`);
+      return;
+    }
     const url = user[`${provider}Id`] ? `/login/${provider}?disconnect=1` : `/login/${provider}`;
     router.push(url);
   }

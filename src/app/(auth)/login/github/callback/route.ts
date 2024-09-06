@@ -63,6 +63,7 @@ async function createNewUser(githubUser: GitHubUser, githubUserEmail: GitHubUser
       )
   });
 
+  // GitHub account is not linked to any account but the GitHub email already exists in the db
   if (existingUser) {
     return redirectWithError(Paths.Login, 'Please log in with your existing account and link your Google account in the security settings.');
   }
@@ -116,13 +117,15 @@ export async function GET(request: Request): Promise<Response> {
         )
     });
 
+    // User is logged in and wants to link account
     if (user) {
-      // User is logged in and wants to link account
+      // If githubId exists in db and If userId in the db !== session user id
       return existingUser && existingUser.id !== user.id
         ? redirectWithError(Paths.Security, 'GitHub account is already linked with another account')
         : handleAccountLinking(githubUser, user.id);
     } else {
-      // User is not logged in
+      // User is not logged in handle logiin or sign up
+      // If githubId exists in db
       return existingUser
         ? handleLogin(githubUser, { id: existingUser.id, githubId: existingUser.githubId, email: existingUser.email })
         : createNewUser(githubUser, githubUserEmail);
