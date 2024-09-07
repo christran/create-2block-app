@@ -73,7 +73,7 @@ export default function RootLayout({
       <Script
         async
         src="/census.js"
-        data-website-id="372170b5-8c79-4b86-8bd5-18864240a4d9"
+        data-website-id="1b28736f-b351-4b3a-8659-44dae398f196"
       />
       </body>
     </html>
