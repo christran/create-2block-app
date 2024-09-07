@@ -9,11 +9,11 @@ import { TRPCReactProvider } from "@/trpc/react";
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 
-const GeistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
+// const GeistSans = localFont({
+//   src: "./fonts/GeistVF.woff",
+//   variable: "--font-geist-sans",
+//   weight: "100 900",
+// });
 
 const Inter = localFont({
   src: "./fonts/Inter.woff2",
@@ -21,12 +21,12 @@ const Inter = localFont({
   weight: "100 900",
 })
 
-const InterItalic = localFont({
-  src: "./fonts/Inter-Italic.woff2",
-  variable: "--font-sans",
-  weight: "100 900",
-  style: "italtic"
-})
+// const InterItalic = localFont({
+//   src: "./fonts/Inter-Italic.woff2",
+//   variable: "--font-sans",
+//   weight: "100 900",
+//   style: "italtic"
+// })
 
 export const metadata: Metadata = {
   title: {
