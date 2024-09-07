@@ -8,11 +8,12 @@ const config = {
     eslint: {
         ignoreDuringBuilds: true,
     },
+    output: 'standalone',
 
-	webpack: (config) => {
-		config.externals.push("@node-rs/argon2", "@node-rs/bcrypt");
-		return config;
-	},
+	// webpack: (config) => {
+	// 	config.externals.push("@node-rs/argon2", "@node-rs/bcrypt");
+	// 	return config;
+	// },
 
     // Add the async rewrites function
     async rewrites() {
