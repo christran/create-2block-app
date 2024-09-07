@@ -76,6 +76,7 @@ export const sendEmail = async <T extends EmailTemplate>(
       subscribed: true,
     })
   };
+  console.log(body);
 
   try {
     const response = await fetch('https://resend.2block.co/api/v1/send', options);

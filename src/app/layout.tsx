@@ -3,11 +3,30 @@ import "@/styles/globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { APP_TITLE, APP_TITLE_PLAIN } from "@/lib/constants";
-import { fontSans } from "@/lib/fonts";
+import localFont from "next/font/local";
 import { cn } from "@/lib/utils";
 import { TRPCReactProvider } from "@/trpc/react";
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
+
+const GeistSans = localFont({
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-geist-sans",
+  weight: "100 900",
+});
+
+const Inter = localFont({
+  src: "./fonts/Inter.woff2",
+  variable: "--font-sans",
+  weight: "100 900",
+})
+
+const InterItalic = localFont({
+  src: "./fonts/Inter-Italic.woff2",
+  variable: "--font-sans",
+  weight: "100 900",
+  style: "italtic"
+})
 
 export const metadata: Metadata = {
   title: {
@@ -31,11 +50,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${Inter.className} antialiased`}>
       <body
         className={cn(
-          "flex flex-col min-h-screen font-sans antialiased",
-          fontSans.variable,
+          "flex flex-col min-h-screen"
         )}
       >
         <ThemeProvider
