@@ -57,10 +57,10 @@ export const ResetPasswordTemplate = ({ fullname, url }: ResetPasswordTemplatePr
             If you didn&apos;t request this, you may ignore this email.
         </Text>
         </Section>
-        <Text style={links}>
+        {/* <Text style={links}>
           <Link style={link}>Your security audit log</Link> ・{" "}
           <Link style={link}>Contact support</Link>
-        </Text>
+        </Text> */}
 
         <Text style={footer}>
           2BLOCK Co. ・1337 Legit Sreet ・Los Angeles, CA 90015
@@ -110,6 +110,7 @@ const text = {
 
 const button = {
   fontSize: "14px",
+  fontWeight: "600",
   backgroundColor: "#09090b",
   color: "#fff",
   lineHeight: 1.5,
@@ -129,7 +130,7 @@ const link = {
 
 const footer = {
   color: "#6a737d",
-  fontSize: "12px",
+  fontSize: "11px",
   textAlign: "center" as const,
-  marginTop: "60px",
+  marginTop: "10px",
 };

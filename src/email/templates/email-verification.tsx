@@ -30,7 +30,7 @@ export default function EmailVerificationTemplate() {
               <strong>Verify your email address</strong>
             </Text>
             <Text style={text}>
-              Hey <strong>{fullname}</strong>!
+              Hey <strong>{fullname}</strong>
             </Text>
             <Text style={text}>
               Thank you for registering for an account with us. To complete your
@@ -45,10 +45,10 @@ export default function EmailVerificationTemplate() {
               Verify Email
             </Button>
           </Section>
-          <Text style={links}>
+          {/* <Text style={links}>
             <Link style={link}>Your security audit log</Link> ・{" "}
             <Link style={link}>Contact support</Link>
-          </Text>
+          </Text> */}
 
           <Text style={footer}>
             2BLOCK Co. ・1337 Legit Sreet ・Los Angeles, CA 90015
@@ -101,17 +101,19 @@ const codeBox = {
   background: "rgb(245, 244, 245)",
   borderRadius: "4px",
   marginBottom: "30px",
-  padding: "40px 10px",
+  padding: "5px 5px",
 };
 
 const confirmationCodeText = {
-  fontSize: "30px",
+  fontSize: "28px",
+  fontWeight: "600",
   textAlign: "center" as const,
   verticalAlign: "middle",
 };
 
 const button = {
   fontSize: "14px",
+  fontWeight: "600",
   backgroundColor: "#09090b",
   color: "#fff",
   lineHeight: 1.5,
@@ -119,7 +121,6 @@ const button = {
   padding: "12px 24px",
   margin: "0 0 8px 0",
 };
-
 
 const links = {
   textAlign: "center" as const,
@@ -132,7 +133,7 @@ const link = {
 
 const footer = {
   color: "#6a737d",
-  fontSize: "12px",
+  fontSize: "11px",
   textAlign: "center" as const,
-  marginTop: "60px",
+  marginTop: "10px",
 };

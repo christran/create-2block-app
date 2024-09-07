@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     template: `%s - ${APP_TITLE_PLAIN}`,
   },
   description: "✌️BLOCK",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: [{ rel: "icon", url: "/icon.png", sizes: "32x32" }],
 };
 
 export const viewport: Viewport = {
