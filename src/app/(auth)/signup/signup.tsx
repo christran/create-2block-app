@@ -136,15 +136,15 @@ export function Signup() {
       </Card>
       <div className="text-center text-xs text-muted-foreground mt-4 px-6 pb-6">
       By signing up, you agree to our{" "}
-      <Link href={Paths.TermsOfService} className="hover:underline dark:text-blue-500">
+      <Link href={Paths.TermsOfService} className="hover:underline dark:text-blue-500" prefetch={false}>
         terms
       </Link>
       ,{" "}
-      <Link href={Paths.AcceptableUsePolicy} className="hover:underline dark:text-blue-500">
+      <Link href={Paths.AcceptableUsePolicy} className="hover:underline dark:text-blue-500" prefetch={false}>
         acceptable use
       </Link>
       , and{" "}
-      <Link href={Paths.PrivacyPolicy} className="hover:underline dark:text-blue-500">
+      <Link href={Paths.PrivacyPolicy} className="hover:underline dark:text-blue-500" prefetch={false}>
         privacy policy
       </Link>
       .

@@ -144,13 +144,13 @@ export function Login() {
       </Card>
       <div className="text-center text-xs text-muted-foreground mt-4 px-6 pb-6">
         By signing in, you agree to our{" "}
-        <Link href={Paths.TermsOfService} className="hover:underline dark:text-blue-500">
+        <Link href={Paths.TermsOfService} className="hover:underline dark:text-blue-500" prefetch={false}>
           terms of service
         </Link>
         {" "}
         and
         {" "}
-        <Link href={Paths.PrivacyPolicy} className="hover:underline dark:text-blue-500">
+        <Link href={Paths.PrivacyPolicy} className="hover:underline dark:text-blue-500" prefetch={false}>
           privacy policy
         </Link>
         .

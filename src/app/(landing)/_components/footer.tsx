@@ -37,11 +37,11 @@ export const Footer = () => {
           <div className="flex-1"></div>
         </div>
         <div className="flex gap-3 text-[0.7rem]">
-          <Link href={Paths.PrivacyPolicy} className="hover:underline hover:text-blue-500">Privacy</Link>
+          <Link href={Paths.PrivacyPolicy} className="hover:underline hover:text-blue-500" prefetch={false}>Privacy</Link>
           <Separator orientation="vertical" className="h-4" />
-          <Link href={Paths.TermsOfService} className="hover:underline hover:text-blue-500">Terms of Service</Link>
+          <Link href={Paths.TermsOfService} className="hover:underline hover:text-blue-500" prefetch={false}>Terms of Service</Link>
           <Separator orientation="vertical" className="h-4" />
-          <Link href={Paths.AcceptableUsePolicy} className="hover:underline hover:text-blue-500">Acceptable Use</Link>
+          <Link href={Paths.AcceptableUsePolicy} className="hover:underline hover:text-blue-500" prefetch={false}>Acceptable Use</Link>
         </div>
       </div>
     </footer>
