@@ -1,3 +1,4 @@
+import { env } from "@/env.js";
 import { defineConfig } from "drizzle-kit";
 import { DATABASE_PREFIX } from "@/lib/constants";
 

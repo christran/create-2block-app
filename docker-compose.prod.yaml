@@ -1,0 +1,9 @@
+services:
+  2block:
+    container_name: 2block
+    image: repo.2block.co/2block
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    restart: always
