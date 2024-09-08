@@ -15,12 +15,15 @@ import { Paths } from "@/lib/constants";
 import { useState, useEffect, useMemo } from 'react';
 import { toast } from 'sonner';
 import { ArrowRightIcon } from "@radix-ui/react-icons";
+import { useRouter } from "next/navigation";
 
 export function Login() {
   const [state, formAction] = useFormState(login, null);
   const [authError, setAuthError] = useState<string | null>(null);
   const [email, setEmail] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
+
+  const router = useRouter();
 
   useEffect(() => {
     const cookies = document.cookie.split(';');
@@ -42,6 +45,10 @@ export function Login() {
     }
   }, [authError]);
 
+  function handleSocial(provider: 'google' | 'discord' | 'github') {    
+    return router.push(`/login/${provider}`);
+  }
+
   return (
     <>
       <Card className="w-full max-w-md">
@@ -51,23 +58,17 @@ export function Login() {
         </CardHeader>
         <CardContent>
         <CardContent className="space-y-2">
-          <Button variant="outline" className="w-full bg-secondary/30">
-            <Link href="/login/google" prefetch={false} className="flex items-center justify-center">
+          <Button variant="outline" onClick={() => handleSocial("google")} className="w-full bg-secondary/30">
               <FontAwesomeIcon icon={faGoogle} className="mr-2 h-5 w-5" />
               Log in with Google
-            </Link>
           </Button>
-          <Button variant="outline" className="w-full bg-secondary/30">
-            <Link href="/login/discord" prefetch={false} className="flex items-center justify-center">
+          <Button variant="outline" onClick={() => handleSocial("discord")} className="w-full bg-secondary/30">
               <DiscordLogoIcon className="mr-2 h-5 w-5" />
               Log in with Discord
-            </Link>
           </Button>
-          <Button variant="outline" className="w-full bg-secondary/30">
-            <Link href="/login/github" prefetch={false} className="flex items-center justify-center">
+          <Button variant="outline" onClick={() => handleSocial("github")} className="w-full bg-secondary/30">
               <GitHubLogoIcon className="mr-2 h-5 w-5" />
               Log in with GitHub
-            </Link>
           </Button>
         </CardContent>
         <div className="my-2 mt-2 mb-8 flex items-center">

@@ -1,6 +1,5 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -16,6 +15,7 @@ import { ExclamationTriangleIcon } from "@/components/icons"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { PasswordInput } from "@/components/password-input"
+import { SubmitButton } from "@/components/submit-button"
 
 export function UpdatePassword(user: { isPasswordLess: boolean }) {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -86,7 +86,7 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
           <div className="text-center">
           <p className="mb-4">You haven't set a password yet.</p>
           <form action={setupPasswordAction}>
-            <Button variant="default" type="submit">Set Password</Button>
+            <SubmitButton variant="default" type="submit">Set Password</SubmitButton>
           </form>
           </div>
         </div>
@@ -154,7 +154,7 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
           </CardContent>
           {user.isPasswordLess !== null && (
             <CardFooter className="border-t px-6 py-4">
-                <Button type="submit" disabled={!isDirty}>Update Password</Button>
+                <SubmitButton type="submit" disabled={!isDirty}>Update Password</SubmitButton>
 
             </CardFooter>
           )}

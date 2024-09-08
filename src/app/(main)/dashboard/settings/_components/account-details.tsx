@@ -30,6 +30,7 @@ import { DatabaseUserAttributes } from "@/lib/auth"
 import { api } from "@/trpc/react"
 import { Paths } from "@/lib/constants"
 import { LoadingButton } from "@/components/loading-button";
+import { SubmitButton } from "@/components/submit-button";
 interface AccountDetailsProps {
   id: string
   fullname: string
@@ -138,7 +139,7 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
               ) : null}
             </CardContent>
             <CardFooter className="border-t px-6 py-4 gap-2">
-              <Button formAction={formAction} disabled={!isDirty}>Update Account</Button>
+              <SubmitButton formAction={formAction} disabled={!isDirty}>Update Account</SubmitButton>
               <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
               <Button variant="link" size="sm">

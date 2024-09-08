@@ -81,14 +81,16 @@ export async function Billing({ stripePromises }: BillingProps) {
             </CardContent>
             <CardFooter className="pt-4">
               {item.name === "Free" ? (
-                <Button className="w-full" disabled={plan?.isPro}>
-                  <Link href="/dashboard">
-                    {plan?.isPro ? "Upgraded" : "Continue"}
-                    <span className="sr-only">
-                      {plan?.isPro ? "You are currently on the Pro plan" : "Continue with Free plan"}
+                <Link href="/dashboard" className="w-full">
+                  <Button className="w-full" disabled={plan?.isPro} asChild>
+                    <span>
+                      {plan?.isPro ? "Upgraded" : "Continue"}
+                      <span className="sr-only">
+                        {plan?.isPro ? "You are currently on the Pro plan" : "Continue with Free plan"}
+                      </span>
                     </span>
-                  </Link>
-                </Button>
+                  </Button>
+                </Link>
               ) : (
                 <ManageSubscriptionForm
                   stripePriceId={item.stripePriceId}

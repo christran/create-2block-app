@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { DesktopIcon } from "@radix-ui/react-icons";
 
 import { Paths } from "@/lib/constants";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -24,12 +25,12 @@ const HomePage = () => {
             The quick brown fox jumped over the lazy dog.
           </p>
           <div className="flex justify-center gap-4">
-            <Button size="lg" variant="outline" asChild>
-              <a href={Paths.Login}>
-                <DesktopIcon className="mr-2 h-5 w-5" />
-                Connect
-              </a>
-            </Button>
+            <Link href={Paths.Login}>
+              <Button size="lg" variant="outline">
+                  <DesktopIcon className="mr-2 h-5 w-5" />
+                  Connect
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

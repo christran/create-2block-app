@@ -14,6 +14,7 @@ import { SubmitButton } from "@/components/submit-button";
 import { Paths } from "@/lib/constants";
 import { useState, useMemo } from "react";
 import { CheckIcon } from "@radix-ui/react-icons";
+import { useRouter } from "next/navigation";
 
 export function Signup() {
   const [state, formAction] = useFormState(signup, null);
@@ -21,9 +22,15 @@ export function Signup() {
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
 
+  const router = useRouter();
+
   const isDirty = useMemo(() => {
     return email.trim() !== '' && currentPassword.trim() !== '' && fullName.trim() !== '';
   }, [email, currentPassword, fullName]);
+
+  function handleSocial(provider: 'google' | 'discord' | 'github') {    
+    return router.push(`/login/${provider}`);
+  }
 
   return (
     <>
@@ -113,23 +120,17 @@ export function Signup() {
             <div className="flex-grow border-t border-muted" />
           </div>
         <CardContent className="space-y-2">
-        <Button variant="outline" className="w-full bg-secondary/30">
-            <Link href="/login/google" prefetch={false} className="flex items-center justify-center">
+          <Button variant="outline" onClick={() => handleSocial("google")} className="w-full bg-secondary/30">
               <FontAwesomeIcon icon={faGoogle} className="mr-2 h-5 w-5" />
               Continue with Google
-            </Link>
           </Button>
-          <Button variant="outline" className="w-full bg-secondary/30">
-            <Link href="/login/discord" prefetch={false} className="flex items-center justify-center">
+          <Button variant="outline" onClick={() => handleSocial("discord")} className="w-full bg-secondary/30">
               <DiscordLogoIcon className="mr-2 h-5 w-5" />
               Continue with Discord
-            </Link>
           </Button>
-          <Button variant="outline" className="w-full bg-secondary/30">
-            <Link href="/login/github" prefetch={false} className="flex items-center justify-center">
+          <Button variant="outline" onClick={() => handleSocial("github")} className="w-full bg-secondary/30">
               <GitHubLogoIcon className="mr-2 h-5 w-5" />
               Continue with GitHub
-            </Link>
           </Button>
         </CardContent>
         </CardContent>
