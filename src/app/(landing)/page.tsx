@@ -4,13 +4,16 @@ import { DesktopIcon } from "@radix-ui/react-icons";
 
 import { Paths } from "@/lib/constants";
 import Link from "next/link";
+import { validateRequest } from "@/lib/auth/validate-request";
 
 export const metadata: Metadata = {
   title: "Home",
   description: "Welcome to ✌️BLOCK",
 };
 
-const HomePage = () => {
+const HomePage = async () => {
+  const { user } = await validateRequest();
+
   return (
     <>
       <section className="mx-auto grid min-h-[calc(100vh-300px)] max-w-5xl flex-col items-center justify-center gap-4 py-10 text-center md:py-12">
@@ -25,7 +28,8 @@ const HomePage = () => {
             The quick brown fox jumped over the lazy dog.
           </p>
           <div className="flex justify-center gap-4">
-            <Link href={Paths.Login}>
+            
+            <Link href={user ? Paths.Dashboard : Paths.Login}>
               <Button size="lg" variant="outline">
                   <DesktopIcon className="mr-2 h-5 w-5" />
                   Connect
