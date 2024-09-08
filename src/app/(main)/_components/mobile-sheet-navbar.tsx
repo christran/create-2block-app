@@ -30,8 +30,8 @@ export function MobileSheetNavbar() {
           </Link>
           <nav className="grid gap-6 text-lg font-medium">
             {navbarItems.map((item) => (
-              <SheetClose asChild>
-                <Link key={item.href} href={item.href}>
+              <SheetClose key={item.title} asChild>
+                <Link href={item.href}>
                   <span
                     className={cn(
                       "flex items-center text-muted-foreground hover:text-foreground",
