@@ -1,7 +1,7 @@
 import "server-only";
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
-import { EmailVerificationTemplate } from "./templates/email-verification";
-import { ResetPasswordTemplate } from "./templates/reset-password";
+import EmailVerificationTemplate from "./templates/email-verification";
+import ResetPasswordTemplate from "./templates/reset-password";
 import { render } from "@react-email/render";
 import { env } from "@/env";
 import { EMAIL_SENDER } from "@/lib/constants";

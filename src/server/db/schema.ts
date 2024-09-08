@@ -20,6 +20,7 @@ export const users = pgTable(
     email: varchar("email", { length: 255 }).unique().notNull(),
     emailVerified: boolean("email_verified").default(false).notNull(),
     hashedPassword: varchar("hashed_password", { length: 255 }),
+    contactId: varchar("contact_id", { length: 255 }).unique(),
     googleId: varchar("google_id", { length: 255 }).unique(),
     discordId: varchar("discord_id", { length: 255 }).unique(),
     githubId: varchar("github_id", { length: 255 }).unique(),
@@ -33,6 +34,7 @@ export const users = pgTable(
   },
   (t) => ({
     emailIdx: index("user_email_idx").on(t.email),
+    contactIdx: index("user_contact_idx").on(t.contactId),
     googleIdx: index("user_google_idx").on(t.googleId),
     discordIdx: index("user_discord_idx").on(t.discordId),
     githubIdx: index("user_githubId_idx").on(t.githubId),

@@ -68,12 +68,18 @@ async function createNewUser(githubUser: GitHubUser, githubUserEmail: GitHubUser
     return redirectWithError(Paths.Login, 'Please log in with your existing account and link your Google account in the security settings.');
   }
 
+  // todo: send welcome email and save contactId
+  // const emailData = await sendEmail(email, EmailTemplate.EmailVerification, { fullname, code: verificationCode });
+
+  // console.log(emailData.emails?.[0]);
+
   const userId = generateId(21);
   await db.insert(users).values({
     id: userId,
     fullname: githubUser.name,
     email: githubUserEmail.email,
     emailVerified: true,
+    contactId: null,
     githubId: githubUser.id,
     avatar: githubUser.avatar_url,
   });

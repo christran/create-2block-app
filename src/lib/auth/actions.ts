@@ -34,6 +34,7 @@ import { sendEmail as sendEmailSMTP, EmailTemplate as EmailTemplateSMTP } from "
 import { sendEmail as sendEmailSES, EmailTemplate as EmailTemplateSES } from "@/lib/email/aws-ses";
 import { sendEmail as sendEmailPlunk, EmailTemplate as EmailTemplatePlunk } from "@/lib/email/plunk";
 import { sendEmail as sendEmailResend, EmailTemplate as EmailTemplateResend } from "@/lib/email/resend";
+import { api } from "@/trpc/server";
 
 const sendEmail = env.NODE_ENV === "production" ? sendEmailResend : sendEmailPlunk;
 const EmailTemplate = env.NODE_ENV === "production" ? EmailTemplateResend : EmailTemplatePlunk;
@@ -121,18 +122,29 @@ export async function signup(_: any, formData: FormData): Promise<ActionResponse
 
   const userId = generateId(21);
   const hashedPassword = await new Scrypt().hash(password);
+
   
+  const verificationCode = await generateEmailVerificationCode(userId, email);
+
+  const emailData = await sendEmail(email, EmailTemplate.EmailVerification, { fullname, code: verificationCode });
+
+  console.log(emailData.emails?.[0]);
+
+  // await api.user.updateContactId.mutate({
+  //   contactId: emailData.emails?.[0]?.contact.id
+  // });
+
+  // await db.update(users).set({ 
+  //   contactId: emailData.emails?.[0]?.contact.id
+  // }).where(eq(users.id, userId));
+
   await db.insert(users).values({
     id: userId,
     fullname,
     email,
     hashedPassword,
-    // avatar,
+    contactId: emailData.emails?.[0]?.contact.id ?? null
   });
-
-  const verificationCode = await generateEmailVerificationCode(userId, email);
-
-  await sendEmail(email, EmailTemplate.EmailVerification, { fullname, code: verificationCode });
 
   const session = await lucia.createSession(userId, {});
   const sessionCookie = lucia.createSessionCookie(session.id);

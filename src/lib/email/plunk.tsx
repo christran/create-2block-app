@@ -1,7 +1,7 @@
 import "server-only";
 
-import { EmailVerificationTemplate } from "./templates/email-verification";
-import { ResetPasswordTemplate } from "./templates/reset-password";
+import EmailVerificationTemplate from "./templates/email-verification";
+import ResetPasswordTemplate from "./templates/reset-password";
 import { env } from "@/env";
 import { EMAIL_SENDER_NAME, EMAIL_SENDER_ADDRESS } from "@/lib/constants";
 import type { ComponentProps } from "react";
@@ -11,7 +11,7 @@ import { logger } from "../logger";
 // Add this interface near the top of the file, after imports
 interface PlunkApiResponse {
   success: boolean;
-  emails?: Array<{ email: string }>;
+  emails?: Array<{ contact: { id: string, email: string } }>;
   timestamp?: string;
   error?: string;
   message?: string;
@@ -89,8 +89,11 @@ export const sendEmail = async <T extends EmailTemplate>(
       throw new Error((data.error, data.message) ?? 'Failed to send email');
     }
 
+    // save contactId to database
+
     logger.info(`📨 Email sent successfully to: ${to}`, {
-      emailId: data.emails?.[0]?.email,
+      contactId: data.emails?.[0]?.contact.id,
+      email: data.emails?.[0]?.contact.email,
       timestamp: data.timestamp,
     });
 

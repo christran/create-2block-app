@@ -1,4 +1,4 @@
-import { Body, Container, Head, Html, Preview, Section, Text, Button, Link } from "@react-email/components";
+import { Body, Container, Head, Html, Preview, Section, Text, Button, Link, Font } from "@react-email/components";
 import { APP_TITLE, Paths } from "@/lib/constants";
 import { env } from "@/env";
 
@@ -7,27 +7,23 @@ export interface EmailVerificationTemplateProps {
   code: string;
 }
 
-export const EmailVerificationTemplate = ({ fullname, code }: EmailVerificationTemplateProps) => {
+export default function EmailVerificationTemplate({fullname, code}: EmailVerificationTemplateProps) {
   return (
     <Html>
       <Head />
+        {/* Add Inter font import */}
+        <link rel="preconnect" href="https://fonts.googleapis.com"/>
+        <link rel="preconnect" href="https://fonts.gstatic.com"/>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet"/>
       <Preview>
         Please verify your email address
       </Preview>
       <Body style={main}>
         <Container style={container}>
-          {/* <Img
-            src={`${baseUrl}/static/github.png`}
-            width="32"
-            height="32"
-            alt="Github"
-          /> */}
-
-          <Text style={title}>
-            <strong>{APP_TITLE}</strong>
-          </Text>
-
           <Section style={section}>
+            <Text style={title}>
+              <strong>{APP_TITLE}</strong>
+            </Text>
             <Text style={subTitle}>
               <strong>Verify your email address</strong>
             </Text>
@@ -47,66 +43,67 @@ export const EmailVerificationTemplate = ({ fullname, code }: EmailVerificationT
               Verify Email
             </Button>
           </Section>
-          {/* <Text style={links}>
-            <Link style={link}>Your security audit log</Link> ・{" "}
-            <Link style={link}>Contact support</Link>
-          </Text> */}
-
-          <Text style={footer}>
-            2BLOCK Co. ・1337 Legit Sreet ・Los Angeles, CA 90015
-          </Text>
         </Container>
+        <Text style={footer}>
+            2BLOCK Co. ・1337 Legit Sreet ・Los Angeles, CA 90015
+        </Text>
       </Body>
     </Html>
   );
 };
 
+EmailVerificationTemplate.PreviewProps = {
+  fullname: "Chris Tran",
+  code: "12345"
+};
+
 const main = {
-  backgroundColor: "#ffffff",
-  color: "#24292e",
+  backgroundColor: "#f5f5f5",
   fontFamily:
-    '-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji"',
+    'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
 };
 
 const container = {
+  backgroundColor: "#ffffff",
   maxWidth: "480px",
   margin: "0 auto",
-  padding: "20px 0 48px",
+  padding: "12px 0px 32px",
+  // marginTop: "32px",
+  marginBottom: "4px",
+};
+
+const section = {
+  padding: "0px 32px",
+  textAlign: "center" as const,
 };
 
 const title = {
   fontSize: "24px",
   lineHeight: 1.25,
+  textAlign: "left" as const,
 };
 
 const subTitle = {
   fontSize: "18px",
   lineHeight: 1.25,
-  margin: "0 0 10px 0",
+  margin: "0 0 18px 0",
   textAlign: "left" as const,
 };
 
-const section = {
-  padding: "24px",
-  border: "solid 1px #dedede",
-  borderRadius: "5px",
-  textAlign: "center" as const,
-};
-
 const text = {
-  margin: "0 0 10px 0",
   textAlign: "left" as const,
 };
 
 const codeBox = {
-  background: "rgb(245, 244, 245)",
+  background: "#f5f5f5",
+  maxWidth: "240px",
   borderRadius: "4px",
   marginBottom: "30px",
   padding: "5px 5px",
 };
 
 const confirmationCodeText = {
-  fontSize: "28px",
+  fontSize: "26px",
   fontWeight: "600",
   textAlign: "center" as const,
   verticalAlign: "middle",
@@ -115,11 +112,11 @@ const confirmationCodeText = {
 const button = {
   fontSize: "14px",
   fontWeight: "600",
-  backgroundColor: "#09090b",
+  backgroundColor: "#171717",
   color: "#fff",
   lineHeight: 1.5,
   borderRadius: "0.5em",
-  padding: "12px 24px",
+  padding: "10px 80px",
   margin: "0 0 8px 0",
 };
 

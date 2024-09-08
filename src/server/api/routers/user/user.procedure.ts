@@ -35,18 +35,21 @@ export const userRouter = createTRPCRouter({
       return user?.hashedPassword === null;
     }),
 
-  removeDiscordAccount: protectedProcedure
-    .query(async ({ ctx }) => {
-      const [discord] = await ctx.db
+  updateContactId: protectedProcedure
+  .input(z.object({
+    contactId: z.string().min(1)
+  }))
+  .mutation(async ({ ctx, input }) => {
+    const [updatedUser] = await ctx.db
       .update(users)
       .set({
-        discordId: null,
+        contactId: input.contactId
       })
       .where(eq(users.id, ctx.user.id))
       .returning();
-    
-    return discord;
-    }),
+
+    return updatedUser;
+  }),
 
   removeSocialAccounts: protectedProcedure
     .input(z.object({

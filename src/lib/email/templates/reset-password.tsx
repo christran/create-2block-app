@@ -17,7 +17,7 @@ export interface ResetPasswordTemplateProps {
   url: string;
 }
 
-export const ResetPasswordTemplate = ({ fullname, url }: ResetPasswordTemplateProps) => {
+export default function ResetPasswordTemplate({ fullname, url }: ResetPasswordTemplateProps) {
   return (
     <Html>
     <Head />
@@ -26,18 +26,10 @@ export const ResetPasswordTemplate = ({ fullname, url }: ResetPasswordTemplatePr
     </Preview>
     <Body style={main}>
       <Container style={container}>
-        {/* <Img
-          src={`${baseUrl}/static/github.png`}
-          width="32"
-          height="32"
-          alt="Github"
-        /> */}
-
-        <Text style={title}>
-          <strong>{APP_TITLE}</strong>
-        </Text>
-
         <Section style={section}>
+          <Text style={title}>
+              <strong>{APP_TITLE}</strong>
+          </Text>
           <Text style={subTitle}>
             <strong>Password Reset</strong>
           </Text>
@@ -57,36 +49,44 @@ export const ResetPasswordTemplate = ({ fullname, url }: ResetPasswordTemplatePr
             If you didn&apos;t request this, you may ignore this email.
         </Text>
         </Section>
-        {/* <Text style={links}>
-          <Link style={link}>Your security audit log</Link> ・{" "}
-          <Link style={link}>Contact support</Link>
-        </Text> */}
-
-        <Text style={footer}>
-          2BLOCK Co. ・1337 Legit Sreet ・Los Angeles, CA 90015
-        </Text>
       </Container>
+      <Text style={footer}>
+        2BLOCK Co. ・1337 Legit Sreet ・Los Angeles, CA 90015
+      </Text>
     </Body>
   </Html>
   );
 };
 
+ResetPasswordTemplate.PreviewProps = {
+  fullname: "Chris Tran",
+  url: "#"
+}
+
 const main = {
-  backgroundColor: "#ffffff",
-  color: "#24292e",
+  backgroundColor: "#f5f5f5",
   fontFamily:
-    '-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji"',
+    'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
 };
 
 const container = {
+  backgroundColor: "#ffffff",
   maxWidth: "480px",
   margin: "0 auto",
-  padding: "20px 0 48px",
+  padding: "12px 0px 32px",
+  // marginTop: "32px",
+  marginBottom: "4px",
+};
+
+const section = {
+  padding: "0px 32px",
+  textAlign: "center" as const,
 };
 
 const title = {
   fontSize: "24px",
   lineHeight: 1.25,
+  textAlign: "left" as const,
 };
 
 const subTitle = {
@@ -96,27 +96,19 @@ const subTitle = {
   textAlign: "left" as const,
 };
 
-const section = {
-  padding: "24px",
-  border: "solid 1px #dedede",
-  borderRadius: "5px",
-  textAlign: "center" as const,
-};
-
 const text = {
-  margin: "0 0 12px 0",
   textAlign: "left" as const,
 };
 
 const button = {
   fontSize: "14px",
   fontWeight: "600",
-  backgroundColor: "#09090b",
+  backgroundColor: "#171717",
   color: "#fff",
   lineHeight: 1.5,
   borderRadius: "0.5em",
-  padding: "12px 24px",
-  margin: "6px 0 18px 0",
+  padding: "10px 80px",
+  margin: "10px 0 10px 0",
 };
 
 const links = {

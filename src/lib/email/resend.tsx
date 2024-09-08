@@ -1,8 +1,8 @@
 import "server-only";
 
 import { Resend } from 'resend';
-import { EmailVerificationTemplate } from "./templates/email-verification";
-import { ResetPasswordTemplate } from "./templates/reset-password";
+import EmailVerificationTemplate from "./templates/email-verification";
+import ResetPasswordTemplate from "./templates/reset-password";
 import { env } from "@/env";
 import { EMAIL_SENDER } from "@/lib/constants";
 import type { ComponentProps } from "react";
