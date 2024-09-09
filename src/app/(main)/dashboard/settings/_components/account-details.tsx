@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { updateAccount } from "@/lib/auth/actions"
+import { logout, updateAccount } from "@/lib/auth/actions"
 import { useState, useEffect, useMemo, Suspense } from "react"
 import { useFormState } from "react-dom"
 import { toast } from "sonner"
@@ -59,7 +59,7 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
     setIsLoading(true);
     try {
       await userMutation.mutateAsync({ id: user.id })
-      router.push(Paths.Login);
+      await logout();
       toast.success("You account has been successfully deleted")
     } catch (error) {
       if (error instanceof Error) {

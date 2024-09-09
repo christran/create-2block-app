@@ -18,6 +18,9 @@ export const welcomeEmailTask = task({
       unsubscribe: `${Paths.Unsubscribe}/${payload.contactId}` 
     });
   },
+  handleError: async (payload, err, { ctx, retryAt }) => {
+    logger.log("Error:", { err });
+  },
 });
 
 export const accountDeletedTask = task({
@@ -34,5 +37,8 @@ export const accountDeletedTask = task({
       url: `${env.NEXT_PUBLIC_APP_URL}/${Paths.Dashboard}`, 
       unsubscribe: `${Paths.Unsubscribe}/${payload.contactId}` 
     });
+  },
+  handleError: async (payload, err, { ctx, retryAt }) => {
+    logger.log("Error:", { err });
   },
 });

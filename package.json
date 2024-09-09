@@ -16,6 +16,7 @@
     "typecheck": "tsc --noEmit",
     "stripe:listen": "stripe listen --forward-to localhost:3000/api/webhooks/stripe --latest",
     "test:e2e": "playwright test",
+    "trigger": "npx trigger.dev@beta dev",
     "deploy:trigger": "npx trigger.dev@3.0.0-beta.56 deploy --skip-typecheck"
   },
   "dependencies": {
@@ -71,6 +72,7 @@
     "superjson": "^2.2.1",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
+    "trigger.dev": "3.0.0-beta.56",
     "vaul": "^0.8.9",
     "zod": "^3.23.8"
   },
