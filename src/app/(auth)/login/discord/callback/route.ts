@@ -7,6 +7,7 @@ import { db } from "@/server/db";
 import { Paths } from "@/lib/constants";
 import { users } from "@/server/db/schema";
 import { validateRequest } from "@/lib/auth/validate-request";
+import { createContact, sendWelcomeEmail } from "@/lib/auth/actions";
 
 // ... existing DiscordUser interface ...
 
@@ -45,11 +46,6 @@ async function handleLogin(discordUser: DiscordUser, existingUser: { id: string;
 }
 
 async function createNewUser(discordUser: DiscordUser): Promise<Response> {
-  const userId = generateId(21);
-  const avatar = discordUser.avatar
-    ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.webp`
-    : null;
-
   const existingUser = await db.query.users.findFirst({
     where: (table, { eq, or }) =>
       or(
@@ -62,11 +58,24 @@ async function createNewUser(discordUser: DiscordUser): Promise<Response> {
     return redirectWithError(Paths.Login, 'Please log in with your existing account and link your Discord account in the security settings.');
   }
 
+  const userId = generateId(21);
+  const avatar = discordUser.avatar
+    ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.webp`
+    : null;
+
+  const newContact = await createContact(discordUser.email, {
+    userId: userId,
+    fullname: discordUser.username
+  });
+
+  sendWelcomeEmail(discordUser.username, discordUser.email, newContact.contactId);
+
   await db.insert(users).values({
     id: userId,
     fullname: discordUser.username,
     email: discordUser.email,
     emailVerified: true,
+    contactId: newContact.contactId,
     discordId: discordUser.id,
     avatar,
   });

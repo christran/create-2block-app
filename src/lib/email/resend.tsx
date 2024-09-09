@@ -1,8 +1,12 @@
 import "server-only";
 
+import React from "react";
+
 import { Resend } from 'resend';
-import EmailVerificationTemplate from "./templates/email-verification";
-import ResetPasswordTemplate from "./templates/reset-password";
+import EmailVerificationTemplate from "@/lib/email/templates/email-verification";
+import ResetPasswordTemplate from "@/lib/email/templates/reset-password";
+import WelcomeTemplate from "@/lib/email/templates/welcome";
+import AccountDeletedTemplate from "@/lib/email/templates/account-deleted";
 import { env } from "@/env";
 import { EMAIL_SENDER } from "@/lib/constants";
 import type { ComponentProps } from "react";
@@ -13,11 +17,15 @@ const resend = new Resend(env.RESEND_API_KEY);
 export enum EmailTemplate {
   EmailVerification = "EmailVerification",
   PasswordReset = "PasswordReset",
+  Welcome = "Welcome",
+  AccountDeleted = "AccountDeleted",
 }
 
 export type PropsMap = {
   [EmailTemplate.EmailVerification]: ComponentProps<typeof EmailVerificationTemplate>;
   [EmailTemplate.PasswordReset]: ComponentProps<typeof ResetPasswordTemplate>;
+  [EmailTemplate.Welcome]: ComponentProps<typeof WelcomeTemplate>;
+  [EmailTemplate.AccountDeleted]: ComponentProps<typeof AccountDeletedTemplate>;
 };
 
 const getEmailTemplate = async <T extends EmailTemplate>(template: T, props: PropsMap[NoInfer<T>]) => {
@@ -31,6 +39,16 @@ const getEmailTemplate = async <T extends EmailTemplate>(template: T, props: Pro
       return {
         subject: "Password reset",
         react: <ResetPasswordTemplate {...(props as PropsMap[EmailTemplate.PasswordReset])} />,
+      };
+    case EmailTemplate.Welcome:
+      return {
+        subject: "Welcome to 2BLOCK",
+        react: <WelcomeTemplate {...(props as PropsMap[EmailTemplate.Welcome])} />,
+      };
+    case EmailTemplate.AccountDeleted:
+      return {
+        subject: "Why are you running?",
+        react: <AccountDeletedTemplate {...(props as PropsMap[EmailTemplate.AccountDeleted])} />,
       };
     default:
       throw new Error("Invalid email template");
@@ -66,7 +84,7 @@ export const sendEmail = async <T extends EmailTemplate>(
 
     return data;
   } catch (error) {
-    logger.error(`Failed to send email to ${to}:`, error);
+    logger.error(`Failed to send email to: ${to} `, error);
 
     throw error;
   }

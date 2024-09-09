@@ -27,7 +27,7 @@ export const UserDropdown = ({
 }: {
   fullname: string;
   email: string;
-  avatar?: string | null;
+  avatar?: string | undefined;
   className?: string;
 }) => {
   const handleSignout = async () => {

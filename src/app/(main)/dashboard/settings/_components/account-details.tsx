@@ -160,7 +160,7 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
                 <Button variant="outline" onClick={() => setOpen(false)}>
                   Cancel
                 </Button>
-                <LoadingButton disabled variant="destructive" loading={isLoading} onClick={accountDelete}>
+                <LoadingButton variant="destructive" loading={isLoading} onClick={accountDelete}>
                   Delete Account
                 </LoadingButton>
               </AlertDialogFooter>

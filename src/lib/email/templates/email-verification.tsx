@@ -1,3 +1,4 @@
+import React from "react";
 import { Body, Container, Head, Html, Preview, Section, Text, Button, Link, Font } from "@react-email/components";
 import { APP_TITLE, Paths } from "@/lib/constants";
 import { env } from "@/env";

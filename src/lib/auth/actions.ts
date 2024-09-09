@@ -30,14 +30,13 @@ import { revalidatePath } from "next/cache";
 import { generateId, Scrypt } from "lucia";
 // import { Argon2id } from "oslo/password";
 
-import { sendEmail as sendEmailSMTP, EmailTemplate as EmailTemplateSMTP } from "@/lib/email/smtp";
-import { sendEmail as sendEmailSES, EmailTemplate as EmailTemplateSES } from "@/lib/email/aws-ses";
-import { sendEmail as sendEmailPlunk, EmailTemplate as EmailTemplatePlunk } from "@/lib/email/plunk";
-import { sendEmail as sendEmailResend, EmailTemplate as EmailTemplateResend } from "@/lib/email/resend";
-import { api } from "@/trpc/server";
+import { sendEmail, EmailTemplate } from "@/lib/email/plunk";
 
-const sendEmail = env.NODE_ENV === "production" ? sendEmailResend : sendEmailPlunk;
-const EmailTemplate = env.NODE_ENV === "production" ? EmailTemplateResend : EmailTemplatePlunk;
+import { logger } from "../logger";
+import { absoluteUrl } from "../utils";
+import { updateContactByEmail } from "../email/actions";
+import { tasks } from "@trigger.dev/sdk/v3";
+import type { welcomeEmailTask } from "@/trigger/email";
 
 export interface ActionResponse<T> {
   fieldError?: Partial<Record<keyof T, string | undefined>>;
@@ -123,27 +122,18 @@ export async function signup(_: any, formData: FormData): Promise<ActionResponse
   const userId = generateId(21);
   const hashedPassword = await new Scrypt().hash(password);
 
+  const newContact = await createContact(email);
   
   const verificationCode = await generateEmailVerificationCode(userId, email);
 
-  const emailData = await sendEmail(email, EmailTemplate.EmailVerification, { fullname, code: verificationCode });
-
-  console.log(emailData.emails?.[0]);
-
-  // await api.user.updateContactId.mutate({
-  //   contactId: emailData.emails?.[0]?.contact.id
-  // });
-
-  // await db.update(users).set({ 
-  //   contactId: emailData.emails?.[0]?.contact.id
-  // }).where(eq(users.id, userId));
+  await sendEmail(email, EmailTemplate.EmailVerification, { fullname, code: verificationCode });
 
   await db.insert(users).values({
     id: userId,
     fullname,
     email,
     hashedPassword,
-    contactId: emailData.emails?.[0]?.contact.id ?? null
+    contactId: newContact.contactId ?? null
   });
 
   const session = await lucia.createSession(userId, {});
@@ -167,6 +157,57 @@ export async function logout(): Promise<{ error: string } | void> {
   cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 
   return redirect(Paths.Login);
+}
+
+// https://docs.useplunk.com/api-reference/contacts/create
+// https://docs.useplunk.com/api-reference/contacts/subscribe
+export async function createContact(email: string, metadata?: Record<string, unknown>): Promise<{ contactId: string }> {
+  const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${env.PLUNK_API_KEY}`
+  }
+
+  try {
+    const options = {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        event: 'new-account',
+        email,
+        subscribed: true,
+        data: metadata
+      })
+    };
+
+    const response = await fetch('https://resend.2block.co/api/v1/track', options);
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error((data.error, data.message) ?? 'Failed to create contact');
+    }
+
+    logger.info(`📨 Contact successfully created for: ${email}`, {
+      contactId: data.contact,
+    });
+
+    return { contactId: data.contact };
+  } catch (error) {
+    logger.error(`Failed to create contact for ${email}: `, error instanceof Error ? error.message : String(error));
+    throw error;
+  }
+}
+
+export async function sendWelcomeEmail(fullname:string, email: string, contactId: string) {
+  const handle = await tasks.trigger<typeof welcomeEmailTask>("welcome-email", {
+    fullname,
+    email,
+    contactId
+  }, 
+  {
+    delay: "3m"
+  })
+
+  return handle;
 }
 
 export async function resendVerificationEmail(): Promise<{

@@ -20,7 +20,7 @@ export const users = pgTable(
     email: varchar("email", { length: 255 }).unique().notNull(),
     emailVerified: boolean("email_verified").default(false).notNull(),
     hashedPassword: varchar("hashed_password", { length: 255 }),
-    contactId: varchar("contact_id", { length: 255 }).unique(),
+    contactId: varchar("contact_id", { length: 255 }).unique().notNull(),
     googleId: varchar("google_id", { length: 255 }).unique(),
     discordId: varchar("discord_id", { length: 255 }).unique(),
     githubId: varchar("github_id", { length: 255 }).unique(),

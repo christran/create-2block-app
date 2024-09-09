@@ -7,6 +7,9 @@ import { db } from "@/server/db";
 import { Paths } from "@/lib/constants";
 import { users } from "@/server/db/schema";
 import { validateRequest } from "@/lib/auth/validate-request";
+import { sendEmail, EmailTemplate } from "@/lib/email/plunk";
+import { createContact, sendWelcomeEmail } from "@/lib/auth/actions";
+import { absoluteUrl } from "@/lib/utils";
 
 interface GitHubUserEmail {
   email: string;
@@ -68,18 +71,20 @@ async function createNewUser(githubUser: GitHubUser, githubUserEmail: GitHubUser
     return redirectWithError(Paths.Login, 'Please log in with your existing account and link your Google account in the security settings.');
   }
 
-  // todo: send welcome email and save contactId
-  // const emailData = await sendEmail(email, EmailTemplate.EmailVerification, { fullname, code: verificationCode });
-
-  // console.log(emailData.emails?.[0]);
-
   const userId = generateId(21);
+  const newContact = await createContact(githubUserEmail.email, {
+    userId: userId,
+    fullname: githubUser.name
+  });
+
+  sendWelcomeEmail(githubUser.name, githubUserEmail.email, newContact.contactId);
+
   await db.insert(users).values({
     id: userId,
     fullname: githubUser.name,
     email: githubUserEmail.email,
     emailVerified: true,
-    contactId: null,
+    contactId: newContact.contactId ?? null,
     githubId: githubUser.id,
     avatar: githubUser.avatar_url,
   });

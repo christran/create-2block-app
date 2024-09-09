@@ -1,7 +1,10 @@
+import { EmailTemplate } from "@/lib/email/plunk";
 import { protectedProcedure, createTRPCRouter } from "@/server/api/trpc";
 import { emailVerificationCodes, passwordResetTokens, sessions, users } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
+import { tasks } from "@trigger.dev/sdk/v3";
+import type { accountDeletedTask } from "@/trigger/email";
 
 export const userRouter = createTRPCRouter({
   getUser: protectedProcedure
@@ -13,6 +16,30 @@ export const userRouter = createTRPCRouter({
           fullname: true,
           email: true,
           emailVerified: true,
+          contactId: true,
+          googleId: true,
+          discordId: true,
+          githubId: true,
+          avatar: true,
+        },
+      });
+    
+      return user;
+    }),
+
+    getUserByEmail: protectedProcedure
+    .input(z.object({
+      email: z.string().min(1)
+    }))
+    .query(async ({ ctx, input }) => {
+      const user = await ctx.db.query.users.findFirst({
+        where: (table, { eq }) => eq(table.email, input.email),
+        columns: {
+          id: true,
+          fullname: true,
+          email: true,
+          emailVerified: true,
+          contactId: true,
           googleId: true,
           discordId: true,
           githubId: true,
@@ -82,6 +109,27 @@ export const userRouter = createTRPCRouter({
       id: z.string(),
     }))
     .mutation(async ({ ctx, input }) => {
+      const userData = await ctx.db.query.users.findFirst({
+        where: (table, { eq }) => eq(table.id, ctx.user.id),
+        columns: {
+          fullname: true,
+          email: true,
+          contactId: true,
+        },
+      });
+      if (!userData) {
+        throw new Error("User data not found");
+      }
+
+      const handle = await tasks.trigger<typeof accountDeletedTask>("account-deleted", {
+        fullname: userData.fullname,
+        email: userData.email,
+        contactId: userData.contactId
+      },
+      {
+        delay: "3m"
+      });
+
       const [user] = await ctx.db.delete(users).where(eq(users.id, input.id)).returning();
       
       await ctx.db.delete(sessions).where(eq(sessions.userId, input.id));

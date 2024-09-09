@@ -7,6 +7,7 @@ import { db } from "@/server/db";
 import { Paths } from "@/lib/constants";
 import { users } from "@/server/db/schema";
 import { validateRequest } from "@/lib/auth/validate-request";
+import { createContact, sendWelcomeEmail } from "@/lib/auth/actions";
 
 // ... existing GoogleUser interface ...
 
@@ -58,12 +59,19 @@ async function createNewUser(googleUser: GoogleUser): Promise<Response> {
   }
 
   const userId = generateId(21);
+  const newContact = await createContact(googleUser.email, {
+    userId: userId,
+    fullname: googleUser.name
+  });
+
+  sendWelcomeEmail(googleUser.name, googleUser.email, newContact.contactId);
 
   await db.insert(users).values({
     id: userId,
     fullname: googleUser.name,
     email: googleUser.email,
     emailVerified: true,
+    contactId: newContact.contactId,
     googleId: googleUser.sub,
     avatar: googleUser.picture,
   });

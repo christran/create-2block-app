@@ -1,7 +1,7 @@
 import React from "react";
 import { Body, Container, Head, Html, Preview, Section, Text, Button, Link, Font } from "@react-email/components";
 
-export default function WelcomeTemplate(props: { fullname: string, url: string, unsubscribe: string }) {
+export default function AccountDeletedTemplate(props: { fullname: string, url: string, unsubscribe: string }) {
   const { fullname, url, unsubscribe } = props;
 
   return (
@@ -18,16 +18,13 @@ export default function WelcomeTemplate(props: { fullname: string, url: string, 
         <Container style={container}>
           <Section style={section}>
             <Text style={heading}>
-              Welcome to ✌️BLOCK!
+              Noooooo {fullname}!
             </Text>
             <Text style={text}>
               Hey <strong>{fullname}</strong>
             </Text>
             <Text style={paragraph}>
-              You're a few seconds away from greatness. You're now ready to
-              to start using our app!
-              {" "}
-              <Link style={link} href={url}>Click here to get started</Link>
+              Why are you leaving us?!
             </Text>
           </Section>
         </Container>
@@ -44,7 +41,7 @@ export default function WelcomeTemplate(props: { fullname: string, url: string, 
   );
 }
 
-WelcomeTemplate.PreviewProps = {
+AccountDeletedTemplate.PreviewProps = {
   fullname: "Chris Tran",
   url: "#",
   unsubscribe: "#"

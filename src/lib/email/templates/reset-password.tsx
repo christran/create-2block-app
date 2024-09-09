@@ -1,4 +1,4 @@
-import { render } from "@react-email/render";
+import React from "react";
 import {
   Body,
   Button,
@@ -21,6 +21,10 @@ export default function ResetPasswordTemplate({ fullname, url }: ResetPasswordTe
   return (
     <Html>
     <Head />
+    {/* Add Inter font import */}
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet"/>
     <Preview>
       Reset your password
     </Preview>

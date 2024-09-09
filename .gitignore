@@ -49,3 +49,4 @@ application.log
 tests/e2e/output
 
 application.log
+.trigger
