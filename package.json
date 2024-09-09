@@ -16,7 +16,7 @@
     "typecheck": "tsc --noEmit",
     "stripe:listen": "stripe listen --forward-to localhost:3000/api/webhooks/stripe --latest",
     "test:e2e": "playwright test",
-    "deploy:trigger": "npx trigger.dev@3.0.0-beta.56 deploy"
+    "deploy:trigger": "npx trigger.dev@3.0.0-beta.56 deploy --skip-typecheck"
   },
   "dependencies": {
     "@aws-sdk/client-sesv2": "^3.645.0",
