@@ -32,7 +32,6 @@ export const accountDeletedTask = task({
     contactId: string
   }, { ctx }) => {
     logger.log( `📨 Sending Account Deleted Email to: ${payload.email}`);
-    logger.log( `GitHub Action Test`);
   
     await sendEmail(payload.email, EmailTemplate.AccountDeleted, { 
       fullname: payload.fullname,
