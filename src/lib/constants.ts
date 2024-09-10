@@ -10,6 +10,8 @@ export const TEST_DB_PREFIX = "test_2block";
 export const EMAIL_SENDER_NAME = '✌️BLOCK';
 export const EMAIL_SENDER_ADDRESS = 'hello@2block.co';
 export const EMAIL_SENDER = '✌️BLOCK <hello@2block.co>';
+export const EMAIL_UNSUBSCRIBE = "You received this email because you agreed to receive emails from 2BLOCK. If you no longer wish to receive emails like this,"
+export const EMAIL_FOOTER = '2BLOCK Co. ・1337 Legit Sreet ・Los Angeles, CA 90015';
 
 export enum Paths {
   Home = "/",

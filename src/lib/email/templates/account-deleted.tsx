@@ -1,5 +1,7 @@
 import React from "react";
 import { Body, Container, Head, Html, Preview, Section, Text, Button, Link, Font } from "@react-email/components";
+import { APP_TITLE, EMAIL_FOOTER, Paths } from "@/lib/constants";
+import { absoluteUrl } from "@/lib/utils";
 
 export default function AccountDeletedTemplate(props: { fullname: string, url: string, unsubscribe: string }) {
   const { fullname, url, unsubscribe } = props;
@@ -7,34 +9,37 @@ export default function AccountDeletedTemplate(props: { fullname: string, url: s
   return (
     <Html>
       <Head />
-      {/* Add Inter font import */}
-      <link rel="preconnect" href="https://fonts.googleapis.com"/>
-      <link rel="preconnect" href="https://fonts.gstatic.com"/>
-      <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet"/>
+      <Head />
+        <link rel="preconnect" href="https://fonts.googleapis.com"/>
+        <link rel="preconnect" href="https://fonts.gstatic.com"/>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet"/>
       <Preview>
-        Welcome to 2BLOCK!
+        Your account has been deleted
       </Preview>
       <Body style={main}>
         <Container style={container}>
           <Section style={section}>
+            <Text style={title}>
+              {APP_TITLE}
+            </Text>
             <Text style={heading}>
               Noooooo {fullname}!
             </Text>
-            <Text style={text}>
-              Hey <strong>{fullname}</strong>
+            <Text style={paragraph}>
+              Hi <strong>{fullname}</strong>
             </Text>
             <Text style={paragraph}>
-              Why are you leaving us?!
+              Your account has been successfully deleted. If you change your mind you can always sign up again <Link href={absoluteUrl(Paths.Home)}>here</Link>
             </Text>
           </Section>
         </Container>
-        <Text style={footer}>
+        {/* <Text style={footer}>
           You received this email because you agreed to receive emails from 2BLOCK. 
           If you no longer wish to receive emails like this,
           <Link href={unsubscribe}> please update your preferences.</Link>
-        </Text>
+        </Text> */}
         <Text style={footer}>
-          2BLOCK Co. ・1337 Legit Sreet ・Los Angeles, CA 90015
+          {EMAIL_FOOTER}
         </Text>
       </Body>
     </Html>
@@ -50,10 +55,11 @@ AccountDeletedTemplate.PreviewProps = {
 const main = {
   backgroundColor: "#f5f5f5",
   fontFamily:
-    'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
+    "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'"
 };
 
 const container = {
+  // color: "#4a5568",
   backgroundColor: "#ffffff",
   maxWidth: "640px",
   margin: "0 auto",
@@ -66,7 +72,18 @@ const section = {
   padding: "0 32px",
 };
 
+const title = {
+  // color: "#1a202c",
+  color: "#00000",
+  fontSize: "24px",
+  fontWeight: "800",
+  lineHeight: 1.25,
+  textAlign: "left" as const,
+};
+
 const heading = {
+  // color: "#1a202c",
+  color: "#00000",
   textAlign: "center" as const,
   fontSize: "32px",
   fontWeight: "900",
@@ -81,7 +98,6 @@ const text = {
 };
 
 const link = {
-  fontSize: "14px",
   color: "#0366d6",
 };
 

@@ -37,6 +37,7 @@ import { absoluteUrl } from "../utils";
 import { updateContactByEmail } from "../email/actions";
 import { tasks } from "@trigger.dev/sdk/v3";
 import type { welcomeEmailTask } from "@/trigger/email";
+import { api } from "@/trpc/server";
 
 export interface ActionResponse<T> {
   fieldError?: Partial<Record<keyof T, string | undefined>>;
@@ -146,6 +147,28 @@ export async function signup(_: any, formData: FormData): Promise<ActionResponse
 
 export async function logout(): Promise<{ error: string } | void> {
   const { session } = await validateRequest();
+  if (!session) {
+    return {
+      error: "No session found.",
+    };
+  }
+
+  await lucia.invalidateSession(session.id);
+  const sessionCookie = lucia.createBlankSessionCookie();
+  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+
+  return redirect(Paths.Login);
+}
+
+export async function deleteAccount(): Promise<{ error: string } | void> {
+  const { user, session } = await validateRequest();
+
+  if (!user) {
+    return redirect(Paths.Login);
+  }
+
+  await api.user.deleteAccountByUserId.mutate({id: user.id});
+  
   if (!session) {
     return {
       error: "No session found.",

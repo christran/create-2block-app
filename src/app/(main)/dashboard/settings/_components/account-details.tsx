@@ -20,17 +20,15 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { logout, updateAccount } from "@/lib/auth/actions"
+import { updateAccount, deleteAccount } from "@/lib/auth/actions"
 import { useState, useEffect, useMemo, Suspense } from "react"
 import { useFormState } from "react-dom"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { AccountDetailsSkeleton } from "./account-details-skeleton"
-import { DatabaseUserAttributes } from "@/lib/auth"
-import { api } from "@/trpc/react"
-import { Paths } from "@/lib/constants"
 import { LoadingButton } from "@/components/loading-button";
 import { SubmitButton } from "@/components/submit-button";
+
 interface AccountDetailsProps {
   id: string
   fullname: string
@@ -45,9 +43,8 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
   const [isLoading, setIsLoading] = useState(false);
 
   const [state, formAction] = useFormState(updateAccount, null);
-  // const formRef = useRef<HTMLFormElement>(null);
 
-  const userMutation = api.user.deleteAccountByUserId.useMutation();
+  // const userMutation = api.user.deleteAccountByUserId.useMutation();
 
   const isDirty = useMemo(() => {
     return fullname !== user?.fullname || email !== user?.email;
@@ -58,8 +55,9 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
   const accountDelete = async () => {
     setIsLoading(true);
     try {
-      await userMutation.mutateAsync({ id: user.id })
-      await logout();
+      // await userMutation.mutateAsync({ id: user.id })
+      await deleteAccount();
+      // await logout();
       toast.success("You account has been successfully deleted")
     } catch (error) {
       if (error instanceof Error) {

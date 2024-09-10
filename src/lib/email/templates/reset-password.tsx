@@ -10,7 +10,7 @@ import {
   Text,
   Link
 } from "@react-email/components";
-import { APP_TITLE } from "@/lib/constants";
+import { APP_TITLE, EMAIL_FOOTER } from "@/lib/constants";
 
 export interface ResetPasswordTemplateProps {
   fullname: string;
@@ -21,10 +21,9 @@ export default function ResetPasswordTemplate({ fullname, url }: ResetPasswordTe
   return (
     <Html>
     <Head />
-    {/* Add Inter font import */}
-    <link rel="preconnect" href="https://fonts.googleapis.com"/>
-    <link rel="preconnect" href="https://fonts.gstatic.com"/>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet"/>
+      <link rel="preconnect" href="https://fonts.googleapis.com"/>
+      <link rel="preconnect" href="https://fonts.gstatic.com"/>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet"/>
     <Preview>
       Reset your password
     </Preview>
@@ -32,7 +31,7 @@ export default function ResetPasswordTemplate({ fullname, url }: ResetPasswordTe
       <Container style={container}>
         <Section style={section}>
           <Text style={title}>
-              <strong>{APP_TITLE}</strong>
+            {APP_TITLE}
           </Text>
           <Text style={subTitle}>
             <strong>Password Reset</strong>
@@ -55,7 +54,7 @@ export default function ResetPasswordTemplate({ fullname, url }: ResetPasswordTe
         </Section>
       </Container>
       <Text style={footer}>
-        2BLOCK Co. ・1337 Legit Sreet ・Los Angeles, CA 90015
+        {EMAIL_FOOTER}
       </Text>
     </Body>
   </Html>
@@ -70,10 +69,11 @@ ResetPasswordTemplate.PreviewProps = {
 const main = {
   backgroundColor: "#f5f5f5",
   fontFamily:
-    'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
+    "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'"
 };
 
 const container = {
+  // color: "#4a5568",
   backgroundColor: "#ffffff",
   maxWidth: "480px",
   margin: "0 auto",
@@ -88,12 +88,15 @@ const section = {
 };
 
 const title = {
+  color: "#00000",
   fontSize: "24px",
+  fontWeight: "800",
   lineHeight: 1.25,
   textAlign: "left" as const,
 };
 
 const subTitle = {
+  color: "#00000",
   fontSize: "18px",
   lineHeight: 1.25,
   margin: "0 0 18px 0",
@@ -101,11 +104,13 @@ const subTitle = {
 };
 
 const text = {
+  fontSize: "14px",
+  lineHeight: "24px",
   textAlign: "left" as const,
 };
 
 const button = {
-  fontSize: "14px",
+  fontSize: "16px",
   fontWeight: "600",
   backgroundColor: "#171717",
   color: "#fff",
