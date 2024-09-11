@@ -123,7 +123,10 @@ export const signup = async (_: any, formData: FormData): Promise<ActionResponse
   const userId = generateId(21);
   const hashedPassword = await new Scrypt().hash(password);
 
-  const newContact = await createContact(email);
+  const newContact = await createContact(email, {
+    userId: userId,
+    fullname: fullname
+  });
   
   const verificationCode = await generateEmailVerificationCode(userId, email);
 
@@ -687,7 +690,12 @@ export const sendMagicLink = async (
     }
   
     const userId = generateId(21);
-    const newContact = await createContact(userEmail);
+
+    const newContact = await createContact(userEmail, {
+      userId: userId,
+      fullname: userEmail // todo: if user updates their name later on in the settings then update contact info
+    });
+
     const magicLinkToken = await generateMagicLinkToken(userId);
     const magicLink = `${env.NEXT_PUBLIC_APP_URL}${Paths.MagicLink}/${magicLinkToken}`;
 
