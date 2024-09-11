@@ -11,6 +11,7 @@ import Script from "next/script";
 import { AnalyticsScript } from "./analytics";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { cookies } from "next/headers";
+import { env } from "@/env";
 
 // const GeistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
@@ -54,6 +55,11 @@ export default async function RootLayout({
 }) {
   const { user } = await validateRequest();
 
+  const userData = {
+    userId: user?.id || cookies().get("lastKnownUserId")?.value || 'N/A',
+    email: user?.email || cookies().get("lastKnownEmail")?.value || 'N/A'
+  };
+
   return (
     <html lang="en" suppressHydrationWarning className={`${Inter.className} antialiased`}>
       <body
@@ -75,7 +81,10 @@ export default async function RootLayout({
       - umami analytics 
       - password-reset is getting sent along with the verificationToken which is bad
       */}
-      <AnalyticsScript userId={user?.id || cookies().get("lastKnownUserId")?.value || 'N/A'} email={user?.email || cookies().get("lastKnownEmail")?.value || 'N/A'} />
+      <AnalyticsScript 
+        websiteId={env.UMAMI_WEBSITE_ID} 
+        userData={userData}  
+      />
       </body>
     </html>
   );

@@ -3,18 +3,20 @@
 import Script from "next/script"
 
 interface AnalyticsScriptProps {
-  userId: string,
-  email: string
+  websiteId: string;
+  userData: Record<string, unknown>;
 }
 
-export function AnalyticsScript({ userId, email }: AnalyticsScriptProps) {
+export function AnalyticsScript({ websiteId, userData }: AnalyticsScriptProps) {
   return (
     <Script
       async
       src="/census.js"
-      data-website-id="1b28736f-b351-4b3a-8659-44dae398f196"
+      data-website-id={websiteId}
       onLoad={() => {
-        (window as any).umami.identify({ userId, email })
+        if (userData) {
+          (window as any).umami.identify(userData);
+        }
       }}
     />
   )
