@@ -148,12 +148,16 @@ export const signup = async (_: any, formData: FormData): Promise<ActionResponse
 }
 
 export const logout = async (): Promise<{ error: string } | void> => {
-  const { session } = await validateRequest();
+  const { user, session } = await validateRequest();
+
   if (!session) {
     return {
       error: "No session found.",
     };
   }
+
+  cookies().set("lastKnownUserId", user.id);
+  cookies().set("lastKnownEmail", user.email);
 
   await lucia.invalidateSession(session.id);
   const sessionCookie = lucia.createBlankSessionCookie();
@@ -746,6 +750,8 @@ export const validateMagicLinkToken = async (token: string) => {
   
   const session = await lucia.createSession(dbToken.userId, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
+
+  // await db.update(users).set({ emailVerified: true }).where(eq(users.id, dbToken.userId));
 
   cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 

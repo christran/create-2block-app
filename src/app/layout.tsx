@@ -8,6 +8,9 @@ import { cn } from "@/lib/utils";
 import { TRPCReactProvider } from "@/trpc/react";
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
+import { AnalyticsScript } from "./analytics";
+import { validateRequest } from "@/lib/auth/validate-request";
+import { cookies } from "next/headers";
 
 // const GeistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
@@ -44,11 +47,13 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { user } = await validateRequest();
+
   return (
     <html lang="en" suppressHydrationWarning className={`${Inter.className} antialiased`}>
       <body
@@ -70,11 +75,7 @@ export default function RootLayout({
       - umami analytics 
       - password-reset is getting sent along with the verificationToken which is bad
       */}
-      <Script
-        async
-        src="/census.js"
-        data-website-id="1b28736f-b351-4b3a-8659-44dae398f196"
-      />
+      <AnalyticsScript userId={user?.id || cookies().get("lastKnownUserId")?.value || 'N/A'} email={user?.email || cookies().get("lastKnownEmail")?.value || 'N/A'} />
       </body>
     </html>
   );
