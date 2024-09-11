@@ -8,12 +8,13 @@ import WelcomeTemplate from "@/lib/email/templates/welcome";
 import AccountDeletedTemplate from "@/lib/email/templates/account-deleted";
 import { createTransport, TransportOptions } from "nodemailer";
 import { SendEmailCommand, SESv2Client } from "@aws-sdk/client-sesv2";
-import { sendEmail as sendEmailResend, EmailTemplate as EmailTemplateResend } from "@/lib/email/resend";
+import { sendEmail as sendEmailResend } from "@/lib/email/resend";
 import { EMAIL_SENDER_NAME, EMAIL_SENDER_ADDRESS, EMAIL_SENDER } from "@/lib/constants";
 import type { ComponentProps } from "react";
 import { render } from '@react-email/render';
 import { env } from "@/env";
 import { logger } from "../logger";
+import MagicLinkTemplate from "./templates/magic-link";
 
 interface PlunkApiResponse {
   success: boolean;
@@ -25,6 +26,7 @@ interface PlunkApiResponse {
 }
 
 export enum EmailTemplate {
+  MagicLink = "MagicLink",
   EmailVerification = "EmailVerification",
   PasswordReset = "PasswordReset",
   Welcome = "Welcome",
@@ -32,6 +34,7 @@ export enum EmailTemplate {
 }
 
 export type PropsMap = {
+  [EmailTemplate.MagicLink]: ComponentProps<typeof MagicLinkTemplate>;
   [EmailTemplate.EmailVerification]: ComponentProps<typeof EmailVerificationTemplate>;
   [EmailTemplate.PasswordReset]: ComponentProps<typeof ResetPasswordTemplate>;
   [EmailTemplate.Welcome]: ComponentProps<typeof WelcomeTemplate>;
@@ -40,6 +43,13 @@ export type PropsMap = {
 
 const getEmailTemplate = async <T extends EmailTemplate>(template: T, props: PropsMap[NoInfer<T>]) => {
   switch (template) {
+    case EmailTemplate.MagicLink:
+      return {
+        subject: "Your Magic Link",
+        body: await render(
+        <MagicLinkTemplate {...(props as PropsMap[EmailTemplate.MagicLink])} />
+        ),
+      };
     case EmailTemplate.EmailVerification:
       return {
         subject: "Verify your account",
@@ -79,7 +89,7 @@ export const sendEmail = async <T extends EmailTemplate>(
   props: PropsMap[NoInfer<T>],
 ) => {
   if (env.MOCK_SEND_EMAIL) {
-    logger.info("📨 Email sent to:", to, "with template:", template, "and props:", props);
+    logger.info("📨 Email sent to: ", to, "with template: ", template, "and props: ", props);
     return;
   }
 
@@ -212,6 +222,7 @@ export const sendEmail = async <T extends EmailTemplate>(
 
         return resend;
       } catch (error) {
+        console.log(error);
         throw new Error(`Resend error:  ${error}`);
       }
     default:

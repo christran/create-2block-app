@@ -16,6 +16,7 @@ export const EMAIL_FOOTER = '2BLOCK Co. ・1337 Legit Sreet ・Los Angeles, CA 9
 export enum Paths {
   Home = "/",
   Login = "/login",
+  MagicLink = "/login/verify",
   Signup = "/signup",
   Dashboard = "/dashboard",
   Billing = "/dashboard/billing",

@@ -25,10 +25,10 @@ export default function AccountDeletedTemplate(props: { fullname: string, url: s
             <Text style={heading}>
               Noooooo {fullname}!
             </Text>
-            <Text style={paragraph}>
+            <Text style={text}>
               Hi <strong>{fullname}</strong>
             </Text>
-            <Text style={paragraph}>
+            <Text style={text}>
               Your account has been successfully deleted. If you change your mind you can always sign up again <Link href={absoluteUrl(Paths.Home)}>here</Link>
             </Text>
           </Section>
@@ -63,7 +63,7 @@ const container = {
   backgroundColor: "#ffffff",
   maxWidth: "640px",
   margin: "0 auto",
-  padding: "20px 0px 18px",
+  padding: "20px 0px 24px",
   // marginTop: "32px",
   marginBottom: "4px",
 };
@@ -93,18 +93,13 @@ const heading = {
 
 const text = {
   fontSize: "14px",
-  margin: "0 0 10px 0",
+  margin: "10px 0 10px 0",
   textAlign: "left" as const,
 };
 
 const link = {
   color: "#0366d6",
-};
-
-const paragraph = {
-  fontSize: "14px",
-  lineHeight: "24px",
-  textAlign: "left" as const,
+  margin: "10px 0 10px 0",
 };
 
 const unsubscribe = {
@@ -120,7 +115,7 @@ const footer = {
   color: "#6a737d",
   fontSize: "11px",
   textAlign: "center" as const,
-  marginTop: "10px",
+  marginTop: "5px",
   maxWidth: "480px",
   margin: "0 auto",
 };

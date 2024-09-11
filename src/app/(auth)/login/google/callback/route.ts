@@ -64,7 +64,7 @@ async function createNewUser(googleUser: GoogleUser): Promise<Response> {
     fullname: googleUser.name
   });
 
-  sendWelcomeEmail(googleUser.name, googleUser.email, newContact.contactId);
+  await sendWelcomeEmail(googleUser.name, googleUser.email, newContact.contactId);
 
   await db.insert(users).values({
     id: userId,

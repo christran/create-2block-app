@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@/lib/constants";
 import { Login } from "./login";
+import { MagicLink } from "./magic-link";
+import { env } from "@/env";
 
 export const metadata = {
   title: "Login",
@@ -13,5 +15,5 @@ export default async function LoginPage() {
 
   if (user) redirect(Paths.Dashboard);
 
-  return <Login />;
+  return env.MAGIC_LINK_AUTH ? <MagicLink /> : <Login />;
 }

@@ -8,6 +8,7 @@ export const uncachedValidateRequest = async (): Promise<
   { user: User; session: Session } | { user: null; session: null }
 > => {
   const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;
+  
   if (!sessionId) {
     return { user: null, session: null };
   }

@@ -16,11 +16,8 @@ const HomePage = async () => {
 
   return (
     <>
-      <section className="mx-auto grid min-h-[calc(100vh-300px)] max-w-5xl flex-col items-center justify-center gap-4 py-10 text-center md:py-12">
+      <section className="items-center justify-center gap-4 py-48 text-center">
         <div className="p-4">
-          {/* <div className="mb-10 flex items-center justify-center font-bold">
-            <PiHandPeaceLight className="h-5 w-5" />BLOCK
-          </div> */}
           <h1 className="text-balance bg-gradient-to-tr from-black/70 via-black to-black/60 bg-clip-text text-center text-3xl font-bold dark:from-zinc-400/10 dark:via-white/90 dark:to-white/20 sm:text-5xl md:text-6xl lg:text-7xl">
             ✌️BLOCK
           </h1>

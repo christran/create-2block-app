@@ -71,6 +71,18 @@ export const emailVerificationCodes = pgTable(
   }),
 );
 
+export const magicLinkTokens = pgTable(
+  "magic_link_tokens",
+  {
+    id: varchar("id", { length: 64 }).primaryKey(),
+    userId: varchar("user_id", { length: 21 }).unique().notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true, mode: "date" }).notNull(),
+  },
+  (t) => ({
+    userIdx: index("magic_Link_token_user_idx").on(t.userId),
+  }),
+);
+
 export const passwordResetTokens = pgTable(
   "password_reset_tokens",
   {

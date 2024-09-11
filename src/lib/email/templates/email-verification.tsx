@@ -40,8 +40,11 @@ export default function EmailVerificationTemplate({fullname, code}: EmailVerific
             </Section>
 
             <Button style={button} href={env.NEXT_PUBLIC_APP_URL + Paths.VerifyEmail}>
-              Verify Email
+              🗸 Verify Email
             </Button>
+            <br/>
+
+            <Link style={link} href={env.NEXT_PUBLIC_APP_URL + Paths.VerifyEmail}>or click here to verify</Link>
           </Section>
         </Container>
         <Text style={footer}>
@@ -69,7 +72,7 @@ const container = {
   backgroundColor: "#ffffff",
   maxWidth: "480px",
   margin: "0 auto",
-  padding: "12px 0px 32px",
+  padding: "12px 0px 24px",
   // marginTop: "32px",
   marginBottom: "4px",
 };
@@ -100,6 +103,7 @@ const subTitle = {
 const text = {
   fontSize: "14px",
   lineHeight: "24px",
+  margin: "10px 0 10px 0",
   textAlign: "left" as const,
 };
 
@@ -126,17 +130,19 @@ const button = {
   color: "#fff",
   lineHeight: 1.5,
   borderRadius: "0.5em",
-  padding: "10px 74px",
+  padding: "10px 62px",
   margin: "0 0 8px 0",
 };
 
 const link = {
   color: "#0366d6",
+  margin: "10px 0 10px 0",
+  fontSize: "12px",
 };
 
 const footer = {
   color: "#6a737d",
   fontSize: "11px",
   textAlign: "center" as const,
-  marginTop: "10px",
+  marginTop: "5px",
 };

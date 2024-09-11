@@ -23,10 +23,10 @@ export default function WelcomeTemplate(props: { fullname: string, url: string, 
             <Text style={heading}>
               Welcome to ✌️BLOCK!
             </Text>
-            <Text style={paragraph}>
+            <Text style={text}>
               Hey <strong>{fullname}</strong>
             </Text>
-            <Text style={paragraph}>
+            <Text style={text}>
               You're a few seconds away from greatness. You're now ready to
               to start using our app!
               {" "}
@@ -64,7 +64,7 @@ const container = {
   backgroundColor: "#ffffff",
   maxWidth: "640px",
   margin: "0 auto",
-  padding: "20px 0px 18px",
+  padding: "20px 0px 24px",
   // marginTop: "32px",
   marginBottom: "4px",
 };
@@ -92,18 +92,24 @@ const heading = {
 
 const text = {
   fontSize: "14px",
-  margin: "0 0 10px 0",
+  margin: "10px 0 10px 0",
   textAlign: "left" as const,
 };
 
 const link = {
+  margin: "10px 0 10px 0",
   color: "#0366d6",
 };
 
-const paragraph = {
-  fontSize: "14px",
-  lineHeight: "24px",
-  textAlign: "left" as const,
+const button = {
+  fontSize: "16px",
+  fontWeight: "600",
+  backgroundColor: "#171717",
+  color: "#fff",
+  lineHeight: 1.5,
+  borderRadius: "0.5em",
+  padding: "10px 80px",
+  margin: "10px 0 10px 0",
 };
 
 const unsubscribe = {
@@ -119,7 +125,7 @@ const footer = {
   color: "#6a737d",
   fontSize: "11px",
   textAlign: "center" as const,
-  marginTop: "10px",
+  marginTop: "5px",
   maxWidth: "480px",
   margin: "0 auto",
 };

@@ -53,7 +53,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={`${Inter.className} antialiased`}>
       <body
         className={cn(
-          "flex flex-col min-h-screen"
+          "flex flex-col min-h-screen dark:bg-neutral-950"
         )}
       >
         <ThemeProvider

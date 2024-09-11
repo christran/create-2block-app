@@ -13,7 +13,7 @@ const githubUrl = "https://github.com/christran";
 
 export const Footer = () => {
   return (
-    <footer className="px-4 py-6 mt-auto dark:bg-neutral-950 text-muted-foreground/90">
+    <footer className="px-4 py-6 mt-auto text-muted-foreground/90">
       <div className="container flex flex-col items-center p-0">
         <div className="w-full flex justify-between items-center mb-2">
           <div className="flex-1">

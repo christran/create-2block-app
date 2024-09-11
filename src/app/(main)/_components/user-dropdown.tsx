@@ -40,6 +40,7 @@ export const UserDropdown = ({
       }
     }
   };
+  console.log(fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join(''))
 
   return (
     <div className="flex items-center gap-4 md:gap-2 lg:gap-4">

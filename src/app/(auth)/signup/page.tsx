@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { Signup } from "./signup";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@/lib/constants";
+import { env } from "@/env";
 
 export const metadata = {
   title: "Sign Up",
@@ -12,6 +13,7 @@ export default async function SignupPage() {
   const { user } = await validateRequest();
 
   if (user) redirect(Paths.Dashboard);
+  if (env.MAGIC_LINK_AUTH) redirect(Paths.Login);
 
   return <Signup />;
 }

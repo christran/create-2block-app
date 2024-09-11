@@ -68,7 +68,7 @@ async function createNewUser(discordUser: DiscordUser): Promise<Response> {
     fullname: discordUser.username
   });
 
-  sendWelcomeEmail(discordUser.username, discordUser.email, newContact.contactId);
+  await sendWelcomeEmail(discordUser.username, discordUser.email, newContact.contactId);
 
   await db.insert(users).values({
     id: userId,

@@ -12,12 +12,12 @@ import {
 } from "@react-email/components";
 import { APP_TITLE, EMAIL_FOOTER } from "@/lib/constants";
 
-export interface ResetPasswordTemplateProps {
+export interface MagicLinkTemplateProps {
   fullname: string;
   url: string;
 }
 
-export default function ResetPasswordTemplate({ fullname, url }: ResetPasswordTemplateProps) {
+export default function MagicLinkTemplate({ fullname, url }: MagicLinkTemplateProps) {
   return (
     <Html>
     <Head />
@@ -25,7 +25,7 @@ export default function ResetPasswordTemplate({ fullname, url }: ResetPasswordTe
       <link rel="preconnect" href="https://fonts.gstatic.com"/>
       <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet"/>
     <Preview>
-      Reset your password
+      Use this magic link to login
     </Preview>
     <Body style={main}>
       <Container style={container}>
@@ -34,21 +34,26 @@ export default function ResetPasswordTemplate({ fullname, url }: ResetPasswordTe
             {APP_TITLE}
           </Text>
           <Text style={subTitle}>
-            <strong>Password Reset</strong>
+            <strong>Login with this Magic Link</strong>
           </Text>
           <Text style={text}>
             Hello <strong>{fullname}</strong>
           </Text>
           <Text style={text}>
-            Someone recently requested a password change for your account. If this was
-            you, you can set a new password here:
+            Use the button or link below to login to your account
           </Text>
 
-          <Button style={button} href={url}>
-            🔑 Reset password
-          </Button><br/>
-          
-          <Link style={link} href={url}>or click here to reset</Link>
+          <div style={buttonContainer}>
+            <Button style={button} href={url}>
+            🪄 Magic Link 🪄
+            </Button><br/>
+
+            <Link style={link} href={url}>or click here to login</Link>
+
+            <Text style={expirationText}>
+            This link will expire in 5 minutes
+            </Text>
+          </div>
 
         {/* <Text style={text}>
             If you didn't request this, you may ignore this email.
@@ -63,9 +68,9 @@ export default function ResetPasswordTemplate({ fullname, url }: ResetPasswordTe
   );
 };
 
-ResetPasswordTemplate.PreviewProps = {
+MagicLinkTemplate.PreviewProps = {
   fullname: "Chris Tran",
-  url: "#"
+  url: "#",
 }
 
 const main = {
@@ -112,6 +117,10 @@ const text = {
   textAlign: "left" as const,
 };
 
+const buttonContainer = {
+  
+}
+
 const button = {
   fontSize: "16px",
   fontWeight: "600",
@@ -123,9 +132,19 @@ const button = {
   margin: "10px 0 10px 0",
 };
 
+const expirationText = {
+  fontSize: "11px",
+  lineHeight: "24px",
+  margin: "0px 0 0px 0",
+  textAlign: "center" as const,
+}
+
+const links = {
+  textAlign: "center" as const,
+};
+
 const link = {
   color: "#0366d6",
-  margin: "10px 0 10px 0",
   fontSize: "12px",
 };
 

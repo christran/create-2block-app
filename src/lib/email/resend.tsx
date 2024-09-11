@@ -3,33 +3,27 @@ import "server-only";
 import React from "react";
 
 import { Resend } from 'resend';
+import MagicLinkTemplate from "./templates/magic-link";
 import EmailVerificationTemplate from "@/lib/email/templates/email-verification";
 import ResetPasswordTemplate from "@/lib/email/templates/reset-password";
 import WelcomeTemplate from "@/lib/email/templates/welcome";
 import AccountDeletedTemplate from "@/lib/email/templates/account-deleted";
 import { env } from "@/env";
 import { EMAIL_SENDER } from "@/lib/constants";
-import type { ComponentProps } from "react";
 import { logger } from "../logger";
+
+import { EmailTemplate } from "./plunk";
+import { PropsMap } from "./plunk";
 
 const resend = new Resend(env.RESEND_API_KEY);
 
-export enum EmailTemplate {
-  EmailVerification = "EmailVerification",
-  PasswordReset = "PasswordReset",
-  Welcome = "Welcome",
-  AccountDeleted = "AccountDeleted",
-}
-
-export type PropsMap = {
-  [EmailTemplate.EmailVerification]: ComponentProps<typeof EmailVerificationTemplate>;
-  [EmailTemplate.PasswordReset]: ComponentProps<typeof ResetPasswordTemplate>;
-  [EmailTemplate.Welcome]: ComponentProps<typeof WelcomeTemplate>;
-  [EmailTemplate.AccountDeleted]: ComponentProps<typeof AccountDeletedTemplate>;
-};
-
 const getEmailTemplate = async <T extends EmailTemplate>(template: T, props: PropsMap[NoInfer<T>]) => {
   switch (template) {
+    case EmailTemplate.MagicLink:
+      return {
+        subject: "Your Magic Link",
+        react: <MagicLinkTemplate {...(props as PropsMap[EmailTemplate.MagicLink])} />
+      };
     case EmailTemplate.EmailVerification:
       return {
         subject: "Verify your account",
@@ -61,7 +55,7 @@ export const sendEmail = async <T extends EmailTemplate>(
   props: PropsMap[NoInfer<T>],
 ) => {
   if (env.MOCK_SEND_EMAIL) {
-    logger.info("📨 Email sent to:", to, "with template:", template, "and props:", props);
+    logger.info("📨 Email sent to: ", to, "with template: ", template, "and props: ", props);
     return;
   }
 

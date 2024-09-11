@@ -96,7 +96,7 @@ export function Signup() {
                 {state?.formError}
               </p>
             ) : null}
-            <div className="flex flex-wrap items-center justify-between text-xs">
+            <div className="flex flex-wrap items-center justify-between text-xs text-muted-foreground">
               <div>
                 Already have an account?{" "}
                 <Button variant="link" size="sm" className="p-0 h-auto" asChild>

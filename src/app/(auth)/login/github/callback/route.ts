@@ -77,7 +77,7 @@ async function createNewUser(githubUser: GitHubUser, githubUserEmail: GitHubUser
     fullname: githubUser.name
   });
 
-  sendWelcomeEmail(githubUser.name, githubUserEmail.email, newContact.contactId);
+  await sendWelcomeEmail(githubUser.name, githubUserEmail.email, newContact.contactId);
 
   await db.insert(users).values({
     id: userId,

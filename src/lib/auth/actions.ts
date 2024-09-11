@@ -21,7 +21,7 @@ import {
   type updatePasswordInput,
   updatePasswordSchema,
 } from "@/lib/validators/auth";
-import { emailVerificationCodes, passwordResetTokens, users } from "@/server/db/schema";
+import { emailVerificationCodes, magicLinkTokens, passwordResetTokens, users } from "@/server/db/schema";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "../constants";
 import { env } from "@/env";
@@ -44,7 +44,7 @@ export interface ActionResponse<T> {
   formError?: string;
 }
 
-export async function login(_: any, formData: FormData): Promise<ActionResponse<LoginInput>> {
+export const login = async (_: any, formData: FormData): Promise<ActionResponse<LoginInput>> => {
   const obj = Object.fromEntries(formData.entries());
 
   const parsed = loginSchema.safeParse(obj);
@@ -92,7 +92,7 @@ export async function login(_: any, formData: FormData): Promise<ActionResponse<
   return redirect(Paths.Dashboard);
 }
 
-export async function signup(_: any, formData: FormData): Promise<ActionResponse<SignupInput>> {
+export const signup = async (_: any, formData: FormData): Promise<ActionResponse<SignupInput>> => {
   const obj = Object.fromEntries(formData.entries());
 
   const parsed = signupSchema.safeParse(obj);
@@ -129,6 +129,8 @@ export async function signup(_: any, formData: FormData): Promise<ActionResponse
 
   await sendEmail(email, EmailTemplate.EmailVerification, { fullname, code: verificationCode });
 
+  await sendWelcomeEmail(fullname, email, newContact.contactId);
+
   await db.insert(users).values({
     id: userId,
     fullname,
@@ -145,7 +147,7 @@ export async function signup(_: any, formData: FormData): Promise<ActionResponse
   return redirect(Paths.Dashboard);
 }
 
-export async function logout(): Promise<{ error: string } | void> {
+export const logout = async (): Promise<{ error: string } | void> => {
   const { session } = await validateRequest();
   if (!session) {
     return {
@@ -160,7 +162,7 @@ export async function logout(): Promise<{ error: string } | void> {
   return redirect(Paths.Login);
 }
 
-export async function deleteAccount(): Promise<{ error: string } | void> {
+export const deleteAccount = async (): Promise<{ error: string } | void> => {
   const { user, session } = await validateRequest();
 
   if (!user) {
@@ -184,7 +186,7 @@ export async function deleteAccount(): Promise<{ error: string } | void> {
 
 // https://docs.useplunk.com/api-reference/contacts/create
 // https://docs.useplunk.com/api-reference/contacts/subscribe
-export async function createContact(email: string, metadata?: Record<string, unknown>): Promise<{ contactId: string }> {
+export const createContact = async (email: string, metadata?: Record<string, unknown>): Promise<{ contactId: string }> => {
   const headers = {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${env.PLUNK_API_KEY}`
@@ -220,7 +222,7 @@ export async function createContact(email: string, metadata?: Record<string, unk
   }
 }
 
-export async function sendWelcomeEmail(fullname:string, email: string, contactId: string) {
+export const sendWelcomeEmail = async (fullname:string, email: string, contactId: string) => {
   const handle = await tasks.trigger<typeof welcomeEmailTask>("welcome-email", {
     fullname,
     email,
@@ -233,10 +235,7 @@ export async function sendWelcomeEmail(fullname:string, email: string, contactId
   return handle;
 }
 
-export async function resendVerificationEmail(): Promise<{
-  error?: string;
-  success?: boolean;
-}> {
+export const resendVerificationEmail = async (): Promise<{ error?: string; success?: boolean; }> => {
   const { user } = await validateRequest();
 
   if (!user) {
@@ -267,13 +266,15 @@ export async function resendVerificationEmail(): Promise<{
   }
 }
 
-export async function verifyEmail(_: any, formData: FormData): Promise<{ error: string } | void> {
+export const verifyEmail = async (_: any, formData: FormData): Promise<{ error: string } | void> => {
   const code = formData.get("code");
 
   if (typeof code !== "string" || code.length !== 6) {
     return { error: "Invalid verification code." };
   }
+
   const { user } = await validateRequest();
+
   if (!user) {
     return redirect(Paths.Login);
   }
@@ -304,10 +305,10 @@ export async function verifyEmail(_: any, formData: FormData): Promise<{ error: 
 }
 
 // Rate limit this
-export async function sendPasswordResetLink(
+export const sendPasswordResetLink = async (
   _: any,
   formData: FormData,
-): Promise<{ error?: string; success?: boolean }> {
+): Promise<{ error?: string; success?: boolean }> => {
   const email = formData.get("email");
   const parsed = z.string().trim().email().safeParse(email);
 
@@ -357,10 +358,7 @@ export async function sendPasswordResetLink(
 }
 
 // Rate limit this
-export async function setupNewPasswordLink(): Promise<{
-  success?: boolean;
-  error?: string;
-}> {
+export const setupNewPasswordLink = async (): Promise<{ success?: boolean; error?: string; }> => {
   const { user } = await validateRequest();
 
   if (!user) {
@@ -400,10 +398,7 @@ export async function setupNewPasswordLink(): Promise<{
   }
 }
 
-export async function resetPassword(
-  _: any,
-  formData: FormData,
-): Promise<{ success?: boolean; error?: string;}> {
+export const resetPassword = async (_: any, formData: FormData): Promise<{ success?: boolean; error?: string;}> => {
   const obj = Object.fromEntries(formData.entries());
 
   const parsed = resetPasswordSchema.safeParse(obj);
@@ -442,7 +437,7 @@ export async function resetPassword(
   redirect(Paths.Dashboard);
 }
 
-export async function updateAccount(_: any, formData: FormData): Promise<ActionResponse<updateAccountInput> & { success?: boolean; error?: string }> {
+export const updateAccount = async (_: any, formData: FormData): Promise<ActionResponse<updateAccountInput> & { success?: boolean; error?: string }> => {
   const { user } = await validateRequest();
 
   if (!user) {
@@ -502,7 +497,7 @@ export async function updateAccount(_: any, formData: FormData): Promise<ActionR
   }
 }
 
-export async function updatePassword(_: any, formData: FormData): Promise<ActionResponse<updatePasswordInput> & { success?: boolean; error?: string }> {
+export const updatePassword = async (_: any, formData: FormData): Promise<ActionResponse<updatePasswordInput> & { success?: boolean; error?: string }> => {
   const { user } = await validateRequest();
 
   if (!user) {
@@ -563,7 +558,7 @@ export async function updatePassword(_: any, formData: FormData): Promise<Action
   }
 }
 
-export async function updateTwoFactorAuth(_: any, formData: FormData): Promise<ActionResponse<updatePasswordInput> & { success?: boolean; error?: string }> {
+export const updateTwoFactorAuth = async (_: any, formData: FormData): Promise<ActionResponse<updatePasswordInput> & { success?: boolean; error?: string }> => {
   const { user } = await validateRequest();
 
   if (!user) {
@@ -583,19 +578,181 @@ const timeFromNow = (time: Date) => {
   return `${minutes}m ${seconds}s`;
 };
 
-async function generateEmailVerificationCode(userId: string, email: string): Promise<string> {
+const generateEmailVerificationCode = async (userId: string, email: string): Promise<string> => {
   await db.delete(emailVerificationCodes).where(eq(emailVerificationCodes.userId, userId));
+
   const code = generateRandomString(6, alphabet("0-9")); // 8 digit code
+
   await db.insert(emailVerificationCodes).values({
     userId,
     email,
     code,
-    expiresAt: createDate(new TimeSpan(10, "m")), // 10 minutes
+    expiresAt: createDate(new TimeSpan(30, "m")), // 10 minutes
   });
+
   return code;
 }
 
-async function generatePasswordResetToken(userId: string): Promise<string> {
+export const resendMagicLink = async (
+  _: any,
+  formData: FormData,
+): Promise<{ success?: boolean; error?: string;}> => {
+  const email = formData.get("email");
+  const parsed = z.string().trim().email().safeParse(email);
+
+  if (!parsed.success) {
+    return { 
+      error: "Please enter a valid email address." 
+    };
+  }
+
+  const user = await db.query.users.findFirst({
+    where: (table, { eq }) => eq(table.email, parsed.data),
+  });
+
+  if (user) {
+    const lastSent = await db.query.magicLinkTokens.findFirst({
+      where: (table, { eq }) => eq(table.userId, user?.id),
+      columns: { expiresAt: true },
+    });
+  
+    if (lastSent && isWithinExpirationDate(lastSent.expiresAt)) {
+      return {
+        error: `Please wait ${timeFromNow(lastSent.expiresAt)} before resending a magic link.`,
+      };
+    }
+  
+    const magicLinkToken = await generateMagicLinkToken(user.id);
+    const magicLink = `${env.NEXT_PUBLIC_APP_URL}${Paths.MagicLink}/${magicLinkToken}`;
+
+    await sendEmail(user.email, EmailTemplate.MagicLink, { fullname: user.fullname, url: magicLink });
+
+    return { success: true };
+  }
+
+  return { 
+    error: "We couldn't send a magic link. Please try again later."
+  };
+}
+
+export const sendMagicLink = async (
+  _: any,
+  formData: FormData,
+): Promise<{ error?: string;}> => {
+  const email = formData.get("email");
+  const parsed = z.string().trim().email().safeParse(email);
+
+  if (!parsed.success) {
+    return { error: "Please enter a valid email address." };
+  }
+
+  const user = await db.query.users.findFirst({
+    where: (table, { eq }) => eq(table.email, parsed.data),
+  });
+
+  if (user) {
+    const lastSent = await db.query.magicLinkTokens.findFirst({
+      where: (table, { eq }) => eq(table.userId, user?.id),
+      columns: { expiresAt: true },
+    });
+  
+    if (lastSent && isWithinExpirationDate(lastSent.expiresAt)) {
+      return {
+        error: `Please wait ${timeFromNow(lastSent.expiresAt)} before resending a magic link.`,
+      };
+    }
+  
+    const magicLinkToken = await generateMagicLinkToken(user.id);
+    const magicLink = `${env.NEXT_PUBLIC_APP_URL}${Paths.MagicLink}/${magicLinkToken}`;
+
+    await sendEmail(user.email, EmailTemplate.MagicLink, { fullname: user.fullname, url: magicLink });
+
+    return redirect(`${Paths.MagicLink}?email=${encodeURIComponent(user.email)}`);
+  } else {
+    const userEmail = parsed.data
+
+    const existingUser = await db.query.users.findFirst({
+      where: (table, { eq }) => eq(table.email, userEmail),
+      columns: { email: true },
+    });
+  
+    if (existingUser) {
+      return {
+        error: "The email is already registered with another account.",
+      };
+    }
+  
+    const userId = generateId(21);
+    const newContact = await createContact(userEmail);
+    const magicLinkToken = await generateMagicLinkToken(userId);
+    const magicLink = `${env.NEXT_PUBLIC_APP_URL}${Paths.MagicLink}/${magicLinkToken}`;
+
+    await sendEmail(userEmail, EmailTemplate.MagicLink, { fullname: userEmail, url: magicLink });
+
+    await sendWelcomeEmail(userEmail, userEmail, newContact.contactId);
+  
+    await db.insert(users).values({
+      id: userId,
+      fullname: userEmail,
+      email: userEmail,
+      emailVerified: true,
+      contactId: newContact.contactId ?? null
+    });
+  
+    return redirect(`${Paths.MagicLink}?email=${encodeURIComponent(userEmail)}`);
+  }
+}
+
+const generateMagicLinkToken = async (userId: string) => {
+  await db.delete(magicLinkTokens).where(eq(magicLinkTokens.userId, userId));
+
+  const code = generateRandomString(64, alphabet("a-z", "A-Z", "0-9"));
+
+  await db.insert(magicLinkTokens).values({
+    id: code,
+    userId,
+    expiresAt: createDate(new TimeSpan(5, "m")), // 5 minutes
+  });
+
+  return code;
+}
+
+export const validateMagicLinkToken = async (token: string) => {
+  const dbToken = await db.transaction(async (tx) => {
+    const item = await tx.query.magicLinkTokens.findFirst({
+      where: (table, { eq }) => eq(table.id, token),
+    });
+    if (item) {
+      await tx.delete(magicLinkTokens).where(eq(magicLinkTokens.id, item.id));
+    }
+    return item;
+  });
+
+  // if (!dbToken) return { error: "Invalid magic link." };
+
+  if (!dbToken) {
+    cookies().set('auth_error', 'Invalid magic link', { maxAge: 5, path: '/' });
+    return redirect(Paths.Login);
+  };
+
+  // if (!isWithinExpirationDate(dbToken.expiresAt)) return { error: "Magic link link expired." };
+
+  if (!isWithinExpirationDate(dbToken.expiresAt)) {
+    cookies().set('auth_error', 'Magic link link expired', { maxAge: 5, path: '/' });
+    return redirect(Paths.Login);
+  }
+
+  await lucia.invalidateUserSessions(dbToken.userId);
+  
+  const session = await lucia.createSession(dbToken.userId, {});
+  const sessionCookie = lucia.createSessionCookie(session.id);
+
+  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+
+  redirect(Paths.Dashboard);
+}
+
+const generatePasswordResetToken = async (userId: string): Promise<string> => {
   await db.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, userId));
   const tokenId = generateId(40);
   await db.insert(passwordResetTokens).values({
