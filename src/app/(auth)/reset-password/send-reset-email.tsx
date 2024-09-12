@@ -3,16 +3,13 @@
 import { useEffect, useRef, useState, useMemo } from "react";
 import { useFormState } from "react-dom";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { SubmitButton } from "@/components/submit-button";
 import { sendPasswordResetLink } from "@/lib/auth/actions";
-import { ExclamationTriangleIcon } from "@/components/icons";
 import { Paths } from "@/lib/constants";
-
 
 // Rate limit this
 export function SendResetEmail() {
@@ -27,7 +24,6 @@ export function SendResetEmail() {
   useEffect(() => {
     if (state?.success) {
       toast.success("A link to reset your password has been sent to your email.");
-      // formRef.current?.reset();
     }
     if (state?.error) {
       toast.error(state.error);
@@ -57,8 +53,8 @@ export function SendResetEmail() {
       <div className="flex flex-wrap justify-between text-xs">
             <div>
               Don't want to reset?{" "}
-              <Button variant="link" size="sm" className="p-0 h-auto" asChild>
-                <Link href={Paths.Login}>Log in</Link>
+              <Button variant="link" size="sm" className="p-0 h-auto">
+                <Link href={Paths.Login} className="text-blue-500">Log in</Link>
               </Button>
             </div>
       </div>

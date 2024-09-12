@@ -1,5 +1,5 @@
 import React from "react";
-import { Body, Container, Head, Html, Preview, Section, Text, Button, Link, Font } from "@react-email/components";
+import { Body, Container, Head, Html, Preview, Section, Text, Link } from "@react-email/components";
 import { APP_TITLE, EMAIL_FOOTER, Paths } from "@/lib/constants";
 import { absoluteUrl } from "@/lib/utils";
 

@@ -34,9 +34,9 @@ export const MagicLinkResend = ({ email }: MagicLinkResendProps) => {
   }, [router])
 
 
-  const handleSubmit = (formData: FormData) => {
-    resendAction(formData);
-  };
+  // const handleSubmit = (formData: FormData) => {
+  //   resendAction(formData);
+  // };
 
   return (
     <div className="flex flex-col gap-2">

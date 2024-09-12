@@ -6,7 +6,7 @@ import EmailVerificationTemplate from "@/lib/email/templates/email-verification"
 import ResetPasswordTemplate from "@/lib/email/templates/reset-password";
 import WelcomeTemplate from "@/lib/email/templates/welcome";
 import AccountDeletedTemplate from "@/lib/email/templates/account-deleted";
-import { createTransport, TransportOptions } from "nodemailer";
+import { createTransport, type TransportOptions } from "nodemailer";
 import { SendEmailCommand, SESv2Client } from "@aws-sdk/client-sesv2";
 import { sendEmail as sendEmailResend } from "@/lib/email/resend";
 import { EMAIL_SENDER_NAME, EMAIL_SENDER_ADDRESS, EMAIL_SENDER } from "@/lib/constants";

@@ -115,7 +115,7 @@ export async function POST(req: Request) {
 
       // Reason: cancellation_requested, admin canceled with custom date
       if (subscription.cancellation_details?.reason) {
-        const subscription = await stripe.subscriptions.update(
+        await stripe.subscriptions.update(
           subscriptionUpdated.id,
           {
             cancel_at_period_end: true

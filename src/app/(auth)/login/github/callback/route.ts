@@ -7,9 +7,7 @@ import { db } from "@/server/db";
 import { Paths } from "@/lib/constants";
 import { users } from "@/server/db/schema";
 import { validateRequest } from "@/lib/auth/validate-request";
-import { sendEmail, EmailTemplate } from "@/lib/email/plunk";
 import { createContact, sendWelcomeEmail } from "@/lib/auth/actions";
-import { absoluteUrl } from "@/lib/utils";
 
 interface GitHubUserEmail {
   email: string;

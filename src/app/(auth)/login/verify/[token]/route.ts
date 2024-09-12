@@ -3,7 +3,7 @@ import { validateMagicLinkToken } from "@/lib/auth/actions";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@/lib/constants";
 import { redirect } from "next/navigation";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 export async function GET(
   req: NextRequest,
@@ -17,5 +17,5 @@ export async function GET(
 
   const { token } = params;
 
-  const result = await validateMagicLinkToken(token);
+  await validateMagicLinkToken(token);
 }

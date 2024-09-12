@@ -5,17 +5,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
 import { redirect } from "next/navigation";
 import { validateRequest } from "@/lib/auth/validate-request";
-// import { VerifyCode } from "./verify-code";
 import { Paths } from "@/lib/constants";
 import Link from "next/link";
 import { ArrowLeftIcon } from "@/components/icons";

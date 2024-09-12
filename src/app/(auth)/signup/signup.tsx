@@ -4,7 +4,7 @@ import { useFormState } from "react-dom";
 import Link from "next/link";
 import { PasswordInput } from "@/components/password-input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { DiscordLogoIcon, faGoogle, FontAwesomeIcon, GitHubLogoIcon } from "@/components/icons";
 import { APP_TITLE } from "@/lib/constants";
@@ -13,7 +13,6 @@ import { signup } from "@/lib/auth/actions";
 import { SubmitButton } from "@/components/submit-button";
 import { Paths } from "@/lib/constants";
 import { useState, useMemo } from "react";
-import { CheckIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/navigation";
 
 export function Signup() {
@@ -99,8 +98,8 @@ export function Signup() {
             <div className="flex flex-wrap items-center justify-between text-xs text-muted-foreground">
               <div>
                 Already have an account?{" "}
-                <Button variant="link" size="sm" className="p-0 h-auto" asChild>
-                  <Link href={Paths.Login}>Log in</Link>
+                <Button variant="link" size="sm" className="p-0 h-auto">
+                  <Link href={Paths.Login} className="text-blue-500">Log in</Link>
                 </Button>
               </div>
             </div>
@@ -135,17 +134,17 @@ export function Signup() {
         </CardContent>
         </CardContent>
       </Card>
-      <div className="text-center text-xs text-muted-foreground mt-4 px-6 pb-6">
+      <div className="text-center text-[10.6px] text-muted-foreground mt-4 px-6 pb-6">
       By signing up, you agree to our{" "}
-      <Link href={Paths.TermsOfService} className="hover:underline dark:text-blue-500" prefetch={false}>
+      <Link href={Paths.TermsOfService} className="hover:underline text-blue-500" prefetch={false}>
         terms
       </Link>
       ,{" "}
-      <Link href={Paths.AcceptableUsePolicy} className="hover:underline dark:text-blue-500" prefetch={false}>
+      <Link href={Paths.AcceptableUsePolicy} className="hover:underline text-blue-500" prefetch={false}>
         acceptable use
       </Link>
       , and{" "}
-      <Link href={Paths.PrivacyPolicy} className="hover:underline dark:text-blue-500" prefetch={false}>
+      <Link href={Paths.PrivacyPolicy} className="hover:underline text-blue-500" prefetch={false}>
         privacy policy
       </Link>
       .

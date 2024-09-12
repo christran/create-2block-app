@@ -4,7 +4,7 @@ import { Paths } from "@/lib/constants";
 import { NextRequest, NextResponse } from "next/server";
 import { env } from "@/env";
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest, res: NextResponse) {
   try {
     // Check for authentication
     const authHeader = req.headers.get("Authorization");

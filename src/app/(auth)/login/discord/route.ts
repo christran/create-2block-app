@@ -6,7 +6,6 @@ import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@/lib/constants";
 import { redirect } from "next/navigation";
 import { api } from "@/trpc/server";
-import { revalidatePath } from "next/cache";
 
 export async function GET(request: Request): Promise<Response> {
   const { searchParams } = new URL(request.url);

@@ -16,7 +16,7 @@ export const freePlan: SubscriptionPlan = {
 
 export const proPlan: SubscriptionPlan = {
   name: "Unlimited",
-  description: "The Unlimited Plan is unlimited so it's must be good.",
+  description: "The Unlimited Plan is unlimited so it's must be good",
   features: ["Unlimited Everything", "Priority Support", "Access to Discord Server"],
   stripePriceId: env.STRIPE_PRO_MONTHLY_PLAN_ID,
 };

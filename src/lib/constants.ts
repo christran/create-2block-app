@@ -36,62 +36,54 @@ export enum Paths {
 
 export const navbarItems = [
   {
-    title: "Dashboard",
-    href: Paths.Dashboard,
-    icon: DesktopIcon,
-    roles: [
-      "default",
-      "member",
-      "admin"
+    category: "Main",
+    items: [
+      {
+        title: "Dashboard",
+        href: Paths.Dashboard,
+        icon: DesktopIcon,
+        roles: ["default", "member", "admin"]
+      },
     ]
   },
   {
-    title: "Billing",
-    href: Paths.Billing,
-    icon: CreditCardIcon,
-    roles: [
-      "default",
-      "member",
-      "admin"
+    category: "Account",
+    items: [
+      {
+        title: "Profile",
+        href: Paths.Settings,
+        icon: PersonIcon,
+        roles: ["default", "member", "admin"]
+      },
+      {
+        title: "Security",
+        href: Paths.Security,
+        icon: LockClosedIcon,
+        roles: ["default", "member", "admin"]
+      },
+      {
+        title: "Billing",
+        href: Paths.Billing,
+        icon: CreditCardIcon,
+        roles: ["default", "member", "admin"]
+      },
     ]
   },
   {
-    title: "Profile",
-    href: Paths.Settings,
-    icon: PersonIcon,
-    roles: [
-      "default",
-      "member",
-      "admin"
-    ]
-  },
-  {
-    title: "Security",
-    href: Paths.Security,
-    icon: LockClosedIcon,
-    roles: [
-      "default",
-      "member",
-      "admin"
-    ]
-  },
-  {
-    title: "Claude 3.5",
-    href: Paths.Home,
-    icon: PiRobot,
-    roles: [
-      "member",
-      "admin"
-    ]
-  },
-  {
-    title: "gpt-4o",
-    href: Paths.Home,
-    icon: PiOpenAiLogo,
-    roles: [
-      "member",
-      "admin"
+    category: "AI Models",
+    items: [
+      {
+        title: "Claude 3.5",
+        href: Paths.Home,
+        icon: PiRobot,
+        roles: ["member", "admin"]
+      },
+      {
+        title: "gpt-4o",
+        href: Paths.Home,
+        icon: PiOpenAiLogo,
+        roles: ["member", "admin"]
+      },
     ]
   }
 ];
-

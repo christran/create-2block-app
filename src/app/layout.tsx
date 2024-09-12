@@ -7,7 +7,6 @@ import localFont from "next/font/local";
 import { cn } from "@/lib/utils";
 import { TRPCReactProvider } from "@/trpc/react";
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import { AnalyticsScript } from "./analytics";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { cookies } from "next/headers";
@@ -56,8 +55,8 @@ export default async function RootLayout({
   const { user } = await validateRequest();
 
   const userData = {
-    userId: user?.id || cookies().get("lastKnownUserId")?.value || 'N/A',
-    email: user?.email || cookies().get("lastKnownEmail")?.value || 'N/A'
+    userId: user?.id ?? cookies().get("lastKnownUserId")?.value ?? 'N/A',
+    email: user?.email ?? cookies().get("lastKnownEmail")?.value ?? 'N/A'
   };
 
   return (

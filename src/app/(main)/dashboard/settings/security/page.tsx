@@ -2,7 +2,7 @@ import { validateRequest } from "@/lib/auth/validate-request";
 import { LinkedAccounts } from "./_components/linked-accounts";
 import { MultiFactorAuth } from "./_components/multifactorauth";
 import { UpdatePassword } from "./_components/update-password";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { Paths } from "@/lib/constants";
 import { api } from "@/trpc/server";
 import { env } from "@/env";
@@ -34,8 +34,13 @@ export default async function SecurityPage() {
       </div>
       <div className="grid gap-8">
         <LinkedAccounts user={user} isPasswordLess={isPasswordLess} />
-        <UpdatePassword isPasswordLess={isPasswordLess} />
-        <MultiFactorAuth />
+
+        {!env.MAGIC_LINK_AUTH && (
+          <>
+            <UpdatePassword isPasswordLess={isPasswordLess} />
+            <MultiFactorAuth />
+          </>
+        )}
       </div>
     </div>
   )

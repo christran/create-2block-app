@@ -2,7 +2,6 @@
 
 import { FilePlusIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import { Paths } from "@/lib/constants";
 import { api } from "@/trpc/react";
 import { type RouterOutputs } from "@/trpc/shared";
 import { useRouter } from "next/navigation";

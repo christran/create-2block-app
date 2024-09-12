@@ -13,7 +13,7 @@ import { EMAIL_SENDER } from "@/lib/constants";
 import { logger } from "../logger";
 
 import { EmailTemplate } from "./plunk";
-import { PropsMap } from "./plunk";
+import type { PropsMap } from "./plunk";
 
 const resend = new Resend(env.RESEND_API_KEY);
 

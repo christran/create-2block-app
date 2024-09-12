@@ -9,6 +9,7 @@ import {
 import { SendResetEmail } from "./send-reset-email";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@/lib/constants";
+import { env } from "@/env";
 
 export const metadata = {
   title: "Reset Password",
@@ -19,6 +20,7 @@ export default async function ForgotPasswordPage() {
   const { user } = await validateRequest();
 
   if (user) redirect(Paths.Dashboard);
+  if (env.MAGIC_LINK_AUTH) redirect(Paths.Login);
 
   return (
     <Card className="w-full max-w-md">

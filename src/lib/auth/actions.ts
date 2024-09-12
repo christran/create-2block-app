@@ -25,7 +25,6 @@ import { emailVerificationCodes, magicLinkTokens, passwordResetTokens, users } f
 import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "../constants";
 import { env } from "@/env";
-import { revalidatePath } from "next/cache";
 
 import { generateId, Scrypt } from "lucia";
 // import { Argon2id } from "oslo/password";
@@ -33,8 +32,6 @@ import { generateId, Scrypt } from "lucia";
 import { sendEmail, EmailTemplate } from "@/lib/email/plunk";
 
 import { logger } from "../logger";
-import { absoluteUrl } from "../utils";
-import { updateContactByEmail } from "../email/actions";
 import { tasks } from "@trigger.dev/sdk/v3";
 import type { welcomeEmailTask } from "@/trigger/email";
 import { api } from "@/trpc/server";
@@ -460,37 +457,38 @@ export const updateAccount = async (_: any, formData: FormData): Promise<ActionR
     return {
       fieldError: {
         fullname: err.fieldErrors.fullname?.[0],
-        email: err.fieldErrors.email?.[0],
+        // email: err.fieldErrors.email?.[0],
       },
     };
   }
 
-  const { fullname, email } = parsed.data;
+  // const { fullname, email } = parsed.data;
+  const { fullname } = parsed.data;
 
-  const existingUser = await db.query.users.findFirst({
-    where: (table, { eq }) => eq(table.email, email),
-    columns: { email: true },
-  });
+  // const existingUser = await db.query.users.findFirst({
+  //   where: (table, { eq }) => eq(table.email, email),
+  //   columns: { email: true },
+  // });
 
-  if (existingUser) {
-    return {
-      error: "This email address is already associated with another account.",
-    };
-  }
+  // if (existingUser) {
+  //   return {
+  //     error: "This email address is already associated with another account.",
+  //   };
+  // }
 
-  const userData = await db.query.users.findFirst({
-    where: (table, { eq }) => eq(table.email, user.email),
-  });
+  // const userData = await db.query.users.findFirst({
+  //   where: (table, { eq }) => eq(table.id, user.id),
+  // });
 
   // email input disabled on client side, force on server side
-  const newEmail = (userData?.hashedPassword ? email : userData?.email)
+  // const newEmail = (userData?.hashedPassword ? email : userData?.email)
 
   // Force reverify after updating email
   try {
     await db.update(users).set({ 
       fullname,
-      email: newEmail,
-      emailVerified: userData?.hashedPassword && email !== user.email ? false : userData?.emailVerified
+      // email: newEmail,
+      // emailVerified: userData?.hashedPassword && email !== user.email ? false : userData?.emailVerified
     }).where(eq(users.id, user.id));
 
     // revalidatePath(Paths.Settings);

@@ -1,4 +1,3 @@
-import { EmailTemplate } from "@/lib/email/plunk";
 import { protectedProcedure, createTRPCRouter } from "@/server/api/trpc";
 import { emailVerificationCodes, passwordResetTokens, sessions, users } from "@/server/db/schema";
 import { eq } from "drizzle-orm";

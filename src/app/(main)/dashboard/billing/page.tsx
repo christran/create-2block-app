@@ -6,7 +6,7 @@ import { ExclamationTriangleIcon } from "@/components/icons";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { env } from "@/env";
 import { validateRequest } from "@/lib/auth/validate-request";
-import { APP_TITLE, Paths } from "@/lib/constants";
+import { Paths } from "@/lib/constants";
 import { api } from "@/trpc/server";
 import { Suspense } from "react";
 import { Billing } from "./_components/billing";

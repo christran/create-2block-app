@@ -23,7 +23,7 @@ export type MagicLinkInput = z.infer<typeof magigcLinkLoginSchema>;
 
 export const updateAccountSchema = z.object({
   fullname: z.string().min(1, "Please provide your full name.").max(255),
-  email: z.string().email("Please enter a valid email"),
+  // email: z.string().email("Please enter a valid email"),
 });
 export type updateAccountInput = z.infer<typeof updateAccountSchema>;
 

@@ -9,14 +9,11 @@ import {
 import {
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { ExclamationTriangleIcon } from "@/components/icons";
 import { logout } from "@/lib/auth/actions";;
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { Paths } from "@/lib/constants";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -24,7 +21,6 @@ export const UserDropdown = ({
   fullname,
   email,
   avatar,
-  className,
 }: {
   fullname: string;
   email: string;

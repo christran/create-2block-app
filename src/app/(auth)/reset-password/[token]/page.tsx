@@ -9,17 +9,22 @@ import { Button } from "@/components/ui/button";
 import { ResetPassword } from "./reset-password";
 import { APP_TITLE, Paths } from "@/lib/constants";
 import Link from "next/link";
+import { validateRequest } from "@/lib/auth/validate-request";
+import { env } from "@/env";
+import { redirect } from "next/navigation";
 
 export const metadata = {
   title: "Reset Password",
   description: "Reset Password Page",
 };
 
-export default function ResetPasswordPage({
+export default async function ResetPasswordPage({
   params,
 }: {
   params: { token: string };
 }) {
+  if (env.MAGIC_LINK_AUTH) redirect(Paths.Login);
+
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
