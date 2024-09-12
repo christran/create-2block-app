@@ -20,6 +20,9 @@ export const users = pgTable(
     email: varchar("email", { length: 255 }).unique().notNull(),
     emailVerified: boolean("email_verified").default(false).notNull(),
     hashedPassword: varchar("hashed_password", { length: 255 }),
+    role: varchar("role", { length: 10, enum: ["default", "member", "admin"] })
+    .default("default")
+    .notNull(),
     contactId: varchar("contact_id", { length: 255 }).unique().notNull(),
     googleId: varchar("google_id", { length: 255 }).unique(),
     discordId: varchar("discord_id", { length: 255 }).unique(),

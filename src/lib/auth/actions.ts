@@ -139,6 +139,7 @@ export const signup = async (_: any, formData: FormData): Promise<ActionResponse
     fullname,
     email,
     hashedPassword,
+    role: "default",
     contactId: newContact.contactId ?? null
   });
 
@@ -708,6 +709,7 @@ export const sendMagicLink = async (
       fullname: userEmail,
       email: userEmail,
       emailVerified: true,
+      role: "default",
       contactId: newContact.contactId ?? null
     });
   

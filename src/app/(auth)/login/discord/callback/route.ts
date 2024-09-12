@@ -75,6 +75,7 @@ async function createNewUser(discordUser: DiscordUser): Promise<Response> {
     fullname: discordUser.username,
     email: discordUser.email,
     emailVerified: true,
+    role: "default",
     contactId: newContact.contactId,
     discordId: discordUser.id,
     avatar,

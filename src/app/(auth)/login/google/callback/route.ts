@@ -71,6 +71,7 @@ async function createNewUser(googleUser: GoogleUser): Promise<Response> {
     fullname: googleUser.name,
     email: googleUser.email,
     emailVerified: true,
+    role: "default",
     contactId: newContact.contactId,
     googleId: googleUser.sub,
     avatar: googleUser.picture,

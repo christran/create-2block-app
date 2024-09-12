@@ -1,5 +1,5 @@
 {
-  "id": "668bee90-c506-4e28-9445-f771a50e8d52",
+  "id": "a75e9959-8a7a-4ede-b25f-f024dfafbe45",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -76,6 +76,58 @@
       "uniqueConstraints": {
         "2block_email_verification_codes_user_id_unique": {
           "name": "2block_email_verification_codes_user_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "user_id"
+          ]
+        }
+      }
+    },
+    "public.2block_magic_link_tokens": {
+      "name": "2block_magic_link_tokens",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(64)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar(21)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "magic_Link_token_user_idx": {
+          "name": "magic_Link_token_user_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "2block_magic_link_tokens_user_id_unique": {
+          "name": "2block_magic_link_tokens_user_id_unique",
           "nullsNotDistinct": false,
           "columns": [
             "user_id"
@@ -303,6 +355,19 @@
           "primaryKey": false,
           "notNull": false
         },
+        "role": {
+          "name": "role",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'default'"
+        },
+        "contact_id": {
+          "name": "contact_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
         "google_id": {
           "name": "google_id",
           "type": "varchar(255)",
@@ -381,6 +446,21 @@
           "method": "btree",
           "with": {}
         },
+        "user_contact_idx": {
+          "name": "user_contact_idx",
+          "columns": [
+            {
+              "expression": "contact_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
         "user_google_idx": {
           "name": "user_google_idx",
           "columns": [
@@ -435,6 +515,13 @@
           "nullsNotDistinct": false,
           "columns": [
             "email"
+          ]
+        },
+        "2block_users_contact_id_unique": {
+          "name": "2block_users_contact_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "contact_id"
           ]
         },
         "2block_users_google_id_unique": {
