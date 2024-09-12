@@ -1,4 +1,4 @@
-import { sendEmail, EmailTemplate } from "@/lib/email/plunk";
+import { sendEmail, EmailTemplate } from "@/lib/email/email-service";
 import { absoluteUrl } from "@/lib/utils";
 import { Paths } from "@/lib/constants";
 import { NextRequest, NextResponse } from "next/server";

@@ -12,8 +12,8 @@ import { env } from "@/env";
 import { EMAIL_SENDER } from "@/lib/constants";
 import { logger } from "../logger";
 
-import { EmailTemplate } from "./plunk";
-import type { PropsMap } from "./plunk";
+import { EmailTemplate } from "./email-service";
+import type { PropsMap } from "./email-service";
 
 const resend = new Resend(env.RESEND_API_KEY);
 

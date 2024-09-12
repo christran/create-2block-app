@@ -1,7 +1,7 @@
 import { env } from "@/env";
 import { Paths } from "@/lib/constants";
 import { deleteContactById } from "@/lib/email/actions";
-import { sendEmail, EmailTemplate } from "@/lib/email/plunk";
+import { sendEmail, EmailTemplate } from "@/lib/email/email-service";
 import { logger, task, wait } from "@trigger.dev/sdk/v3";
 
 export const welcomeEmailTask = task({
@@ -26,6 +26,9 @@ export const welcomeEmailTask = task({
 
 export const accountDeletedTask = task({
   id: "account-deleted",
+  retry: {
+    maxAttempts: 1,
+  },
   run: async (payload: {
     fullname: string,
     email: string;
@@ -44,5 +47,8 @@ export const accountDeletedTask = task({
   },
   handleError: async (payload, err, { ctx, retryAt }) => {
     logger.log("Error:", { err });
+
+    // handle this error
+    // Error deleting contact: Error: That contact was not found at deleteContactById
   },
 });
