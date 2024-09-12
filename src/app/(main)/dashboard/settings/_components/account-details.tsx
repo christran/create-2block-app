@@ -137,34 +137,34 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
               ) : null}
             </CardContent>
             <CardFooter className="border-t px-6 py-4 gap-2">
-              <SubmitButton formAction={formAction} disabled={!isDirty}>Update Account</SubmitButton>
-              <AlertDialog open={open} onOpenChange={setOpen}>
-            <AlertDialogTrigger asChild>
-              <Button variant="link" size="sm">
-                Delete Account
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent className="max-w">
-              <AlertDialogHeader>
-                <AlertDialogTitle>
-                  Are you absolutely sure?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete your
-                  account and remove your data from our servers.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <Button variant="outline" onClick={() => setOpen(false)}>
-                  Cancel
-                </Button>
-                <LoadingButton variant="destructive" loading={isLoading} onClick={accountDelete}>
+            <SubmitButton formAction={formAction} disabled={!isDirty}>Update Account</SubmitButton>
+            <AlertDialog open={open} onOpenChange={setOpen}>
+              <AlertDialogTrigger asChild>
+                <Button variant="link" size="sm">
                   Delete Account
-                </LoadingButton>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-            </CardFooter>
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="w-[90vw] md:max-w rounded-lg">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Are you absolutely sure?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete your
+                    account and remove your data from our servers.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <Button variant="outline" onClick={() => setOpen(false)}>
+                    Cancel
+                  </Button>
+                  <LoadingButton variant="destructive" className="mb-2 md:mb-0" loading={isLoading} onClick={accountDelete}>
+                    Delete Account
+                  </LoadingButton>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </CardFooter>
           </form>
         </Suspense>
       </Card>

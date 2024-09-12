@@ -24,7 +24,7 @@ export function MobileSheetNavbar() {
             <span className="sr-only">Toggle navigation menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left">
+        <SheetContent side="left" className="w-[240px] md:w-[290px]">
           <Link className="flex mb-4 items-center justify-center text-xs font-bold" href="/dashboard">
               <PiHandPeaceLight className="h-5 w-5" />{APP_TITLE_UNSTYLED}
           </Link>

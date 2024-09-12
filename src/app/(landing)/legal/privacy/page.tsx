@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 
 const PrivacyPolicyPage = () => {
   return (
-    <section className="mx-auto max-w-4xl px-4 py-12">
-      <h1 className="mb-2 text-3xl font-bold text-center">Privacy Policy</h1>
+    <section className="mx-auto max-w-4xl px-4 py-6">
+      <h1 className="mb-2 text-4xl font-bold text-center">Privacy Policy</h1>
       <p className="mb-8 text-sm text-muted-foreground text-center">Last updated: August 18th, 2024</p>
       <div className="space-y-6 text-muted-foreground">
         <p>This Privacy Policy explains how ✌️BLOCK collects, uses, and protects your personal information:</p>

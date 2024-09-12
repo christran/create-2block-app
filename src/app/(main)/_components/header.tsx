@@ -17,9 +17,7 @@ export const Header = async () => {
       <div className="container flex items-center justify-between gap-2 px-2 py-2 lg:px-10">
         <div className="flex items-center gap-4">
           <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
-            <Link className={`flex items-center justify-center text-xs font-bold hover:text-${randomColor}-500`} href="/dashboard">
-              <PiHandPeaceLight className="h-5 w-5" />{APP_TITLE_UNSTYLED}
-            </Link>
+
             {/* <Link
               href={Paths.Dashboard}
               className="text-muted-foreground transition-colors hover:text-foreground"
@@ -28,6 +26,9 @@ export const Header = async () => {
             </Link> */}
           </nav>
           <MobileSheetNavbar />
+          <Link className={`flex items-center justify-center text-xs font-bold hover:text-${randomColor}-500`} href="/dashboard">
+            <PiHandPeaceLight className="h-5 w-5" />{APP_TITLE_UNSTYLED}
+          </Link>
         </div>
         <UserDropdown 
           fullname={user?.fullname ?? ''} 

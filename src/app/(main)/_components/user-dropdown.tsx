@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Paths } from "@/lib/constants";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export const UserDropdown = ({
   fullname,
@@ -45,13 +46,22 @@ export const UserDropdown = ({
     <div className="flex items-center gap-4 md:gap-2 lg:gap-4">
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="secondary" size="icon" className="rounded-full">
-        <Avatar>
-          <AvatarImage src={avatar} alt={fullname} />
-          <AvatarFallback delayMs={100}>{fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}</AvatarFallback>
-        </Avatar>
-          <span className="sr-only">Toggle user menu</span>
-        </Button>
+        <div className="rounded-full"> {/* Changed from Button to div */}
+          <TooltipProvider delayDuration={400} disableHoverableContent={true}>
+            <Tooltip>
+              <TooltipTrigger>
+                <Avatar>
+                  <AvatarImage src={avatar} alt={fullname} />
+                  <AvatarFallback delayMs={100}>{fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}</AvatarFallback>
+                </Avatar>
+                <span className="sr-only">Toggle user menu</span>
+              </TooltipTrigger>
+              <TooltipContent className="font-medium text-sm">
+                {fullname}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>

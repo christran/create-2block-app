@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 
 const TermsOfServicePage = () => {
   return (
-    <section className="mx-auto max-w-4xl px-4 py-12">
-      <h1 className="mb-2 text-3xl font-bold text-center">Terms of Service</h1>
+    <section className="mx-auto max-w-4xl px-4 py-6">
+      <h1 className="mb-2 text-4xl font-bold text-center">Terms of Service</h1>
       <p className="mb-8 text-sm text-muted-foreground text-center">Last updated: August 18th, 2024</p>
       <div className="space-y-6 text-muted-foreground">
         <p>By using our service, you agree to these terms:</p>
@@ -22,7 +22,7 @@ const TermsOfServicePage = () => {
         <p>
           By creating an Account on our Service, you agree to subscribe to newsletters, marketing or 
           promotional materials and other information we may send. However, you may opt out of receiving any, or all, 
-          of these communications from us by following the unsubscribe link or by emailing at.
+          of these communications from us by following the unsubscribe link.
         </p>
         
         <h2 className="mt-6 text-xl font-semibold text-foreground">3. User Responsibilities</h2>

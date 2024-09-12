@@ -14,16 +14,12 @@ import { validateRequest } from "@/lib/auth/validate-request";
 const routes = [
   { 
     name: "Home", 
-    href: "/" 
+    href: Paths.Home 
   },
-  // { 
-  //   name: "Team", 
-  //   href: "/#features" 
-  // },
-  // {
-  //   name: "Jobs",
-  //   href: "https://google.com",
-  // },
+  { 
+    name: "Login", 
+    href: Paths.Login 
+  },
 ] as const;
 
 export const Header = async () => {
@@ -51,7 +47,7 @@ export const Header = async () => {
               <div className="py-1">
                 {routes.map(({ name, href }) => (
                   <DropdownMenuItem key={name} asChild>
-                    <Link href={href}>{name}</Link>
+                    <Link href={href} className="hover:bg-accent/70 hover:text-secondary-foreground">{name}</Link>
                   </DropdownMenuItem>
                 ))}
               </div>
