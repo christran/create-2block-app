@@ -15,8 +15,8 @@ export function BillingSkeleton() {
           <Skeleton className="h-5 w-36" />
         </Card>
       </section>
-      <section className="grid gap-6 lg:grid-cols-2">
-        {Array.from({ length: 2 }).map((_, i) => (
+      <section className="grid gap-6 lg:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, i) => (
           <Card key={i} className="flex flex-col p-2">
             <CardHeader className="h-full">
               <Skeleton className="h-7 w-24" />

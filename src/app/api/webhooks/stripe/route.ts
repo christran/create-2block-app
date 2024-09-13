@@ -46,20 +46,28 @@ export async function POST(req: Request) {
         checkoutSessionCompleted.subscription as string,
       );
 
+      const stripePriceId = subscription.items.data[0]?.price.id
+
+      const isProPlus = stripePriceId === env.STRIPE_PRO_PLUS_MONTHLY_PLAN_ID;
+      const newRole = isProPlus ? "premium" : "member";
+
+      console.log(isProPlus, stripePriceId)
+
       // Update the user stripe into in our database
-      // Since this is the initial subscription, we need to update
-      // the subscription id and customer id
       await db
         .update(users)
         .set({
           stripeSubscriptionId: subscription.id,
           stripeCustomerId: subscription.customer as string,
-          stripePriceId: subscription.items.data[0]?.price.id,
+          stripePriceId,
           stripeCurrentPeriodEnd: new Date(
             subscription.current_period_end * 1000,
           ),
+          role: newRole
         })
         .where(eq(users.id, userId));
+
+        // todo: Send thank you email?
 
       break;
     }
@@ -96,6 +104,7 @@ export async function POST(req: Request) {
     }
     case "customer.subscription.updated": {
       // Triggers when admin updates a user's subscription directly on the Stripe dashboard
+      // Triggers on billing auto renew
       console.log("customer.subscription.updated");
 
       const subscriptionUpdated = event.data.object;
@@ -123,6 +132,33 @@ export async function POST(req: Request) {
         );
       }
 
+      const [currentUser] = await db
+      .select()
+      .from(users)
+      .where(eq(users.stripeCustomerId, customerId as string))
+      .limit(1);
+  
+      if (!currentUser) {
+        return new Response("User not found in database.", { status: 404 });
+      }
+    
+      const newPriceId = subscription.items.data[0]?.price.id;
+      const currentPriceId = currentUser.stripePriceId;
+      
+      // Update User's Role
+      if (newPriceId !== currentPriceId) {
+        const isUpgrade = newPriceId === env.STRIPE_PRO_PLUS_MONTHLY_PLAN_ID;
+        const subscriptionChange = isUpgrade ? "upgraded" : "downgraded";
+        const newRole = isUpgrade ? "premium" : "member";
+      
+        console.log(`User ${currentUser.id} has ${subscriptionChange} their subscription.`);
+      
+        await db
+          .update(users)
+          .set({ role: newRole })
+          .where(eq(users.stripeCustomerId, customerId as string));
+      }
+      
       // Update the user stripe into in our database
       // Since this is the initial subscription, we need to update
       // the subscription id and customer id
@@ -137,11 +173,13 @@ export async function POST(req: Request) {
           ),
         })
         .where(eq(users.stripeCustomerId, customerId as string));
-
       break;
     }
     case "customer.subscription.deleted": {
       // Triggers when admin cancels a user's subscription directly on the Stripe dashboard
+      // Also triggers automatically
+      // when subscription ends
+      // customer canceled before and so no auto renew
       console.log("customer.subscription.deleted");
 
       const subscriptionDeleted = event.data.object;
@@ -161,6 +199,7 @@ export async function POST(req: Request) {
           stripeCustomerId: null,
           stripePriceId: null,
           stripeCurrentPeriodEnd: null,
+          role: "default",
         })
         .where(eq(users.stripeCustomerId, customerId as string));
 

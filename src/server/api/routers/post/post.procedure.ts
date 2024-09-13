@@ -3,13 +3,11 @@ import { z } from "zod";
 import { posts } from "@/server/db/schema";
 import { generateId } from "lucia";
 import { count, eq } from "drizzle-orm";
+import { createPostSchema, deletePostSchema, getPostSchema, listPostsSchema, myPostsSchema, updatePostSchema } from "./post.input";
 
 export const postRouter = createTRPCRouter({
   list: protectedProcedure
-    .input(z.object({
-      page: z.number().int().default(1),
-      perPage: z.number().int().default(12),
-    }))
+    .input(listPostsSchema)
     .query(async ({ ctx, input }) => {
       return ctx.db.query.posts.findMany({
         where: (table, { eq }) => eq(table.status, "published"),
@@ -28,9 +26,7 @@ export const postRouter = createTRPCRouter({
     }),
 
   get: protectedProcedure
-    .input(z.object({
-      id: z.string(),
-    }))
+    .input(getPostSchema)
     .query(({ ctx, input }) => {
       return ctx.db.query.posts.findFirst({
         where: (table, { eq }) => eq(table.id, input.id),
@@ -39,11 +35,7 @@ export const postRouter = createTRPCRouter({
     }),
 
   create: protectedProcedure
-    .input(z.object({
-      title: z.string().min(3).max(255),
-      excerpt: z.string().min(3).max(255),
-      content: z.string().min(3),
-    }))
+    .input(createPostSchema)
     .mutation(async ({ ctx, input }) => {
       const id = generateId(15);
 
@@ -61,12 +53,7 @@ export const postRouter = createTRPCRouter({
     }),
 
   update: protectedProcedure
-    .input(z.object({
-      id: z.string(),
-      title: z.string().min(3).max(255),
-      excerpt: z.string().min(3).max(255),
-      content: z.string().min(3),
-    }))
+    .input(updatePostSchema)
     .mutation(async ({ ctx, input }) => {
       const [item] = await ctx.db
       .update(posts)
@@ -82,19 +69,14 @@ export const postRouter = createTRPCRouter({
     }),
 
   delete: protectedProcedure
-    .input(z.object({
-      id: z.string(),
-    }))
+    .input(deletePostSchema)
     .mutation(async ({ ctx, input }) => {
       const [item] = await ctx.db.delete(posts).where(eq(posts.id, input.id)).returning();
       return item;
     }),
 
   myPosts: protectedProcedure
-    .input(z.object({
-      page: z.number().int().default(1),
-      perPage: z.number().int().default(12),
-    }))
+    .input(myPostsSchema)
     .query(({ ctx, input }) => {
       return ctx.db.query.posts.findMany({
         where: (table, { eq }) => eq(table.userId, ctx.user.id),

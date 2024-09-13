@@ -7,13 +7,16 @@ import type { ManageSubscriptionInput } from "@/server/api/routers/stripe/stripe
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import { Paths } from "@/lib/constants";
+import { proPlan, proPlus } from "@/config/subscriptions";
 
 export function ManageSubscriptionForm({
   isPro,
+  isProPlus,
   isCanceled,
   stripeCustomerId,
   stripeSubscriptionId,
   stripePriceId,
+  buttonText,
 }: ManageSubscriptionInput) {
   const [isPending, startTransition] = React.useTransition();
   const managePlanMutation = api.stripe.managePlan.useMutation();
@@ -25,10 +28,12 @@ export function ManageSubscriptionForm({
       try {
         const session = await managePlanMutation.mutateAsync({
           isPro,
+          isProPlus,
           isCanceled,
           stripeCustomerId,
           stripeSubscriptionId,
           stripePriceId,
+          buttonText,
         });
 
         if (session) {
@@ -46,13 +51,7 @@ export function ManageSubscriptionForm({
   return (
     <form className="w-full" onSubmit={onSubmit}>
       <Button className="w-full" disabled={isPending}>
-        {isPending
-          ? "Loading..."
-          : isCanceled
-          ? "Resubscribe"
-          : isPro
-          ? "Manage plan"
-          : "Subscribe"}
+        {isPending ? "Loading..." : buttonText}
       </Button>
     </form>
   );

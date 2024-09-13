@@ -10,12 +10,9 @@ import { LockClosedIcon } from "@radix-ui/react-icons";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
 
-// Define a type alias for the user role
-type UserRole = User['role'];
-
 // Define the props interface for the DashboardNavbar component
 interface DashboardNavbarProps {
-  userRole: UserRole;
+  userRole: User['role'];
 }
 
 // Define the DashboardNavbar component
@@ -31,7 +28,6 @@ export function DashboardNavbar({ userRole }: DashboardNavbarProps) {
         <div key={category.category} className="flex flex-col gap-2">
           {/* Category title */}
           <h3 className="font-semibold text-primary px-3 py-1">{category.category}</h3>
-          {/* Commented out separator */}
           {/* <Separator/> */}
           {/* Map through category items */}
           {category.items.map((item) => (
@@ -55,7 +51,9 @@ export function DashboardNavbar({ userRole }: DashboardNavbarProps) {
                       </span>
                       {/* PRO label for non-default items */}
                       {item.roles && !item.roles.includes("default") && (
-                        <span className="ml-1 text-[10px] font-bold text-yellow-500">PRO</span>
+                        <span className="ml-1 text-[10px] font-bold text-yellow-500">
+                          {item.roles.includes("premium") && !item.roles.includes("member") ? "PRO+" : "PRO"}
+                        </span>
                       )}
                     </span>
                   </TooltipTrigger>

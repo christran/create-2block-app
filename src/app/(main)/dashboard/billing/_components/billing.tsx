@@ -1,7 +1,5 @@
 import Link from "next/link";
-
-import { CheckIcon } from "@/components/icons";
-
+import { CheckCircledIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,7 +12,10 @@ import {
 import { formatDate } from "@/lib/utils";
 import { type RouterOutputs } from "@/trpc/shared";
 import { ManageSubscriptionForm } from "./manage-subscription-form";
-import { createBillingPortalSession } from "@/server/api/routers/stripe/stripe.service";
+import { createBillingPortalSession } from "@/server/api/routers/stripe/stripe.procedure";
+import { proPlan, proPlus } from "@/config/subscriptions";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
 interface BillingProps {
   stripePromises: Promise<
@@ -25,6 +26,17 @@ interface BillingProps {
 export async function Billing({ stripePromises }: BillingProps) {
   const [plans, plan] = await stripePromises;
 
+  const getButtonText = (itemName: string) => {
+    if (itemName === "Free") {
+      return plan?.isPro || plan?.isProPlus ? "Upgraded" : "Continue";
+    }
+    if (plan?.isCanceled) return "Resubscribe";
+    if (plan?.isPro && itemName === proPlus.name) return "Upgrade";
+    if (plan?.isProPlus && itemName === proPlan.name) return "Downgrade";
+    if (plan?.isPro || plan?.isProPlus) return "Manage Plan";
+    return "Subscribe";
+  };
+
   return (
     <>
       <section>
@@ -32,72 +44,78 @@ export async function Billing({ stripePromises }: BillingProps) {
           <h3 className="text-lg font-semibold sm:text-xl">Subscription</h3>
           <h4 className="text-lg font-semibold sm:text-xl">{plan?.name ?? "Free"}</h4>
           <p className="text-sm text-muted-foreground">
-            {!plan?.isPro
-              ? "The Free Plan is limited. Upgrade to to unlock unlimited to access all the features"
-              : plan.isCanceled
-                ? <>
-                    {`Your subscription will be canceled on `}
-                    <span className="font-semibold">
-                      {plan?.stripeCurrentPeriodEnd ? formatDate(plan.stripeCurrentPeriodEnd) : null}
-                    </span>
-                    {`. `}
-                    {plan?.stripeCustomerId && (
-                      <Link href={await createBillingPortalSession(plan.stripeCustomerId)} className="underline">
-                        Click here to resubscribe
-                      </Link>
-                    )}
-                  </>
-                : <>
-                    Your subscription renews on{" "}
-                    <span className="font-semibold">
-                      {plan?.stripeCurrentPeriodEnd ? formatDate(plan.stripeCurrentPeriodEnd) : null}
-                    </span>
-                  </>}
+          {!plan?.isPro && !plan?.isProPlus
+            ? "The Free Plan is limited. Upgrade to unlock unlimited access to all features"
+            : plan.isCanceled
+              ? <>
+                  {`Your subscription will end on `}
+                  <span className="font-semibold">
+                    {plan?.stripeCurrentPeriodEnd ? formatDate(plan.stripeCurrentPeriodEnd) : null}
+                  </span>
+                  {`. `}
+                  {plan?.stripeCustomerId && (
+                    <Link href={await createBillingPortalSession(plan.stripeCustomerId)} className="underline">
+                      Click here to resubscribe
+                    </Link>
+                  )}
+                </>
+              : <>
+                  Your subscription renews on{" "}
+                  <span className="font-semibold">
+                    {plan?.stripeCurrentPeriodEnd ? formatDate(plan.stripeCurrentPeriodEnd) : null}
+                  </span>
+                </>
+          }
           </p>
         </Card>
       </section>
-      <section className="grid gap-6 lg:grid-cols-2">
+      {/* Weekly/Monthly Toggle */}
+      {/* <div className="flex items-center justify-center justify-end space-x-2">
+        <Label htmlFor="billing-toggle">Weekly</Label>
+        <Switch
+          id="billing-toggle"
+          // checked={!isMonthly}
+          // onCheckedChange={toggleBillingPeriod}
+        />
+        <Label htmlFor="billing-toggle">Monthly</Label>
+      </div> */}
+      <section className="grid gap-6 lg:grid-cols-3">
         {plans.map((item) => (
           <Card key={item.name} className="flex flex-col p-2">
-            <CardHeader className="h-full">
-              <CardTitle className="line-clamp-1">{item.name}</CardTitle>
-              <CardDescription className="line-clamp-2">{item.description}</CardDescription>
+            <CardHeader>
+              <CardTitle className="text-xl font-bold">{item.name}</CardTitle>
+              <CardDescription className="h-12 text-sm">{item.description}</CardDescription>
             </CardHeader>
-            <CardContent className="h-full flex-1 space-y-6">
-              <div className="text-3xl font-bold">
-                {item.price}
-                <span className="text-sm font-normal text-muted-foreground">/month</span>
+            <CardContent className="flex-1 space-y-6">
+              <div className="flex items-baseline">
+                <span className="text-3xl font-bold">{item.price}</span>
+                <span className="ml-1 text-sm text-muted-foreground">/month</span>
               </div>
-              <div className="space-y-2">
+              <ul className="space-y-2">
                 {item.features.map((feature) => (
-                  <div key={feature} className="flex items-center gap-2">
-                    <div className="aspect-square shrink-0 rounded-full bg-foreground p-px text-background">
-                      <CheckIcon className="size-4" aria-hidden="true" />
-                    </div>
-                    <span className="text-sm text-muted-foreground">{feature}</span>
-                  </div>
+                  <li key={feature} className="flex items-center gap-2">
+                    <CheckCircledIcon className="h-4 w-4 text-primary" aria-hidden="true" />
+                    <span className="text-sm">{feature}</span>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </CardContent>
             <CardFooter className="pt-4">
               {item.name === "Free" ? (
-                <Link href="/dashboard" className="w-full">
-                  <Button className="w-full" disabled={plan?.isPro} asChild>
-                    <span>
-                      {plan?.isPro ? "Upgraded" : "Continue"}
-                      <span className="sr-only">
-                        {plan?.isPro ? "You are currently on the Pro plan" : "Continue with Free plan"}
-                      </span>
-                    </span>
-                  </Button>
-                </Link>
+                <Button className="w-full" disabled={plan?.isPro || plan?.isProPlus}>
+                  <Link href="/dashboard" className="w-full">
+                    {plan?.isPro || plan?.isProPlus ? "Upgraded" : "Continue"}
+                  </Link>
+                </Button>
               ) : (
                 <ManageSubscriptionForm
                   stripePriceId={item.stripePriceId}
                   isPro={plan?.isPro ?? false}
+                  isProPlus={plan?.isProPlus ?? false}
                   isCanceled={plan?.isCanceled ?? false}
                   stripeCustomerId={plan?.stripeCustomerId}
                   stripeSubscriptionId={plan?.stripeSubscriptionId}
+                  buttonText={getButtonText(item.name)}
                 />
               )}
             </CardFooter>

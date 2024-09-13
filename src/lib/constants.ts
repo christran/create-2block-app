@@ -42,7 +42,7 @@ export const navbarItems = [
         title: "Dashboard",
         href: Paths.Dashboard,
         icon: DesktopIcon,
-        roles: ["default", "member", "admin"]
+        roles: ["default", "member", "premium", "admin"]
       },
     ]
   },
@@ -53,19 +53,19 @@ export const navbarItems = [
         title: "Profile",
         href: Paths.Settings,
         icon: PersonIcon,
-        roles: ["default", "member", "admin"]
+        roles: ["default", "member", "premium", "admin"]
       },
       {
         title: "Security",
         href: Paths.Security,
         icon: LockClosedIcon,
-        roles: ["default", "member", "admin"]
+        roles: ["default", "member", "premium", "admin"]
       },
       {
         title: "Billing",
         href: Paths.Billing,
         icon: CreditCardIcon,
-        roles: ["default", "member", "admin"]
+        roles: ["default", "member", "premium", "admin"]
       },
     ]
   },
@@ -73,16 +73,22 @@ export const navbarItems = [
     category: "AI Models",
     items: [
       {
-        title: "Claude 3.5",
+        title: "Claude 3.5 Sonnet",
         href: Paths.Home,
         icon: PiRobot,
-        roles: ["member", "admin"]
+        roles: ["member", "premium", "admin"]
       },
       {
-        title: "gpt-4o",
+        title: "gpt-4o + gpt-o1",
         href: Paths.Home,
         icon: PiOpenAiLogo,
-        roles: ["member", "admin"]
+        roles: ["member", "premium", "admin"]
+      },
+      {
+        title: "AGI",
+        href: Paths.Home,
+        icon: PiOpenAiLogo,
+        roles: ["premium", "admin"]
       },
     ]
   }
