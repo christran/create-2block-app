@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Paths } from "@/lib/constants";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Ellipsis, EllipsisVertical } from "lucide-react";
 
 export const UserDropdownNavBar = ({
   fullname,
@@ -45,8 +46,8 @@ export const UserDropdownNavBar = ({
         <div className="flex items-center rounded-full text-xs">
           <TooltipProvider delayDuration={400} disableHoverableContent={true}>
             <Tooltip>
-              <TooltipTrigger className="flex items-center hover:bg-foreground/5 px-1 py-1 rounded-lg transition-all hover:text-primary">
-                <Avatar>
+              <TooltipTrigger className="flex items-center h-9 hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 px-2 duration-300 rounded-lg transition-all hover:text-primary">
+                <Avatar className="h-7 w-7">
                   <AvatarImage src={avatar} alt={fullname} />
                   <AvatarFallback delayMs={100}>
                     {fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}
@@ -55,6 +56,7 @@ export const UserDropdownNavBar = ({
                 <span className="hidden md:inline-block ml-2 text-sm truncate max-w-[150px]">
                   {email}
                 </span>
+                <EllipsisVertical className="h-4 w-4 text-muted-foreground"/>
                 <span className="sr-only">Toggle user menu</span>
               </TooltipTrigger>
               <TooltipContent className="font-medium text-sm">
@@ -78,7 +80,7 @@ export const UserDropdownNavBar = ({
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          className="font-semibold"
+          className="font-medium"
           onSelect={handleSignout}
         >
         Sign out

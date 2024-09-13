@@ -26,14 +26,14 @@ export function DashboardNavbar({ userRole }: DashboardNavbarProps) {
   
   return (
     <>
-      <nav className="mt-4 flex-1">
+      <nav className="mt-2 flex-1">
         {/* Map through navbar categories */}
         <ul className="flex flex-col gap-2">
         {navbarItems.map((category) => (
-          <div key={category.category} className="flex flex-col gap-1 mb-2">
+          <div key={category.category} className="flex flex-col gap-1 mb-1">
             {/* Category title */}
-            <h4 className="font-bold text-muted-foreground text-[10.5px] px-3 py-1">{category.category.toUpperCase()}</h4>
-            <Separator/>
+            <h4 className="text-muted-foreground text-[10.5px] py-1">{category.category.toUpperCase()}</h4>
+            {/* <Separator className="mb-1" /> */}
             {/* Map through category items */}
             {category.items.map((item) => (
               // Link wrapper, redirects to billing if user doesn't have required role
@@ -44,9 +44,9 @@ export function DashboardNavbar({ userRole }: DashboardNavbarProps) {
                       {/* Navigation item */}
                       <span
                         className={cn(
-                          "flex items-center rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-foreground/5 transition-all hover:text-primary",
+                          "flex h-9 items-center rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all hover:text-primary",
                           // "flex h-8 items-center gap-2 rounded-md px-2 text-sm text-slate-11 hover:bg-slate-4 hover:text-slate-12"
-                          path === item.href ? "font-semibold text-primary bg-foreground/5" : ""
+                          path === item.href ? "text-primary bg-zinc-600/10 dark:bg-zinc-800/70" : ""
                         )}
                       >
                         {/* Item icon */}
@@ -83,8 +83,8 @@ export function DashboardNavbar({ userRole }: DashboardNavbarProps) {
             <Link key="admin" href={Paths.Admin}>
               <span
                 className={cn(
-                  "flex items-center rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-foreground/5 transition-all hover:text-primary",
-                  path === Paths.Admin ? "font-semibold text-primary bg-foreground/5" : ""
+                  "flex h-9 items-center rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all hover:text-primary",
+                  path === Paths.Admin ? "text-primary bg-zinc-600/10 dark:bg-zinc-800/70" : ""
                 )}
               >
                 <LockClosedIcon className="mr-2 h-4 w-4" />
