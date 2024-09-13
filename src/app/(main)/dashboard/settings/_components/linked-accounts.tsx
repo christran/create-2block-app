@@ -53,11 +53,11 @@ export function LinkedAccounts({ user, isPasswordLess }: { user: LinkedAccountPr
   }
 
   return (
-    <Card className="rounded-lg border border-slate-6">
+    <Card className="flex flex-col items-center gap-1 text-center">
       <CardHeader>
         <CardTitle>Linked Accounts</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-col items-center gap-1 text-center">
         <div className="w-full md:w-1/2 space-y-2">
           <Button
             variant="outline"

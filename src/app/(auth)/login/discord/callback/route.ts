@@ -29,7 +29,7 @@ async function handleAccountLinking(discordUser: DiscordUser, userId: string): P
     .set({ discordId: discordUser.id })
     .where(eq(users.id, userId));
 
-  return new Response(null, { status: 302, headers: { Location: Paths.Security } });
+  return new Response(null, { status: 302, headers: { Location: Paths.LinkedAccounts } });
 }
 
 async function handleLogin(discordUser: DiscordUser, existingUser: { id: string; discordId: string | null }): Promise<Response> {

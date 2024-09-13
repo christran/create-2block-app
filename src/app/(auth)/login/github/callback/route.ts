@@ -38,7 +38,7 @@ async function handleAccountLinking(githubUser: GitHubUser, userId: string): Pro
     .set({ githubId: githubUser.id })
     .where(eq(users.id, userId));
 
-  return new Response(null, { status: 302, headers: { Location: Paths.Security } });
+  return new Response(null, { status: 302, headers: { Location: Paths.LinkedAccounts } });
 }
 
 async function handleLogin(githubUser: GitHubUser, existingUser: { id: string; githubId: string | null, email: string }): Promise<Response> {

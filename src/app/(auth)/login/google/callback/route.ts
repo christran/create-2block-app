@@ -29,7 +29,7 @@ async function handleAccountLinking(googleUser: GoogleUser, userId: string): Pro
     .set({ googleId: googleUser.sub })
     .where(eq(users.id, userId));
 
-  return new Response(null, { status: 302, headers: { Location: Paths.Security } });
+  return new Response(null, { status: 302, headers: { Location: Paths.LinkedAccounts } });
 }
 
 async function handleLogin(googleUser: GoogleUser, existingUser: { id: string; googleId: string | null }): Promise<Response> {

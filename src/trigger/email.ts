@@ -15,7 +15,7 @@ export const welcomeEmailTask = task({
 
     await sendEmail(payload.email, EmailTemplate.Welcome, { 
       fullname: payload.fullname,
-      url: `${env.NEXT_PUBLIC_APP_URL}/${Paths.Dashboard}`, 
+      url: `${env.NEXT_PUBLIC_APP_URL}${Paths.Dashboard}`, 
       unsubscribe: `${Paths.Unsubscribe}/${payload.contactId}` 
     });
   },
@@ -38,7 +38,7 @@ export const accountDeletedTask = task({
   
     await sendEmail(payload.email, EmailTemplate.AccountDeleted, { 
       fullname: payload.fullname,
-      url: `${env.NEXT_PUBLIC_APP_URL}/${Paths.Dashboard}`, 
+      url: `${env.NEXT_PUBLIC_APP_URL}${Paths.Dashboard}`, 
       unsubscribe: `${Paths.Unsubscribe}/${payload.contactId}` 
     });
 

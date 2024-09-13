@@ -25,7 +25,7 @@ export function MobileSheetNavbar({ userRole }: MobileSheetNavbarProps) {
   return (
     <Sheet>
       <div className="flex items-center justify-between w-full md:hidden">
-        <Link className="flex items-center text-sm font-bold" href={Paths.Dashboard}>
+        <Link className="flex items-center text-md font-bold" href={Paths.Dashboard}>
           <PiHandPeaceLight className="h-5 w-5 mr-1" />{APP_TITLE_UNSTYLED}
         </Link>
         <SheetTrigger asChild>
@@ -40,7 +40,7 @@ export function MobileSheetNavbar({ userRole }: MobileSheetNavbarProps) {
         </SheetTrigger>
       </div>
       <SheetContent side="left" className="w-[280px] md:w-[320px]">
-        <Link className="flex mb-4 items-center justify-center text-xs font-bold" href={Paths.Dashboard}>
+        <Link className="flex mb-4 items-center justify-center font-bold" href={Paths.Dashboard}>
           <PiHandPeaceLight className="h-5 w-5" />{APP_TITLE_UNSTYLED}
         </Link>
         <nav className="grid gap-4">
@@ -79,7 +79,7 @@ export function MobileSheetNavbar({ userRole }: MobileSheetNavbarProps) {
                     {/* Tooltip content for items user can't access */}
                     {item.roles && !item.roles.some((r) => userRole.includes(r)) && (
                       <TooltipContent className="font-medium text-sm">
-                        Upgrade to access {item.title}!
+                        Upgrade to access {item.title}
                       </TooltipContent>
                     )}
                   </Tooltip>

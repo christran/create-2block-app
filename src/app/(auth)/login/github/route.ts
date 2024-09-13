@@ -16,13 +16,13 @@ export async function GET(request: Request): Promise<Response> {
 
     if (!user) redirect(Paths.Login);
     
-    if (!user.githubId) redirect(Paths.Security);
+    if (!user.githubId) redirect(Paths.LinkedAccounts);
 
     const isPasswordLess = await api.user.isPasswordLess.query();
     const connectedAccountsCount = ['googleId', 'discordId', 'githubId'].filter(id => user[id as keyof typeof user]).length;
 
 		// todo: send message for toast.error
-    if (isPasswordLess && connectedAccountsCount <= 1) redirect(Paths.Security);
+    if (isPasswordLess && connectedAccountsCount <= 1) redirect(Paths.LinkedAccounts);
 
     await api.user.removeSocialAccounts.mutate({ github: true });
   }

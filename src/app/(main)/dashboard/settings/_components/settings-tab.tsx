@@ -34,7 +34,7 @@ export function SettingsTab({ user, isPasswordLess, magicLinkAuth }: { user: Use
       ) : (
         <div className="flex flex-col items-center gap-1 text-center">
           <h3 className="text-2xl font-bold tracking-tight">
-            No password needed!
+            No password needed
           </h3>
           <p className="text-sm text-muted-foreground">
             We use 🪄 Magic Links 🪄 to login
@@ -44,18 +44,18 @@ export function SettingsTab({ user, isPasswordLess, magicLinkAuth }: { user: Use
       )}
       </> 
     },
+    { value: "linked-accounts", label: "Linked Accounts", content: <LinkedAccounts user={user} isPasswordLess={isPasswordLess} /> },
     { value: "usage", label: "Usage", content: 
       <div className="flex flex-col items-center gap-1 text-center">
         <h3 className="text-2xl font-bold tracking-tight">
           Usage
         </h3>
         <p className="text-sm text-muted-foreground">
-          Watch your spending...
+          Watch your spending
         </p>
         {/* <Button className="mt-4">Add Product</Button> */}
       </div>
     },
-    { value: "linked-accounts", label: "Linked Accounts", content: <LinkedAccounts user={user} isPasswordLess={isPasswordLess} /> },
   ];
 
   const activeTab = searchParams.get("tab") || "account";
@@ -80,20 +80,21 @@ export function SettingsTab({ user, isPasswordLess, magicLinkAuth }: { user: Use
 
   return (
     <>
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-      <TabsList className="mb-8">
+      <Tabs value={activeTab} onValueChange={handleTabChange}>
+        <TabsList className="mb-8">
           {tabs.map((tab) => (
             <TabsTrigger key={tab.value} value={tab.value}>
               {tab.label}
             </TabsTrigger>
           ))}
         </TabsList>
+        
         {tabs.map((tab) => (
           <TabsContent key={tab.value} value={tab.value}>
             {tab.content}
           </TabsContent>
         ))}
-      </Tabs>
+    </Tabs>
     </>
   )
 }

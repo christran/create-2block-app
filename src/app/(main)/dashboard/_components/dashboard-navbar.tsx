@@ -66,7 +66,7 @@ export function DashboardNavbar({ userRole }: DashboardNavbarProps) {
                     {/* Tooltip content for items user can't access */}
                     {item.roles && !item.roles.some((r) => userRole.includes(r)) && (
                       <TooltipContent className="font-medium text-sm">
-                        Upgrade to access {item.title}!
+                        Upgrade to access {item.title}
                       </TooltipContent>
                     )}
                   </Tooltip>

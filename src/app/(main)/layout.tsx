@@ -15,16 +15,12 @@ import { UserDropdownNavBar } from "./_components/user-dropdown-navbar";
 const MainLayout = async ({ children }: { children: ReactNode }) => {
   const { user } = await validateRequest();
 
-  // Generate a random color for hover effect
-  const colors = ['blue', 'teal'];
-  const randomColor = colors[Math.floor(Math.random() * colors.length)];
-
   return (
     <div className="flex">
       <nav className="bg-muted/25">
         <aside className="dark:bg-root hidden h-screen w-[250px] flex-shrink-0 flex-col justify-between border-r border-slate-4 bg-slate-1 px-4 pb-6 dark:border-slate-6 md:flex">
           <div className="flex h-[60px] items-center">
-            <Link className={`flex items-center text-sm font-bold hover:text-${randomColor}-500`} href={Paths.Dashboard}>
+            <Link className={`flex items-center text-sm font-bold hover:text-yellow-500`} href={Paths.Dashboard}>
               <PiHandPeaceLight className="h-5 w-5" />{APP_TITLE_UNSTYLED}
             </Link>
             <div className="ml-auto">

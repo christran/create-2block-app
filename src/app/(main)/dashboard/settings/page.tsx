@@ -3,12 +3,7 @@ import { redirect } from "next/navigation";
 import { env } from "@/env";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@/lib/constants";
-import { AccountDetails } from "./_components/account-details";
 import { api } from "@/trpc/server";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { LinkedAccounts } from "./_components/linked-accounts";
-import { UpdatePassword } from "./_components/update-password";
-import { MultiFactorAuth } from "./_components/multifactorauth";
 import { SettingsTab } from "./_components/settings-tab";
 
 export const metadata: Metadata = {

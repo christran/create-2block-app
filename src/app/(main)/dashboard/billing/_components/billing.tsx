@@ -90,7 +90,7 @@ export async function Billing({ stripePromises }: BillingProps) {
             <CardContent className="flex-1 space-y-6">
               <div className="flex items-baseline">
                 <span className="text-3xl font-bold">{item.price}</span>
-                <span className="ml-1 text-sm text-muted-foreground">/month</span>
+                <span className="ml-1 text-sm text-muted-foreground">/ month</span>
               </div>
               <ul className="space-y-2">
                 {item.features.map((feature) => (

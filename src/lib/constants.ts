@@ -54,19 +54,19 @@ export const navbarItems = [
     items: [
       {
         title: "Claude 3.5 Sonnet",
-        href: Paths.Home,
+        href: "#",
         icon: PiRobot,
         roles: ["member", "premium", "admin"]
       },
       {
-        title: "gpt-4o + gpt-o1",
-        href: Paths.Home,
+        title: "GPT-4o + GPT-o1",
+        href: "#",
         icon: PiOpenAiLogo,
         roles: ["member", "premium", "admin"]
       },
       {
         title: "AGI",
-        href: Paths.Home,
+        href: "#",
         icon: PiOpenAiLogo,
         roles: ["premium", "admin"]
       },
