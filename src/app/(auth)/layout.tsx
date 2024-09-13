@@ -9,7 +9,7 @@ const AuthLayout = ({ children }: { children: ReactNode }) => {
       <div className="grid place-items-center pt-20">
         {children}
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };
