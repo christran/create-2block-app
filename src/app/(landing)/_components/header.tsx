@@ -47,7 +47,7 @@ export const Header = async () => {
               <div className="py-1">
                 {routes.map(({ name, href }) => (
                   <DropdownMenuItem key={name} asChild>
-                    <Link href={href} className="hover:bg-accent/70 hover:text-secondary-foreground">{name}</Link>
+                    <Link href={href} className="hover:bg-foreground/5 hover:text-secondary-foreground">{name}</Link>
                   </DropdownMenuItem>
                 ))}
               </div>

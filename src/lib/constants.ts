@@ -1,5 +1,5 @@
 import { DesktopIcon, LockClosedIcon, PersonIcon } from "@radix-ui/react-icons";
-import { CreditCardIcon } from "lucide-react";
+import { CreditCardIcon, Settings2 } from "lucide-react";
 import { PiOpenAiLogo, PiRobot } from "react-icons/pi";
 
 export const APP_TITLE = "✌️BLOCK";
@@ -22,7 +22,9 @@ export enum Paths {
   Dashboard = "/dashboard",
   Billing = "/dashboard/billing",
   Settings = "/dashboard/settings",
-  Security = "/dashboard/settings/security",
+  Security = "/dashboard/settings?tab=security",
+  LinkedAccounts = "/dashboard/settings?tab=linked-accounts",
+  Usage = "/dashboard/settings?tab=usage",
   Admin = "/admin",
   VerifyEmail = "/verify-email",
   ResetPassword = "/reset-password",
@@ -32,6 +34,7 @@ export enum Paths {
   TermsOfService = "/legal/terms-of-service",
   PrivacyPolicy = "/legal/privacy",
   AcceptableUsePolicy = "/legal/acceptable-use",
+  GitHub = "https://github.com/christran",
 }
 
 export const navbarItems = [
@@ -42,29 +45,6 @@ export const navbarItems = [
         title: "Dashboard",
         href: Paths.Dashboard,
         icon: DesktopIcon,
-        roles: ["default", "member", "premium", "admin"]
-      },
-    ]
-  },
-  {
-    category: "Account",
-    items: [
-      {
-        title: "Profile",
-        href: Paths.Settings,
-        icon: PersonIcon,
-        roles: ["default", "member", "premium", "admin"]
-      },
-      {
-        title: "Security",
-        href: Paths.Security,
-        icon: LockClosedIcon,
-        roles: ["default", "member", "premium", "admin"]
-      },
-      {
-        title: "Billing",
-        href: Paths.Billing,
-        icon: CreditCardIcon,
         roles: ["default", "member", "premium", "admin"]
       },
     ]
@@ -91,5 +71,22 @@ export const navbarItems = [
         roles: ["premium", "admin"]
       },
     ]
-  }
+  },
+  {
+    category: "Account",
+    items: [
+      {
+        title: "Billing",
+        href: Paths.Billing,
+        icon: CreditCardIcon,
+        roles: ["default", "member", "premium", "admin"]
+      },
+      {
+        title: "Settings",
+        href: Paths.Settings,
+        icon: Settings2,
+        roles: ["default", "member", "premium", "admin"]
+      },
+    ]
+  },
 ];

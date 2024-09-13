@@ -17,7 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Paths } from "@/lib/constants";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-export const UserDropdown = ({
+export const UserDropdownNavBar = ({
   fullname,
   email,
   avatar,
@@ -39,17 +39,22 @@ export const UserDropdown = ({
   };
 
   return (
-    <div className="flex items-center gap-4 md:gap-2 lg:gap-4">
+    <div className="flex items-center justify-center">
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="rounded-full"> {/* Changed from Button to div */}
+        <div className="flex items-center rounded-full text-xs">
           <TooltipProvider delayDuration={400} disableHoverableContent={true}>
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger className="flex items-center hover:bg-foreground/5 px-1 py-1 rounded-lg transition-all hover:text-primary">
                 <Avatar>
                   <AvatarImage src={avatar} alt={fullname} />
-                  <AvatarFallback delayMs={100}>{fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}</AvatarFallback>
+                  <AvatarFallback delayMs={100}>
+                    {fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}
+                  </AvatarFallback>
                 </Avatar>
+                <span className="hidden md:inline-block ml-2 text-sm truncate max-w-[150px]">
+                  {email}
+                </span>
                 <span className="sr-only">Toggle user menu</span>
               </TooltipTrigger>
               <TooltipContent className="font-medium text-sm">
@@ -59,20 +64,17 @@ export const UserDropdown = ({
           </TooltipProvider>
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="center">
         <DropdownMenuLabel>
           <span className="text-bold">{fullname}</span><br />
           <span className="text-xs text-muted-foreground">{email}</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="cursor-pointer" asChild>
-          <Link href={Paths.Settings}>Profile</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer" asChild>
           <Link href={Paths.Billing}>Billing</Link>
         </DropdownMenuItem>
         <DropdownMenuItem className="cursor-pointer" asChild>
-          <Link href={Paths.Security}>Settings</Link>
+          <Link href={Paths.Settings}>Settings</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem

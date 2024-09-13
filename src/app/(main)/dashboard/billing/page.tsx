@@ -28,31 +28,35 @@ export default async function BillingPage() {
   const stripePromises = Promise.all([api.stripe.getPlans.query(), api.stripe.getPlan.query()]);
 
   return (
-    <div className="grid gap-8">
-      <div>
-        <h1 className="text-3xl font-bold md:text-4xl">Billing</h1>
-      </div>
-      <section>
-        <Alert className="p-6 [&>svg]:left-6 [&>svg]:top-6 [&>svg~*]:pl-10">
-          <ExclamationTriangleIcon className="h-6 w-6 !text-red-500" />
-          <AlertTitle>Stripe Test Environment</AlertTitle>
-          <AlertDescription>
-            Currently using Stripe test environment. Use test cards provided {" "}
-            <a
-              href="https://docs.stripe.com/testing#cards"
-              target="_blank"
-              rel="noreferrer"
-              className="font-medium hover:underline dark:text-teal-500"
-            >
-              here
-            </a>
-            .
-          </AlertDescription>
-        </Alert>
-      </section>
-      <Suspense fallback={<BillingSkeleton />}>
-        <Billing stripePromises={stripePromises} />
-      </Suspense>
-    </div>
+      <>
+        <div className="mx-auto max-w-5xl px-6 py-8">
+          <div className="flex items-center">
+            <h1 className="text-[28px] leading-[34px] tracking-[-0.416px] text-slate-12 font-bold">Billing</h1>
+          </div>
+        </div>
+        <div className="flex flex-col gap-6 mx-auto max-w-5xl px-6">
+          <section>
+            <Alert className="p-6 [&>svg]:left-6 [&>svg]:top-6 [&>svg~*]:pl-10 rounded-lg border border-slate-6">
+              <ExclamationTriangleIcon className="h-6 w-6 !text-red-500" />
+              <AlertTitle>Stripe Test Environment</AlertTitle>
+              <AlertDescription>
+                Currently using Stripe test environment. Use test cards provided {" "}
+                <a
+                  href="https://docs.stripe.com/testing#cards"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-medium hover:underline dark:text-teal-500"
+                >
+                  here
+                </a>
+                .
+              </AlertDescription>
+            </Alert>
+          </section>
+          <Suspense fallback={<BillingSkeleton />}>
+            <Billing stripePromises={stripePromises} />
+          </Suspense>
+        </div>
+      </>
   );
 }

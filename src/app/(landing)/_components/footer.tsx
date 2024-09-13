@@ -9,8 +9,6 @@ import {
 import { APP_TITLE, Paths } from "@/lib/constants";
 import Link from "next/link";
 
-const githubUrl = "https://github.com/christran";
-
 export const Footer = () => {
   return (
     <footer className="px-4 py-6 mt-auto text-muted-foreground/90">
@@ -24,7 +22,7 @@ export const Footer = () => {
                 <TooltipTrigger asChild>
                 <p className="text-xs">
                   Powered by{" "}
-                  <a href={githubUrl} className="hover:text-blue-500">
+                  <a href={Paths.GitHub} className="hover:text-blue-500">
                     {APP_TITLE}
                   </a>
                 </p>

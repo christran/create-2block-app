@@ -8,6 +8,9 @@ import { PostsSkeleton } from "./_components/posts-skeleton";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@/lib/constants";
 import { myPostsSchema } from "@/server/api/routers/post/post.input";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { AccountDetailsSkeleton } from "./settings/_components/account-details-skeleton";
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
@@ -38,13 +41,34 @@ export default async function DashboardPage({ searchParams }: Props) {
   ]);
 
   return (
-    <div className="grid gap-8">
-      <div>
-        <h1 className="text-3xl font-bold md:text-4xl">Dashboard</h1>
+    <>
+      <div className="mx-auto max-w-5xl px-6 py-8">
+        <div className="flex items-center">
+          <h1 className="text-[28px] leading-[34px] tracking-[-0.416px] text-slate-12 font-bold">Dashboard</h1>
+        </div>
       </div>
-      <Suspense fallback={<PostsSkeleton />}>
-        <Posts promises={promises} />
-      </Suspense>
-    </div>
+      
+      <div className="flex flex-col gap-6 mx-auto max-w-5xl px-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Posts</CardTitle>
+            <CardDescription>
+              
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center">
+            <h3 className="text-2xl font-bold tracking-tight">
+              There should be something here
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Maybe some posts?
+            </p>
+          {/* <Suspense fallback={<PostsSkeleton />}>
+              <Posts promises={promises} />
+          </Suspense> */}
+          </CardContent>
+        </Card>
+      </div>
+    </>
   );
 }

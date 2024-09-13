@@ -9,22 +9,20 @@ import {
 import { APP_TITLE, Paths } from "@/lib/constants";
 import Link from "next/link";
 
-const githubUrl = "https://github.com/christran";
-
 export const Footer = () => {
   return (
-    <footer className="px-4 py-6 mt-auto text-muted-foreground/90">
+    <footer className="py-4 px-4 lg:px-6 text-muted-foreground/75">
       <div className="container flex flex-col items-center p-0">
         <div className="w-full flex justify-between items-center mb-2">
           <div className="flex-1">
-            <ThemeToggle />
+            {/* <ThemeToggle /> */}
           </div>
             <TooltipProvider delayDuration={400}>
               <Tooltip>
                 <TooltipTrigger asChild>
                 <p className="text-xs">
                   Powered by{" "}
-                  <a href={githubUrl} className="hover:text-blue-500">
+                  <a href={Paths.GitHub} className="hover:text-blue-500">
                     {APP_TITLE}
                   </a>
                 </p>

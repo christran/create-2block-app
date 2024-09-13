@@ -1,16 +1,20 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-
 import { env } from "@/env";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@/lib/constants";
 import { AccountDetails } from "./_components/account-details";
 import { api } from "@/trpc/server";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { LinkedAccounts } from "./_components/linked-accounts";
+import { UpdatePassword } from "./_components/update-password";
+import { MultiFactorAuth } from "./_components/multifactorauth";
+import { SettingsTab } from "./_components/settings-tab";
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
-  title: "Profile",
-  description: "Manage your profile details",
+  title: "Settings",
+  description: "Manage your your account",
 };
 
 export default async function SettingsPage() {
@@ -27,11 +31,16 @@ export default async function SettingsPage() {
   const isPasswordLess = await api.user.isPasswordLess.query();
 
   return (
-    <div className="grid gap-8">
-      <div>
-        <h1 className="text-3xl font-bold md:text-4xl">Profile</h1>
+    <>
+      <div className="mx-auto max-w-5xl px-6 py-8">
+        <div className="flex items-center">
+          <h1 className="text-[28px] leading-[34px] tracking-[-0.416px] text-slate-12 font-bold">Settings</h1>
+        </div>
       </div>
-      <AccountDetails user={user} isPasswordLess={isPasswordLess} />
-    </div>
+      
+      <div className="flex flex-col gap-6 mx-auto max-w-5xl px-6">
+        <SettingsTab user={user} isPasswordLess={isPasswordLess} magicLinkAuth={env.MAGIC_LINK_AUTH} />
+      </div>
+    </>
   );
 }

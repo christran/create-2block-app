@@ -16,6 +16,7 @@ import { createBillingPortalSession } from "@/server/api/routers/stripe/stripe.p
 import { proPlan, proPlus } from "@/config/subscriptions";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Paths } from "@/lib/constants";
 
 interface BillingProps {
   stripePromises: Promise<
@@ -40,7 +41,7 @@ export async function Billing({ stripePromises }: BillingProps) {
   return (
     <>
       <section>
-        <Card className="space-y-2 p-8">
+        <Card className="space-y-2 p-8 rounded-lg border border-slate-6">
           <h3 className="text-lg font-semibold sm:text-xl">Subscription</h3>
           <h4 className="text-lg font-semibold sm:text-xl">{plan?.name ?? "Free"}</h4>
           <p className="text-sm text-muted-foreground">
@@ -81,7 +82,7 @@ export async function Billing({ stripePromises }: BillingProps) {
       </div> */}
       <section className="grid gap-6 lg:grid-cols-3">
         {plans.map((item) => (
-          <Card key={item.name} className="flex flex-col p-2">
+          <Card key={item.name} className="flex flex-col p-2 rounded-lg border border-slate-6">
             <CardHeader>
               <CardTitle className="text-xl font-bold">{item.name}</CardTitle>
               <CardDescription className="h-12 text-sm">{item.description}</CardDescription>
@@ -103,7 +104,7 @@ export async function Billing({ stripePromises }: BillingProps) {
             <CardFooter className="pt-4">
               {item.name === "Free" ? (
                 <Button className="w-full" disabled={plan?.isPro || plan?.isProPlus}>
-                  <Link href="/dashboard" className="w-full">
+                  <Link href={Paths.Dashboard} className="w-full">
                     {plan?.isPro || plan?.isProPlus ? "Upgraded" : "Continue"}
                   </Link>
                 </Button>

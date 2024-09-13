@@ -24,56 +24,68 @@ export function MobileSheetNavbar({ userRole }: MobileSheetNavbarProps) {
 
   return (
     <Sheet>
-      <SheetTrigger asChild>
-        <Button
-          variant="outline"
-          size="icon"
-          className="shrink-0 md:hidden"
-        >
-          <Menu className="h-5 w-5" />
-          <span className="sr-only">Toggle navigation menu</span>
-        </Button>
-      </SheetTrigger>
-      <SheetContent side="left" className="w-[240px] md:w-[290px]">
-        <Link className="flex mb-4 items-center justify-center text-xs font-bold" href="/dashboard">
+      <div className="flex items-center justify-between w-full md:hidden">
+        <Link className="flex items-center text-sm font-bold" href={Paths.Dashboard}>
+          <PiHandPeaceLight className="h-5 w-5 mr-1" />{APP_TITLE_UNSTYLED}
+        </Link>
+        <SheetTrigger asChild>
+          <Button
+            variant="outline"
+            size="icon"
+            className="shrink-0"
+          >
+            <Menu className="h-5 w-5" />
+            <span className="sr-only">Toggle navigation menu</span>
+          </Button>
+        </SheetTrigger>
+      </div>
+      <SheetContent side="left" className="w-[280px] md:w-[320px]">
+        <Link className="flex mb-4 items-center justify-center text-xs font-bold" href={Paths.Dashboard}>
           <PiHandPeaceLight className="h-5 w-5" />{APP_TITLE_UNSTYLED}
         </Link>
-        <nav className="grid gap-4 text-lg font-medium">
+        <nav className="grid gap-4">
           {navbarItems.map((category) => (
             <div key={category.category} className="flex flex-col">
-              <h3 className="font-semibold text-sm text-primary">{category.category}</h3>
-              <Separator/>
+              <h3 className="font-semibold text-sm text-muted-foregroun">{category.category}</h3>
+              <Separator className="mb-1" />
               {category.items.map((item) => (
-                <SheetClose key={item.href} asChild>
-                  <Link href={item.roles && !item.roles.some((r) => userRole.includes(r)) ? Paths.Billing : item.href}>
-                    <TooltipProvider delayDuration={100} disableHoverableContent={true} skipDelayDuration={50}>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span
-                            className={cn(
-                              "group flex items-center rounded-lg py-2 text-md font-medium hover:bg-accent/70 hover:text-secondary-foreground",
-                              path === item.href ? "font-semibold text-primary" : ""
-                            )}
-                          >
-                            <item.icon className="mr-2 h-4 w-4" />
-                            <span className={item.roles && !item.roles.some((r) => userRole.includes(r)) ? "line-through" : ""}>
-                              {item.title}
-                            </span>
-                            {item.roles && !item.roles.includes("default") && (
-                              <span className="ml-1 text-[10px] font-bold text-yellow-500">PRO</span>
-                            )}
-                          </span>
-                        </TooltipTrigger>
-                        {item.roles && !item.roles.some((r) => userRole.includes(r)) && (
-                          <TooltipContent className="font-medium text-sm">
-                            Upgrade to access {item.title}!
-                          </TooltipContent>
+              // Link wrapper, redirects to billing if user doesn't have required role
+              <Link key={item.href} href={item.roles && !item.roles.some((r) => userRole.includes(r)) ? Paths.Billing : item.href}>
+                <TooltipProvider delayDuration={100} disableHoverableContent={true} skipDelayDuration={50}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      {/* Navigation item */}
+                      <span
+                        className={cn(
+                          "flex items-center rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-foreground/5 transition-all hover:text-primary",
+                          // "flex h-8 items-center gap-2 rounded-md px-2 text-sm text-slate-11 hover:bg-slate-4 hover:text-slate-12"
+                          path === item.href ? "font-semibold text-primary bg-foreground/5" : ""
                         )}
-                      </Tooltip>
-                    </TooltipProvider>
-                  </Link>
-                </SheetClose>
-              ))}
+                      >
+                        {/* Item icon */}
+                        <item.icon className="mr-2 h-4 w-4" />
+                        {/* Item title, strikethrough if user doesn't have required role */}
+                        <span className={item.roles && !item.roles.some((r) => userRole.includes(r)) ? "line-through" : ""}>
+                          {item.title}
+                        </span>
+                        {/* PRO label for non-default items */}
+                        {item.roles && !item.roles.includes("default") && (
+                          <span className="ml-1 text-[10px] font-bold text-yellow-500">
+                            {item.roles.includes("premium") && !item.roles.includes("member") ? "PRO+" : "PRO"}
+                          </span>
+                        )}
+                      </span>
+                    </TooltipTrigger>
+                    {/* Tooltip content for items user can't access */}
+                    {item.roles && !item.roles.some((r) => userRole.includes(r)) && (
+                      <TooltipContent className="font-medium text-sm">
+                        Upgrade to access {item.title}!
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
+              </Link>
+            ))}
             </div>
           ))}
           
@@ -84,8 +96,8 @@ export function MobileSheetNavbar({ userRole }: MobileSheetNavbarProps) {
                 <Link href={Paths.Admin}>
                   <span
                     className={cn(
-                      "group flex items-center rounded-lg px-3 py-2 text-md font-medium hover:bg-accent/70 hover:text-secondary-foreground",
-                      path === Paths.Admin ? "font-semibold text-primary" : ""
+                      "flex items-center rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-foreground/5 transition-all hover:text-primary",
+                      path === Paths.Admin ? "font-semibold text-primary bg-foreground/5" : ""
                     )}
                   >
                     <LockClosedIcon className="mr-2 h-4 w-4" />

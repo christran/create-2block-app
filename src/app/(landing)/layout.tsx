@@ -7,7 +7,7 @@ function LandingPageLayout({ children }: { children: ReactNode }) {
     <>
       <Header />
         {children}
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

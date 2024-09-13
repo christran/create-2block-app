@@ -12,6 +12,7 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { DiscordLogoIcon, faGoogle, FontAwesomeIcon, GitHubLogoIcon } from "@/components/icons"
+
 interface LinkedAccountProps {
   googleId: string | null
   discordId: string | null
@@ -52,7 +53,7 @@ export function LinkedAccounts({ user, isPasswordLess }: { user: LinkedAccountPr
   }
 
   return (
-    <Card>
+    <Card className="rounded-lg border border-slate-6">
       <CardHeader>
         <CardTitle>Linked Accounts</CardTitle>
       </CardHeader>
