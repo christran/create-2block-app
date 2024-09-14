@@ -11,6 +11,8 @@ import { validateRequest } from "@/lib/auth/validate-request";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { UserDropdownNavBar } from "./_components/user-dropdown-navbar";
+import { Badge } from "@/components/ui/badge";
+import { EmailVerificationWarning } from "./dashboard/_components/email-verification-warning";
 
 const MainLayout = async ({ children }: { children: ReactNode }) => {
   const { user } = await validateRequest();
@@ -20,21 +22,26 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
       <nav className="bg-muted/25">
         <aside className="dark:bg-root hidden h-screen w-[250px] flex-shrink-0 flex-col justify-between border-r border-slate-4 bg-slate-1 px-4 pb-6 dark:border-slate-6 md:flex">
           <div className="flex h-[60px] items-center">
-            <Link className={`flex items-center text-sm font-bold hover:text-yellow-500`} href={Paths.Dashboard}>
+            <Link className={`flex items-center text-sm font-bold hover:text-yellow-400`} href={Paths.Dashboard}>
               <PiHandPeaceLight className="h-5 w-5" />{APP_TITLE_UNSTYLED}
             </Link>
             <div className="ml-auto">
-            <ThemeToggle />
+            {/* <ThemeToggle /> */}
             </div>
    
           </div>
 
           <DashboardNavbar userRole={user?.role ?? "default"} />
 
-          {user?.role === "admin" && (
+          {user?.role === "default" && (
             <Card className="mb-4">
               <CardHeader className="p-4">
-                <CardTitle className="text-sm">Upgrade to Pro</CardTitle>
+                <CardTitle className="text-sm flex items-center gap-1">
+                  Upgrade to Pro
+                  {/* <Badge variant="default" className="cursor-pointer text-[9px] px-1.5 py-0.1 rounded-lg font-extrabold text-yellow-400 hover:text-yellow-500 dark:text-yellow-500 bg-primary/75 dark:bg-accent/50 hover:bg-yellow-400/15 dark:hover:bg-yellow-400/20">
+                    Pro
+                  </Badge> */}
+                </CardTitle>
                 <CardDescription className="text-xs">
                   Unlock all features and get unlimited access to everything.
                 </CardDescription>
@@ -49,13 +56,12 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
             </Card>
           )}
 
-          <div>
-            <UserDropdownNavBar
-              fullname={user?.fullname ?? ''} 
-              email={user?.email ?? ''} 
-              avatar={user?.avatar ?? ''} 
-            />
-          </div>
+          <UserDropdownNavBar
+            fullname={user?.fullname ?? ''} 
+            email={user?.email ?? ''} 
+            avatar={user?.avatar ?? ''} 
+          />
+
           {/* <div className="flex items-center justify-between pt-2">
             <ThemeToggle />
             <Button variant="ghost" size="icon" className="ml-auto h-8 w-8">
@@ -69,6 +75,14 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
       <div className="w-full">
         <Header />
         <div className="scrollContainer h-[calc(100vh-60px)] overflow-auto">
+          {user?.emailVerified === false && (
+            <div className="mx-auto px-6 mt-8">
+              <div className="flex flex-col gap-6 mx-auto max-w-5xl px-6">
+                <EmailVerificationWarning />
+              </div>
+            </div>
+          )}
+          
           {children}
           
           {/* todo: sticky footer? */}

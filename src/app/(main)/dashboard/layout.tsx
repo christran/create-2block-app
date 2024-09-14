@@ -5,7 +5,6 @@ interface Props {
 export default async function DashboardLayout({ children }: Props) {
   return (
     <>
-      {/* <EmailVerificationWarning /> */}
       {children}
     </>
   );

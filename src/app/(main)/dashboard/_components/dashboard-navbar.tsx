@@ -9,11 +9,7 @@ import type { User } from "@/server/db/schema";
 import { LockClosedIcon } from "@radix-ui/react-icons";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
-import { PiHandPeaceLight } from "@/components/icons";
-import { Button } from "@/components/ui/button";
-import { Bell } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { Badge } from "@/components/ui/badge";
 
 // Define the props interface for the DashboardNavbar component
 interface DashboardNavbarProps {
@@ -40,26 +36,23 @@ export function DashboardNavbar({ userRole }: DashboardNavbarProps) {
               <Link key={item.href} href={item.roles && !item.roles.some((r) => userRole.includes(r)) ? Paths.Billing : item.href}>
                 <TooltipProvider delayDuration={100} disableHoverableContent={true} skipDelayDuration={50}>
                   <Tooltip>
-                    <TooltipTrigger asChild>
-                      {/* Navigation item */}
+                  <TooltipTrigger asChild>
                       <span
                         className={cn(
-                          "flex h-9 items-center rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all hover:text-primary",
-                          // "flex h-8 items-center gap-2 rounded-md px-2 text-sm text-slate-11 hover:bg-slate-4 hover:text-slate-12"
+                          "flex h-9 items-center justify-between rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all hover:text-primary",
                           path === item.href ? "text-primary bg-zinc-600/10 dark:bg-zinc-800/70" : ""
                         )}
                       >
-                        {/* Item icon */}
-                        <item.icon className="mr-2 h-4 w-4" />
-                        {/* Item title, strikethrough if user doesn't have required role */}
-                        <span className={item.roles && !item.roles.some((r) => userRole.includes(r)) ? "line-through" : ""}>
-                          {item.title}
-                        </span>
-                        {/* PRO label for non-default items */}
-                        {item.roles && !item.roles.includes("default") && (
-                          <span className="ml-1 text-[10px] font-bold text-yellow-500">
-                            {item.roles.includes("premium") && !item.roles.includes("member") ? "PRO+" : "PRO"}
+                        <span className="flex items-center">
+                          <item.icon className="mr-2 h-4 w-4" />
+                          <span className={item.roles && !item.roles.some((r) => userRole.includes(r)) ? "line-through" : ""}>
+                            {item.title}
                           </span>
+                        </span>
+                        {item.roles && !item.roles.includes("default") && (
+                          <Badge variant="default" className="text-[9px] px-1.5 py-0.1 rounded-lg font-extrabold text-yellow-400 hover:text-yellow-500 dark:text-yellow-500 bg-primary/75 dark:bg-accent/50 hover:bg-yellow-400/15 dark:hover:bg-yellow-400/20">
+                            {item.roles.includes("premium") && !item.roles.includes("member") ? "PRO+" : "PRO"}
+                          </Badge>
                         )}
                       </span>
                     </TooltipTrigger>

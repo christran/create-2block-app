@@ -24,11 +24,11 @@ export function ThemeToggle() {
           <Button variant="ghost" size="icon" onClick={toggleTheme} className="hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70">
             <SunIcon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
             <MoonIcon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            <span className="sr-only">Toggle theme</span>
+            {/* <span className="sr-only">Toggle theme</span> */}
           </Button>
         </TooltipTrigger>
         <TooltipContent className="text-xs">
-          <p>Toggle theme</p>
+          Toggle theme
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

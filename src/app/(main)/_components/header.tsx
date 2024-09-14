@@ -11,8 +11,13 @@ export const Header = async () => {
   const { user } = await validateRequest();
 
   return (
-    <header className="flex h-[60px] items-center justify-end border-b border-slate-6 px-6">
-      <MobileSheetNavbar userRole={user?.role ?? "default"} />
+    <header className="flex h-[60px] items-center justify-end border-b  border-slate-6 px-6">
+      <MobileSheetNavbar 
+        fullname={user?.fullname ?? ''} 
+        email={user?.email ?? ''} 
+        avatar={user?.avatar ?? ''} 
+        userRole={user?.role ?? "default"} 
+      />
       <div className="hidden items-center gap-4 md:flex">
       <div className="w-full flex-1">
         {/* <UserDropdownHeader 

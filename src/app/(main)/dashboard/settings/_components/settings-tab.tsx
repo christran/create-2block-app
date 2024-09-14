@@ -8,6 +8,7 @@ import { MultiFactorAuth } from "./multifactorauth";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { LinkedAccounts } from "./linked-accounts";
+import { Button } from "@/components/ui/button";
 
 interface UserSettingsProps {
   id: string | '',
@@ -23,14 +24,18 @@ export function SettingsTab({ user, isPasswordLess, magicLinkAuth }: { user: Use
   const searchParams = useSearchParams();
 
   const tabs = [
-    { value: "account", label: "Account", content: <AccountDetails user={user} isPasswordLess={isPasswordLess} /> },
+    { value: "account", label: "Account", content: 
+      <div className="flex flex-col gap-6">
+        <AccountDetails user={user} isPasswordLess={isPasswordLess} />
+      </div>
+    },
     { value: "security", label: "Security", content: 
       <>
       {!magicLinkAuth ? (
-        <>
+        <div className="flex flex-col gap-6">
           <UpdatePassword isPasswordLess={isPasswordLess} />
           <MultiFactorAuth />
-        </>
+        </div>
       ) : (
         <div className="flex flex-col items-center gap-1 text-center">
           <h3 className="text-2xl font-bold tracking-tight">
@@ -44,7 +49,11 @@ export function SettingsTab({ user, isPasswordLess, magicLinkAuth }: { user: Use
       )}
       </> 
     },
-    { value: "linked-accounts", label: "Linked Accounts", content: <LinkedAccounts user={user} isPasswordLess={isPasswordLess} /> },
+    { value: "linked-accounts", label: "Linked Accounts", content: 
+      <div className="flex flex-col gap-6">
+        <LinkedAccounts user={user} isPasswordLess={isPasswordLess} magicLinkAuth={magicLinkAuth} /> 
+      </div>
+    },
     { value: "usage", label: "Usage", content: 
       <div className="flex flex-col items-center gap-1 text-center">
         <h3 className="text-2xl font-bold tracking-tight">

@@ -19,7 +19,7 @@ interface LinkedAccountProps {
   githubId: string | null
 }
 
-export function LinkedAccounts({ user, isPasswordLess }: { user: LinkedAccountProps; isPasswordLess: boolean }) {
+export function LinkedAccounts({ user, isPasswordLess, magicLinkAuth }: { user: LinkedAccountProps; isPasswordLess: boolean, magicLinkAuth: boolean }) {
   const [authError, setAuthError] = useState<string | null>(null);
   // const formRef = useRef<HTMLFormElement>(null);
 
@@ -44,20 +44,22 @@ export function LinkedAccounts({ user, isPasswordLess }: { user: LinkedAccountPr
   function handleSocial(provider: 'google' | 'discord' | 'github') {
     const connectedAccountsCount = ['googleId', 'discordId', 'githubId'].filter(id => user[id as keyof LinkedAccountProps]).length;
     
-    if (isPasswordLess && user[`${provider}Id`] && connectedAccountsCount <= 1) {
-      toast.error(`You can't remove this account without setting a password or connecting another account.`);
-      return;
+    if(!magicLinkAuth) {
+      if (isPasswordLess && user[`${provider}Id`] && connectedAccountsCount <= 1) {
+        return toast.error(`You can't remove this account without setting a password or connecting another account.`);
+      }
     }
+
     const url = user[`${provider}Id`] ? `/login/${provider}?disconnect=1` : `/login/${provider}`;
     router.push(url);
   }
 
   return (
-    <Card className="flex flex-col items-center gap-1 text-center">
+    <Card className="flex flex-col gap-1">
       <CardHeader>
         <CardTitle>Linked Accounts</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col items-center gap-1 text-center">
+      <CardContent className="flex flex-col gap-1 items-center text-center">
         <div className="w-full md:w-1/2 space-y-2">
           <Button
             variant="outline"

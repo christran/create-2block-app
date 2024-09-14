@@ -22,7 +22,7 @@ export async function GET(request: Request): Promise<Response> {
     const connectedAccountsCount = ['googleId', 'discordId', 'githubId'].filter(id => user[id as keyof typeof user]).length;
 
     // todo: send message for toast.error
-    if (isPasswordLess && connectedAccountsCount <= 1) redirect(Paths.LinkedAccounts);
+    if (!env.MAGIC_LINK_AUTH && isPasswordLess && connectedAccountsCount <= 1) redirect(Paths.LinkedAccounts);
 
     await api.user.removeSocialAccounts.mutate({ discord: true });
   }

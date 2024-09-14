@@ -16,7 +16,11 @@ import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Paths } from "@/lib/constants";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Ellipsis, EllipsisVertical } from "lucide-react";
+import { Copy, CreditCardIcon, Ellipsis, EllipsisVertical, LogOut, Settings2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { MoonIcon, SunIcon } from "@/components/icons";
+import { useTheme } from "next-themes";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export const UserDropdownNavBar = ({
   fullname,
@@ -28,6 +32,26 @@ export const UserDropdownNavBar = ({
   avatar?: string | undefined;
   className?: string;
 }) => {
+  const { theme, setTheme } = useTheme();
+
+  const toggleTheme = useCallback(() => {
+    setTheme(theme === "light" ? "dark" : "light");
+  }, [theme, setTheme]);
+
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key === "m" || event.key === "M") {
+        toggleTheme();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [toggleTheme]);
+
   const handleSignout = async () => {
     try {
       await logout();
@@ -39,54 +63,146 @@ export const UserDropdownNavBar = ({
     }
   };
 
+  const isEmail = (text: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(text);
+  };
+
+  const TruncatedText = ({ text, maxWidth, className }: { text: string; maxWidth: string; className: string }) => {
+    const ref = useRef<HTMLSpanElement>(null);
+    const [isTruncated, setIsTruncated] = useState(false);
+
+    useEffect(() => {
+      const checkTruncation = () => {
+        if (ref.current) {
+          setIsTruncated(ref.current.scrollWidth > ref.current.clientWidth);
+        }
+      };
+
+      checkTruncation();
+      window.addEventListener('resize', checkTruncation);
+      return () => window.removeEventListener('resize', checkTruncation);
+    }, [text]);
+
+    const handleCopy = () => {
+      navigator.clipboard.writeText(text).then(() => {
+        toast.success("Copied to clipboard");
+      }).catch((err) => {
+        console.error('Failed to copy text: ', err);
+        toast.error("Failed to copy text");
+      });
+    };
+
+    return (
+      <TooltipProvider delayDuration={100}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span
+              ref={ref}
+              className={`${className} truncate`}
+              style={{ maxWidth }}
+            >
+              {text}
+            </span>
+          </TooltipTrigger>
+          {isTruncated && (
+            <TooltipContent side="bottom" align="center" className="flex items-center gap-2">
+              <span className="font-medium text-sm cursor-pointer" onClick={handleCopy}>{text}</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-4 w-4 text-muted-foreground hover:text-primary"
+                onClick={handleCopy}
+              >
+                <Copy className="h-4 w-4" />
+                <span className="sr-only">Copy to clipboard</span>
+              </Button>
+            </TooltipContent>
+          )}
+        </Tooltip>
+      </TooltipProvider>
+    );
+  };
+
   return (
-    <div className="flex items-center justify-center">
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="flex items-center rounded-full text-xs">
-          <TooltipProvider delayDuration={400} disableHoverableContent={true}>
-            <Tooltip>
-              <TooltipTrigger className="flex items-center h-9 hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 px-2 duration-300 rounded-lg transition-all hover:text-primary">
-                <Avatar className="h-7 w-7">
-                  <AvatarImage src={avatar} alt={fullname} />
-                  <AvatarFallback delayMs={100}>
-                    {fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="hidden md:inline-block ml-2 text-sm truncate max-w-[150px]">
-                  {email}
-                </span>
-                <EllipsisVertical className="h-4 w-4 text-muted-foreground"/>
-                <span className="sr-only">Toggle user menu</span>
-              </TooltipTrigger>
-              <TooltipContent className="font-medium text-sm">
-                {fullname}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+        <div className="cursor-pointer flex h-9 items-center justify-between rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all duration-300 hover:text-primary">
+          <div className="flex items-center">
+            <Avatar className="h-7 w-7">
+              <AvatarImage src={avatar} alt={fullname} />
+              <AvatarFallback delayMs={100}>
+                {fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}
+              </AvatarFallback>
+            </Avatar>
+            <span className="inline-block ml-2 text-sm truncate max-w-[140px]">
+              {isEmail(fullname) ? email : fullname}
+            </span>
+          </div>
+          <EllipsisVertical className="h-4 w-4 text-muted-foreground ml-2"/>
+          <span className="sr-only">Toggle user menu</span>
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="center">
+      <DropdownMenuContent align="center" className="w-[230px]">
         <DropdownMenuLabel>
-          <span className="text-bold">{fullname}</span><br />
-          <span className="text-xs text-muted-foreground">{email}</span>
+          <div className="flex items-center">
+            <Avatar className="h-8 w-8 mr-2">
+              <AvatarImage src={avatar} alt={fullname} />
+              <AvatarFallback delayMs={100}>
+                {fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col">
+              <TruncatedText
+                text={fullname}
+                maxWidth="170px"
+                className="font-semibold text-sm"
+              />
+              <TruncatedText
+                text={email}
+                maxWidth="150px"
+                className="font-medium text-xs text-muted-foreground"
+              />
+            </div>
+          </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer" asChild>
-          <Link href={Paths.Billing}>Billing</Link>
+        <DropdownMenuItem className="cursor-pointer font-medium text-muted-foreground hover:text-primary" onClick={toggleTheme}>
+          <div className="flex items-center w-full justify-between">
+            <div className="flex items-center">
+              <SunIcon className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 mr-2" />
+              <MoonIcon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 mr-2" />
+              Toggle theme
+            </div>
+            <kbd className="rounded-md border bg-muted px-1.5 text-[12px] font-extrabold text-muted-foreground">
+              M
+            </kbd>
+          </div>
         </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer" asChild>
-          <Link href={Paths.Settings}>Settings</Link>
+        <Link href={Paths.Billing}>
+          <DropdownMenuItem className="cursor-pointer font-medium text-muted-foreground hover:text-primary" asChild>
+            <div className="flex items-center w-full">
+              <CreditCardIcon className="h-4 w-4 mr-2"/>
+              Billing
+            </div>
+          </DropdownMenuItem>
+        </Link>
+        <Link href={Paths.Settings}>
+        <DropdownMenuItem className="cursor-pointer font-medium text-muted-foreground hover:text-primary" asChild>
+          <div className="flex items-center w-full">
+          <Settings2 className="h-4 w-4 mr-2"/>
+          Settings
+          </div>
         </DropdownMenuItem>
+        </Link>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          className="font-medium"
-          onSelect={handleSignout}
-        >
-        Sign out
+        <DropdownMenuItem className="cursor-pointer font-medium text-muted-foreground hover:text-primary" onClick={handleSignout}>
+        <div className="flex items-center w-full">
+          <LogOut className="h-4 w-4 mr-2"/>
+          Logout
+        </div>
        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  </div>
   );
 };
