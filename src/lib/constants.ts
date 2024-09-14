@@ -1,5 +1,5 @@
 import { DesktopIcon, LockClosedIcon, PersonIcon } from "@radix-ui/react-icons";
-import { CreditCardIcon, Settings2 } from "lucide-react";
+import { CreditCardIcon, Home, LogIn, Settings2 } from "lucide-react";
 import { PiOpenAiLogo, PiRobot } from "react-icons/pi";
 
 export const APP_TITLE = "✌️BLOCK";
@@ -88,5 +88,18 @@ export const navbarItems = [
         roles: ["default", "member", "premium", "admin"]
       },
     ]
+  },
+];
+
+export const guestNavBarItems = [
+  {
+    title: "Home",
+    href: Paths.Home,
+    icon: Home,
+  },
+  {
+    title: "Login",
+    href: Paths.Login,
+    icon: LogIn,
   },
 ];

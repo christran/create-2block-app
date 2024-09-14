@@ -18,7 +18,7 @@ export async function EmailVerificationWarning() {
             access all features.
           </AlertDescription>
         </div>
-        <Button size="sm" asChild>
+        <Button size="sm" className="shadow" asChild>
           <Link href="/verify-email">Verify Email</Link>
         </Button>
       </div>

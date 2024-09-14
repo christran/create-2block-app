@@ -16,7 +16,7 @@ export const Header = async () => {
         fullname={user?.fullname ?? ''} 
         email={user?.email ?? ''} 
         avatar={user?.avatar ?? ''} 
-        userRole={user?.role ?? "default"} 
+        userRole={user?.role ?? "guest"} 
       />
       <div className="hidden items-center gap-4 md:flex">
       <div className="w-full flex-1">
@@ -26,7 +26,7 @@ export const Header = async () => {
           avatar={user?.avatar ?? ''} 
         /> */}
       <Link href={Paths.GitHub}>
-        <Button variant="outline" className="text-muted-foreground text-xs">
+        <Button variant="outline" className="text-muted-foreground text-xs shadow">
           <span className="inline-flex items-center justify-center gap-1 truncate">
             <PiChatCenteredDotsLight className="h-5 w-5" />
             Support
