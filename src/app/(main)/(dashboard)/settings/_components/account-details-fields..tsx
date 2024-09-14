@@ -19,6 +19,7 @@ export async function AccountDetailsFields() {
     <div className="w-full md:w-1/2 space-y-2">
       <Label>Full Name</Label>
       <Input
+        className="bg-secondary/30"
         required
         placeholder="Jeon Jungkook"
         autoComplete="name"
@@ -31,6 +32,7 @@ export async function AccountDetailsFields() {
       <Input
         // required={user?.accountPasswordless === null}
         // readOnly={true}
+        className="bg-secondary/30"
         placeholder="hello@2block.co"
         autoComplete="email"
         name="email"

@@ -44,10 +44,8 @@ export const MagicLinkResend = ({ email }: MagicLinkResendProps) => {
         <Input
               className="hidden"
               id="email"
-              placeholder="Email"
-              autoComplete="email"
               name="email"
-              type="email"
+              type="hidden"
               value={email}
         />
         <SubmitButton className="w-full shadow-md" variant="default">

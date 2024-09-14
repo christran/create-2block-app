@@ -1,5 +1,5 @@
 import { DesktopIcon, LockClosedIcon, PersonIcon } from "@radix-ui/react-icons";
-import { CreditCardIcon, Home, LogIn, Settings2 } from "lucide-react";
+import { BrainCircuit, CreditCardIcon, Home, LogIn, Settings2 } from "lucide-react";
 import { PiOpenAiLogo, PiRobot } from "react-icons/pi";
 
 export const APP_TITLE = "✌️BLOCK";
@@ -67,7 +67,7 @@ export const navbarItems = [
       {
         title: "AGI",
         href: "#",
-        icon: PiOpenAiLogo,
+        icon: BrainCircuit,
         roles: ["premium", "admin"]
       },
     ]

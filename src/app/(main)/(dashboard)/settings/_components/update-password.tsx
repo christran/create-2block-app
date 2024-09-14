@@ -99,7 +99,7 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
             <CardTitle>Password</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="w-full md:w-1/2 space-y-2">
+            <div className="w-full md:w-[380px] space-y-2">
               <div className="space-y-2">
                 <Label>Current Password</Label>
                 <PasswordInput

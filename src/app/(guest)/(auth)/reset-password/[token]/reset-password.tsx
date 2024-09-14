@@ -23,6 +23,7 @@ export function ResetPassword({ token }: { token: string }) {
       <div className="space-y-2">
         {/* <Label>Password</Label> */}
         <PasswordInput
+          className="bg-secondary/30"
           required
           id="password"
           name="password"

@@ -90,7 +90,7 @@ export function SettingsTab({ user, isPasswordLess, magicLinkAuth }: { user: Use
   return (
     <>
       <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList className="mb-8">
+        <TabsList className="mb-8 dark:bg-secondary/70">
           {tabs.map((tab) => (
             <TabsTrigger key={tab.value} value={tab.value}>
               {tab.label}

@@ -25,7 +25,7 @@ export const CopyToClipboard = ({ text }: { text: string }) => {
       <Input
         readOnly
         value={text}
-        className="bg-secondary text-muted-foreground"
+        className="bg-secondary/30 text-muted-foreground"
       />
       <Button size="icon" onClick={() => copyToClipboard()}>
         {copied ? <CheckIcon className={cn( copied ? "opacity-100": "opacity-0" , "h-5 w-5 transition-opacity duration-500" )}/>: <CopyIcon className="h-5 w-5" />}

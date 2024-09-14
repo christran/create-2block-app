@@ -56,52 +56,53 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
             <nav className="flex-1 overflow-scroll scrollbar-hide">
               <ul className="flex flex-col gap-2">
                 {navbarItems.map((category) => (
-                  <div key={category.category} className="flex flex-col gap-1 mb-1">
-                  <h4 className="text-muted-foreground text-[10.5px] py-1">{category.category.toUpperCase()}</h4>
-                  {/* <Separator className="mb-1" /> */}
-                    {category.items.map((item) => (
-                    // Link wrapper, redirects to billing if user doesn't have required role
-                    <SheetClose asChild>
-                      <Link key={item.href} href={item.roles && !item.roles.some((r) => userRole.includes(r)) ? Paths.Billing : item.href}>
-                        <TooltipProvider delayDuration={100} disableHoverableContent={true} skipDelayDuration={50}>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              {/* Navigation item */}
-                              <span
-                                className={cn(
-                                  inactiveLinkClass,
-                                  // "flex h-8 items-center gap-2 rounded-md px-2 text-sm text-slate-11 hover:bg-slate-4 hover:text-slate-12"
-                                  path === item.href ? activeLinkClass : ""
-                                )}
-                              >
-                                {/* Item icon */}
-                                <span className="flex items-center">
-                                  <item.icon className="mr-2 h-4 w-4" />
-                                  {/* Item title, strikethrough if user doesn't have required role */}
-                                  <span className={item.roles && !item.roles.some((r) => userRole.includes(r)) ? "line-through" : ""}>
-                                    {item.title}
+                  <li>
+                    <div key={category.category} className="flex flex-col gap-1 mb-1">
+                    <h4 className="text-muted-foreground text-[10.5px] py-1">{category.category.toUpperCase()}</h4>
+                    {/* <Separator className="mb-1" /> */}
+                      {category.items.map((item) => (
+                      // Link wrapper, redirects to billing if user doesn't have required role
+                      <SheetClose asChild>
+                        <Link key={item.href} href={item.roles && !item.roles.some((r) => userRole.includes(r)) ? Paths.Billing : item.href}>
+                          <TooltipProvider delayDuration={100} disableHoverableContent={true} skipDelayDuration={50}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                {/* Navigation item */}
+                                <span
+                                  className={cn(
+                                    inactiveLinkClass,
+                                    path === item.href ? activeLinkClass : ""
+                                  )}
+                                >
+                                  {/* Item icon */}
+                                  <span className="flex items-center">
+                                    <item.icon className="mr-2 h-5 w-5" />
+                                    {/* Item title, strikethrough if user doesn't have required role */}
+                                    <span className={item.roles && !item.roles.some((r) => userRole.includes(r)) ? "line-through" : ""}>
+                                      {item.title}
+                                    </span>
+                                      {/* PRO label for non-default items */}
+                                      {item.roles && !item.roles.includes("default") && (
+                                        <span className="ml-1 text-[10px] font-bold text-yellow-500">
+                                          {item.roles.includes("premium") && !item.roles.includes("member") ? "PRO+" : "PRO"}
+                                        </span>
+                                      )}
+                                    </span>
                                   </span>
-                                    {/* PRO label for non-default items */}
-                                    {item.roles && !item.roles.includes("default") && (
-                                      <span className="ml-1 text-[10px] font-bold text-yellow-500">
-                                        {item.roles.includes("premium") && !item.roles.includes("member") ? "PRO+" : "PRO"}
-                                      </span>
-                                    )}
-                                  </span>
-                                </span>
-                            </TooltipTrigger>
-                            {/* Tooltip content for items user can't access */}
-                            {item.roles && !item.roles.some((r) => userRole.includes(r)) && (
-                              <TooltipContent className="font-medium text-sm">
-                                Upgrade to access {item.title}
-                              </TooltipContent>
-                            )}
-                          </Tooltip>
-                        </TooltipProvider>
-                      </Link>
-                    </SheetClose>
-                  ))}
-                  </div>
+                              </TooltipTrigger>
+                              {/* Tooltip content for items user can't access */}
+                              {item.roles && !item.roles.some((r) => userRole.includes(r)) && (
+                                <TooltipContent className="font-medium text-sm">
+                                  Upgrade to access {item.title}
+                                </TooltipContent>
+                              )}
+                            </Tooltip>
+                          </TooltipProvider>
+                        </Link>
+                      </SheetClose>
+                    ))}
+                    </div>
+                  </li>
                 ))}
                 
                 {userRole === 'admin' && (
@@ -116,7 +117,7 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
                             )}
                           >
                             <span className="flex items-center">
-                                <LockClosedIcon className="mr-2 h-4 w-4" />
+                                <LockClosedIcon className="mr-2 h-5 w-5" />
                                 <span>Admin</span>
                             </span>
                           </span>
@@ -126,13 +127,11 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
                 )}
               </ul>
             </nav>
-
             <UserDropdownNavBar
               fullname={fullname}
               email={email} 
               avatar={avatar} 
             />
-            
           </SheetContent>
         </Sheet>
         ) : (
@@ -159,19 +158,21 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
             <nav className="mt-2 flex-1">
               <ul className="flex flex-col gap-2">
               {guestNavBarItems.map((item) => (
-                <Link key={item.href} href={item.href}>
-                  <span
-                    className={cn(
-                      inactiveLinkClass,
-                      path === item.href ? activeLinkClass : ""
-                    )}
-                  >
-                    <span className="flex items-center">
-                      <item.icon className="mr-2 h-4 w-4" />
-                      {item.title}
+                <li>
+                  <Link key={item.href} href={item.href}>
+                    <span
+                      className={cn(
+                        inactiveLinkClass,
+                        path === item.href ? activeLinkClass : ""
+                      )}
+                    >
+                      <span className="flex items-center">
+                        <item.icon className="mr-2 h-5 w-5" />
+                        {item.title}
+                      </span>
                     </span>
-                  </span>
-                </Link>
+                  </Link>
+                </li>
               ))}
               </ul>
             </nav>

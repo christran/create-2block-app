@@ -57,9 +57,9 @@ export default async function DashboardPage({ searchParams }: Props) {
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <h3 className="text-2xl font-bold tracking-tight">
+            <p className="text-2xl font-bold">
               There should be something here
-            </h3>
+            </p>
             <p className="text-sm text-muted-foreground">
               Maybe some posts?
             </p>

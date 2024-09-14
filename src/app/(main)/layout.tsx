@@ -22,8 +22,8 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
       <nav className="bg-muted/25">
         <aside className="dark:bg-root hidden h-screen w-[250px] flex-shrink-0 flex-col justify-between border-r border-slate-4 bg-slate-1 px-4 pb-6 dark:border-slate-6 md:flex">
           <div className="flex h-[60px] items-center">
-            <Link className={`flex items-center text-sm font-bold hover:text-yellow-400`} href={Paths.Dashboard}>
-              <PiHandPeaceLight className="h-5 w-5" />{APP_TITLE_UNSTYLED}
+            <Link className={`flex items-center text-lg font-extrabold text-primary/75 hover:text-yellow-400/90`} href={Paths.Dashboard}>
+              <PiHandPeaceLight className="h-7 w-7" />{APP_TITLE_UNSTYLED}
             </Link>
             <div className="ml-auto">
             {/* <ThemeToggle /> */}
@@ -73,7 +73,12 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
       </nav>
 
       <div className="w-full">
-        <Header />
+        <Header
+          fullname={user?.fullname ?? ''} 
+          email={user?.email ?? ''} 
+          avatar={user?.avatar ?? ''}
+          userRole={user?.role ?? 'guest'} 
+        />
         <div className="scrollContainer h-[calc(100vh-60px)] overflow-auto">
           {user?.emailVerified === false && (
             <div className="mx-auto px-6 mt-8">

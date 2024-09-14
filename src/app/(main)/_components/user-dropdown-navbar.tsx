@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Paths } from "@/lib/constants";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Copy, CreditCardIcon, Ellipsis, EllipsisVertical, LogIn, LogOut, Pencil, Settings2 } from "lucide-react";
+import { Copy, CreditCardIcon, EllipsisVertical, LogIn, LogOut, Pencil, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MoonIcon, SunIcon } from "@/components/icons";
 import { useTheme } from "next-themes";
@@ -40,13 +40,16 @@ export const UserDropdownNavBar = ({
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.key === "m" || event.key === "M") {
+      const activeElement = document.activeElement;
+      const isInputActive = activeElement instanceof HTMLInputElement || activeElement instanceof HTMLTextAreaElement;
+  
+      if ((event.key === "m" || event.key === "M") && !isInputActive) {
         toggleTheme();
       }
     };
-
+  
     window.addEventListener("keydown", handleKeyPress);
-
+  
     return () => {
       window.removeEventListener("keydown", handleKeyPress);
     };
@@ -176,7 +179,7 @@ export const UserDropdownNavBar = ({
                   <MoonIcon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 mr-2" />
                   Toggle theme
                 </div>
-                <kbd className="rounded-md border bg-muted px-1.5 text-[12px] font-extrabold text-muted-foreground">
+                <kbd className="inline-flex rounded-md border border-primary/20 bg-muted px-1.5 h-[22px] w-[22px] font-extrabold text-muted-foreground items-center justify-center select-none uppercase">
                   M
                 </kbd>
               </div>
