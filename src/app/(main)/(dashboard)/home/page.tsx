@@ -3,14 +3,14 @@ import { env } from "@/env";
 import { api } from "@/trpc/server";
 import { type Metadata } from "next";
 import { Suspense } from "react";
-import { Posts } from "./_components/posts";
-import { PostsSkeleton } from "./_components/posts-skeleton";
+import { Posts } from "../_components/posts";
+import { PostsSkeleton } from "../_components/posts-skeleton";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@/lib/constants";
 import { myPostsSchema } from "@/server/api/routers/post/post.input";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { AccountDetailsSkeleton } from "./settings/_components/account-details-skeleton";
+import { AccountDetailsSkeleton } from "../settings/_components/account-details-skeleton";
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),

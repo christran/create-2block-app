@@ -28,7 +28,7 @@ test.describe("signup and login", () => {
     expect(code).not.toBeNull();
     await page.getByLabel("Verification Code").fill(code!);
     await page.getByLabel("submit-btn").click();
-    await page.waitForURL("/dashboard");
+    await page.waitForURL("/home");
   });
   test("login and logout", async ({ page }) => {
     await page.goto("/");
@@ -36,7 +36,7 @@ test.describe("signup and login", () => {
     await page.getByLabel("Email").fill(testUser.email);
     await page.getByLabel("Password").fill(testUser.password);
     await page.getByLabel("submit-btn").click();
-    await page.waitForURL("/dashboard");
+    await page.waitForURL("/home");
     await page.getByAltText("Avatar").click();
     await page.getByText("Sign out").click();
     await page.getByText("Continue").click();

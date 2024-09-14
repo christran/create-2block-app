@@ -6,13 +6,13 @@ import { PiHandPeaceLight } from "@/components/icons";
 import { APP_TITLE_UNSTYLED, Paths } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
-import { DashboardNavbar } from "./dashboard/_components/dashboard-navbar";
+import { DashboardNavbar } from "./(dashboard)/_components/dashboard-navbar";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { UserDropdownNavBar } from "./_components/user-dropdown-navbar";
 import { Badge } from "@/components/ui/badge";
-import { EmailVerificationWarning } from "./dashboard/_components/email-verification-warning";
+import { EmailVerificationWarning } from "./(dashboard)/_components/email-verification-warning";
 
 const MainLayout = async ({ children }: { children: ReactNode }) => {
   const { user } = await validateRequest();
@@ -82,7 +82,7 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
               </div>
             </div>
           )}
-          
+
           {children}
           
           {/* todo: sticky footer? */}

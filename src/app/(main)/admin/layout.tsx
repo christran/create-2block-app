@@ -1,5 +1,3 @@
-// import { DashboardNavbar } from "../_components/dashboard-navbar";
-
 interface Props {
   children: React.ReactNode;
 }
