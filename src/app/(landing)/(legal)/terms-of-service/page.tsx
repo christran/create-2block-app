@@ -41,7 +41,7 @@ const TermsOfServicePage = () => {
         <p>We reserve the right to modify these Terms of Service at any time. Your continued use of ✌️BLOCK after changes constitutes acceptance of those changes.</p>
         
         <h2 className="mt-6 text-xl font-semibold text-foreground">8. Governing Law</h2>
-        <p>These Terms of Service shall be governed by and construed in accordance with the laws of [Your Jurisdiction].</p>
+        <p>These Terms of Service shall be governed by and construed in accordance with the laws of Los Angeles, California</p>
       </div>
     </section>
   );

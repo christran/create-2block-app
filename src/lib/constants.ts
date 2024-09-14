@@ -31,9 +31,9 @@ export enum Paths {
   Subscribe = "https://resend.2block.co/subscribe",
   Unsubscribe = "https://resend.2block.co/unsubscribe",
   ManageEmailSubscription = "https://resend.2block.co/manage",
-  TermsOfService = "/legal/terms-of-service",
-  PrivacyPolicy = "/legal/privacy",
-  AcceptableUsePolicy = "/legal/acceptable-use",
+  TermsOfService = "/terms-of-service",
+  PrivacyPolicy = "/privacy",
+  AcceptableUsePolicy = "/acceptable-use",
   GitHub = "https://github.com/christran",
 }
 
