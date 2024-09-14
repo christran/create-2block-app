@@ -48,7 +48,7 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
 
   const isDirty = useMemo(() => {
     return fullname !== user?.fullname || email !== user?.email;
-  }, [fullname, email]);
+  }, [fullname, email, user?.fullname, user?.email]);
 
   const router = useRouter();
 
@@ -72,6 +72,9 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
 
   useEffect(() => {
     if (state?.success) {
+      setFullname(fullname);
+      setEmail(email);
+
       toast.success("Account updated");
       router.refresh();
     }
@@ -86,7 +89,7 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
         <CardHeader>
           <CardTitle>Account Details</CardTitle>
           <CardDescription>
-            Update your profile information
+            Update your account information
           </CardDescription>
         </CardHeader>
         <Suspense fallback={<AccountDetailsSkeleton />}>
