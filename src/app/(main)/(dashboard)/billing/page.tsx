@@ -40,7 +40,7 @@ export default async function BillingPage() {
               <ExclamationTriangleIcon className="h-6 w-6 !text-red-500" />
               <AlertTitle>Stripe Test Environment</AlertTitle>
               <AlertDescription>
-                Currently using Stripe test environment. Use test cards provided {" "}
+                Stripe test environment enabled. Use test cards provided {" "}
                 <a
                   href="https://docs.stripe.com/testing#cards"
                   target="_blank"

@@ -50,7 +50,7 @@ export function ManageSubscriptionForm({
 
   return (
     <form className="w-full" onSubmit={onSubmit}>
-      <Button className="w-full" disabled={isPending}>
+      <Button className="w-full shadow-md" disabled={isPending}>
         {isPending ? "Loading..." : buttonText}
       </Button>
     </form>

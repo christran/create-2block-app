@@ -103,7 +103,7 @@ export async function Billing({ stripePromises }: BillingProps) {
             </CardContent>
             <CardFooter className="pt-4">
               {item.name === "Free" ? (
-                <Button className="w-full" disabled={plan?.isPro || plan?.isProPlus}>
+                <Button className="w-full shadow-md" disabled={plan?.isPro || plan?.isProPlus}>
                   <Link href={Paths.Dashboard} className="w-full">
                     {plan?.isPro || plan?.isProPlus ? "Upgraded" : "Continue"}
                   </Link>
