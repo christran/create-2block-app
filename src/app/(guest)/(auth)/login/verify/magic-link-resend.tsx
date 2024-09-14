@@ -50,7 +50,7 @@ export const MagicLinkResend = ({ email }: MagicLinkResendProps) => {
               type="email"
               value={email}
         />
-        <SubmitButton className="w-full" variant="default">
+        <SubmitButton className="w-full shadow-md" variant="default">
           🪄 Resend Magic Link 🪄
         </SubmitButton>
       </form>

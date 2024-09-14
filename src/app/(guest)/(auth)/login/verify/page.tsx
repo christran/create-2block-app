@@ -31,7 +31,7 @@ export default async function MagicLinkPage({
   if (!email) redirect(Paths.Login);
 
   return (
-    <div className="w-full max-w-md">
+    <div className="w-full max-w-md mt-20">
       <Card>
         <CardHeader>
           <Link
