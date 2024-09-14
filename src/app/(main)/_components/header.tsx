@@ -63,7 +63,7 @@ export const Header = ({ fullname, email, avatar, userRole }: HeaderProps) => {
   };
 
   return (
-    <header className="flex h-[60px] items-center justify-between border-b border-slate-6 px-6">
+    <header className="flex h-[60px] items-center justify-between border-b px-6">
       <MobileSheetNavbar 
         fullname={fullname ?? ''} 
         email={email ?? ''} 

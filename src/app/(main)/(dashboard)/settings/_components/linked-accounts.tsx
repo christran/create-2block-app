@@ -3,6 +3,7 @@
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -12,6 +13,7 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { DiscordLogoIcon, faGoogle, FontAwesomeIcon, GitHubLogoIcon } from "@/components/icons"
+import { APP_TITLE } from "@/lib/constants";
 
 interface LinkedAccountProps {
   googleId: string | null
@@ -55,12 +57,15 @@ export function LinkedAccounts({ user, isPasswordLess, magicLinkAuth }: { user: 
   }
 
   return (
-    <Card className="flex flex-col gap-1">
-      <CardHeader>
+    <Card className="flex flex-col gap-1"> 
+      <CardHeader className="border-b px-6 py-4">
         <CardTitle>Linked Accounts</CardTitle>
+        <CardDescription>
+          Connect additional accounts to speed up your login process
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-1 items-center text-center">
-        <div className="w-full md:w-1/2 space-y-2">
+        <div className="w-full md:w-1/2 space-y-2 pt-5">
           <Button
             variant="outline"
             onClick={() => handleSocial('google')}

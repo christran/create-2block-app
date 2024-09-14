@@ -36,7 +36,7 @@ export default async function BillingPage() {
         </div>
         <div className="flex flex-col gap-6 mx-auto max-w-5xl px-6">
           <section>
-            <Alert className="p-6 [&>svg]:left-6 [&>svg]:top-6 [&>svg~*]:pl-10 rounded-lg border border-slate-6">
+            <Alert className="p-6 [&>svg]:left-6 [&>svg]:top-6 [&>svg~*]:pl-10 rounded-lg border">
               <ExclamationTriangleIcon className="h-6 w-6 !text-red-500" />
               <AlertTitle>Stripe Test Environment</AlertTitle>
               <AlertDescription>

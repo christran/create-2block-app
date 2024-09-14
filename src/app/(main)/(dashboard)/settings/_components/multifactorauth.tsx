@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -41,11 +42,14 @@ export function MultiFactorAuth() {
     return (
       <form action={handleSubmit} className="grid gap-4">
         <Card>
-          <CardHeader>
+          <CardHeader className="border-b px-6 py-4">
             <CardTitle>Two Step Verification</CardTitle>
+            <CardDescription>
+              Secure your account with two-factor authentication
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="w-full md:w-1/2 space-y-2">
+            <div className="w-full md:w-1/2 space-y-2 pt-4">
               <div className="space-y-2">
                 <Label htmlFor="one-time-code">Secret</Label>
                 <Input

@@ -41,7 +41,7 @@ export async function Billing({ stripePromises }: BillingProps) {
   return (
     <>
       <section>
-        <Card className="space-y-2 p-8 rounded-lg border border-slate-6">
+        <Card className="space-y-2 p-8 rounded-lg border">
           <h3 className="text-lg font-semibold sm:text-xl">Subscription</h3>
           <h4 className="text-lg font-semibold sm:text-xl">{plan?.name ?? "Free"}</h4>
           <p className="text-sm text-muted-foreground">
@@ -82,7 +82,7 @@ export async function Billing({ stripePromises }: BillingProps) {
       </div> */}
       <section className="grid gap-6 lg:grid-cols-3">
         {plans.map((item) => (
-          <Card key={item.name} className="flex flex-col p-2 rounded-lg border border-slate-6">
+          <Card key={item.name} className="flex flex-col p-2 rounded-lg border">
             <CardHeader>
               <CardTitle className="text-xl font-bold">{item.name}</CardTitle>
               <CardDescription className="h-12 text-sm">{item.description}</CardDescription>

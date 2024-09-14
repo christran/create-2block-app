@@ -86,7 +86,7 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
   return (
     <>
       <Card>
-        <CardHeader>
+        <CardHeader className="border-b px-6 py-4">
           <CardTitle>Account Details</CardTitle>
           <CardDescription>
             Update your account information
@@ -95,7 +95,7 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
         <Suspense fallback={<AccountDetailsSkeleton />}>
           <form>
             <CardContent>
-              <div className="w-full md:w-[380px] space-y-2">
+              <div className="w-full md:w-[380px] space-y-2 pt-4">
                 <div className="space-y-2">
                   <Label>Full Name</Label>
                   <Input

@@ -3,6 +3,7 @@
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -95,11 +96,14 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
     ) : (
       <form action={handleSubmit} className="grid gap-4">
         <Card>
-          <CardHeader>
+          <CardHeader className="border-b px-6 py-4">
             <CardTitle>Password</CardTitle>
+            <CardDescription>
+              Update your password here to keep your account safe
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="w-full md:w-[380px] space-y-2">
+            <div className="w-full md:w-[380px] space-y-2 pt-4">
               <div className="space-y-2">
                 <Label>Current Password</Label>
                 <PasswordInput
