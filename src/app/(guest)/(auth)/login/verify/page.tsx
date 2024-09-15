@@ -41,7 +41,7 @@ export default async function MagicLinkPage({
             <ArrowLeftIcon className="h-5 w-5 mr-1" /> Back
           </Link>
           <CardTitle>Magic Link</CardTitle>
-          <CardDescription>
+          <CardDescription className="pt-2">
             A magic link was sent to <strong>{email}</strong><br />
             Check your spam folder if you can't find the email.
           </CardDescription>
