@@ -70,6 +70,7 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
             fullname={user?.fullname ?? ''} 
             email={user?.email ?? ''} 
             avatar={user?.avatar ?? ''} 
+            withSheetClose={false}
           />
 
           {/* <div className="flex items-center justify-between pt-2">

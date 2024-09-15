@@ -65,6 +65,7 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
             fullname={"Guest"} 
             email={"hello@2block.co"} 
             avatar={"/avatars/01.png"}
+            withSheetClose={false}
           />
         </aside>
       </nav>

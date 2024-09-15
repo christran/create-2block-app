@@ -20,19 +20,24 @@ import { Copy, CreditCardIcon, EllipsisVertical, LogIn, LogOut, Pencil, Settings
 import { Button } from "@/components/ui/button";
 import { MoonIcon, SunIcon } from "@/components/icons";
 import { useTheme } from "next-themes";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, Fragment } from "react";
 import { SheetClose } from "@/components/ui/sheet";
 
 export const UserDropdownNavBar = ({
   fullname,
   email,
   avatar,
+  withSheetClose,
 }: {
   fullname: string;
   email: string;
   avatar?: string | undefined;
-  className?: string;
+  withSheetClose: any
 }) => {
+  const [SheetCloseWrapper, shetCloseWrapperProps] = withSheetClose
+    ? [SheetClose, { asChild: true }]
+    : [Fragment, {}];
+
   const { theme, setTheme } = useTheme();
 
   const toggleTheme = useCallback(() => {
@@ -185,7 +190,7 @@ export const UserDropdownNavBar = ({
                 </kbd>
               </div>
             </DropdownMenuItem>
-            <SheetClose asChild>
+            <SheetCloseWrapper {...shetCloseWrapperProps} key="billing">
               <Link href={Paths.Billing}>
                 <DropdownMenuItem className="cursor-pointer font-medium text-muted-foreground hover:text-primary" asChild>
                   <div className="flex items-center w-full">
@@ -194,8 +199,8 @@ export const UserDropdownNavBar = ({
                   </div>
                 </DropdownMenuItem>
               </Link>
-            </SheetClose>
-            <SheetClose asChild>
+            </SheetCloseWrapper>
+            <SheetCloseWrapper {...shetCloseWrapperProps} key="settings">
               <Link href={Paths.Settings}>
                 <DropdownMenuItem className="cursor-pointer font-medium text-muted-foreground hover:text-primary" asChild>
                   <div className="flex items-center w-full">
@@ -204,7 +209,7 @@ export const UserDropdownNavBar = ({
                   </div>
                 </DropdownMenuItem>
               </Link>
-            </SheetClose>
+            </SheetCloseWrapper>
             <DropdownMenuSeparator />
               <DropdownMenuItem className="cursor-pointer font-medium text-muted-foreground hover:text-primary" onClick={handleSignout}>
                 <div className="flex items-center w-full">
@@ -269,7 +274,7 @@ export const UserDropdownNavBar = ({
                 </kbd>
               </div>
             </DropdownMenuItem>
-            <SheetClose asChild>
+            <SheetCloseWrapper {...shetCloseWrapperProps} key="register">
               <Link href={Paths.Signup}>
                 <DropdownMenuItem className="cursor-pointer font-medium text-muted-foreground hover:text-primary" asChild>
                   <div className="flex items-center w-full">
@@ -278,9 +283,9 @@ export const UserDropdownNavBar = ({
                   </div>
                 </DropdownMenuItem>
               </Link>
-            </SheetClose>
+            </SheetCloseWrapper>
             <DropdownMenuSeparator />
-            <SheetClose asChild>
+            <SheetCloseWrapper {...shetCloseWrapperProps} key="login">
               <Link href={Paths.Login}>
                 <DropdownMenuItem className="cursor-pointer font-medium text-muted-foreground hover:text-primary" asChild>
                   <div className="flex items-center w-full">
@@ -289,7 +294,7 @@ export const UserDropdownNavBar = ({
                   </div>
                 </DropdownMenuItem>
               </Link>
-            </SheetClose>
+            </SheetCloseWrapper>
           </DropdownMenuContent>
         </DropdownMenu>
       )}

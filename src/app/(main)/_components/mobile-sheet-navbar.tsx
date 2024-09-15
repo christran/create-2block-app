@@ -135,6 +135,7 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
               fullname={fullname}
               email={email} 
               avatar={avatar} 
+              withSheetClose
             />
           </SheetContent>
         </Sheet>
@@ -188,6 +189,7 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
               fullname={"Guest"} 
               email={"hello@2block.co"} 
               avatar={"/avatars/01.png"}
+              withSheetClose
             />
             </SheetContent>
           </Sheet>
