@@ -9,11 +9,12 @@ import { LockClosedIcon } from "@radix-ui/react-icons";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
 import { PiHandPeaceLight } from "@/components/icons";
-import { Menu } from "lucide-react"
+import { Menu, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { ThemeToggle } from "@/components/theme-toggle";
 import { UserDropdownNavBar } from "./user-dropdown-navbar";
+import { Input } from "@/components/ui/input";
 
 type UserRole = User['role'];
 
@@ -35,9 +36,23 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
       {userRole !== "guest" ? (
         <Sheet>
           <div className="flex items-center justify-between w-full md:hidden">
-            <Link className="flex items-center text-md font-bold" href={Paths.Dashboard}>
-              <PiHandPeaceLight className="h-5 w-5 mr-1" />{APP_TITLE_UNSTYLED}
+            <Link className="flex items-center text-xl font-extrabold text-primary/75" href={Paths.Dashboard}>
+              <PiHandPeaceLight className="h-7 w-7" />{APP_TITLE_UNSTYLED}
             </Link>
+
+            <form>
+              <div className="flex-1 mx-2">
+                <div className="relative">
+                  <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    type="search"
+                    placeholder="Search"
+                    className="w-full pl-8 h-8 text-sm"
+                  />
+                </div>
+              </div>
+            </form>
+    
             <SheetTrigger asChild>
               <Button
                 variant="outline"
@@ -51,8 +66,8 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
           </div>
           <SheetContent side="left" onOpenAutoFocus={(event) => event.preventDefault()} className="w-[280px] md:w-[320px] flex flex-col">
             <SheetClose asChild>
-              <Link className="flex items-center justify-center font-bold" href={Paths.Dashboard}>
-                <PiHandPeaceLight className="h-5 w-5" />{APP_TITLE_UNSTYLED}
+              <Link className="flex items-center justify-center text-xl font-extrabold text-primary/75" href={Paths.Dashboard}>
+                <PiHandPeaceLight className="h-7 w-7" />{APP_TITLE_UNSTYLED}
               </Link>
             </SheetClose>
             <nav className="flex-1 overflow-scroll scrollbar-hide">
@@ -142,9 +157,23 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
         ) : (
           <Sheet>
             <div className="flex items-center justify-between w-full md:hidden">
-              <Link className="flex items-center text-md font-bold" href={Paths.Dashboard}>
-                <PiHandPeaceLight className="h-5 w-5 mr-1" />{APP_TITLE_UNSTYLED}
+              <Link className="flex items-center text-xl font-extrabold text-primary/75" href={Paths.Dashboard}>
+                <PiHandPeaceLight className="h-7 w-7" />{APP_TITLE_UNSTYLED}
               </Link>
+
+              <form>
+                <div className="flex-1 mx-2">
+                  <div className="relative">
+                    <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      type="search"
+                      placeholder="Search"
+                      className="w-full pl-8 h-8 text-sm"
+                    />
+                  </div>
+                </div>
+              </form>
+
               <SheetTrigger asChild>
                 <Button
                   variant="outline"
@@ -158,8 +187,8 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
             </div>
           <SheetContent side="left" onOpenAutoFocus={(event) => event.preventDefault()} className="w-[280px] md:w-[320px] flex flex-col">
             <SheetClose asChild>
-              <Link className="flex items-center justify-center font-bold" href={Paths.Dashboard}>
-                <PiHandPeaceLight className="h-5 w-5" />{APP_TITLE_UNSTYLED}
+              <Link className="flex items-center justify-center text-xl font-extrabold text-primary/75" href={Paths.Dashboard}>
+                <PiHandPeaceLight className="h-7 w-7" />{APP_TITLE_UNSTYLED}
               </Link>
             </SheetClose>
             <nav className="mt-2 flex-1">

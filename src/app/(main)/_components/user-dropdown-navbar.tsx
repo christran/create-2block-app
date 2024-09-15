@@ -185,7 +185,7 @@ export const UserDropdownNavBar = ({
                   <MoonIcon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 mr-2" />
                   Toggle theme
                 </div>
-                <kbd className="inline-flex rounded-md border border-primary/20 bg-muted px-1.5 h-[22px] w-[22px] font-extrabold text-muted-foreground items-center justify-center select-none uppercase">
+                <kbd className="hidden md:inline-flex rounded-md border border-primary/20 bg-muted px-1.5 h-[22px] w-[22px] font-extrabold text-muted-foreground items-center justify-center select-none uppercase">
                   M
                 </kbd>
               </div>
@@ -269,7 +269,7 @@ export const UserDropdownNavBar = ({
                   <MoonIcon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 mr-2" />
                   Toggle theme
                 </div>
-                <kbd className="rounded-md border bg-muted px-1.5 text-[12px] font-extrabold text-muted-foreground">
+                <kbd className="hidden md:inline-flex rounded-md border bg-muted px-1.5 text-[12px] font-extrabold text-muted-foreground">
                   M
                 </kbd>
               </div>
