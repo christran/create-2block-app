@@ -4,3 +4,9 @@
 [ ] whole button is not clickable only text area
 [ ] don't allow user to unlinnk account if no password set
 [ ] handle if oauth email exists in db but oauth id is not linked to any account.
+
+
+- notes
+- windows firewall inbound port allow 3000
+- connectaddress = wsl hostname -I or hostname -I
+- netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=3000 connectaddress=192.168.186.138 connectport=3000

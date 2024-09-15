@@ -159,19 +159,21 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
               <ul className="flex flex-col gap-2">
               {guestNavBarItems.map((item) => (
                 <li>
-                  <Link key={item.href} href={item.href}>
-                    <span
-                      className={cn(
-                        inactiveLinkClass,
-                        path === item.href ? activeLinkClass : ""
-                      )}
-                    >
-                      <span className="flex items-center">
-                        <item.icon className="mr-2 h-5 w-5" />
-                        {item.title}
+                  <SheetClose asChild>
+                    <Link key={item.href} href={item.href}>
+                      <span
+                        className={cn(
+                          inactiveLinkClass,
+                          path === item.href ? activeLinkClass : ""
+                        )}
+                      >
+                        <span className="flex items-center">
+                          <item.icon className="mr-2 h-5 w-5" />
+                          {item.title}
+                        </span>
                       </span>
-                    </span>
-                  </Link>
+                    </Link>
+                  </SheetClose>
                 </li>
               ))}
               </ul>
