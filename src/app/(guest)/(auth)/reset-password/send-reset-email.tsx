@@ -51,12 +51,12 @@ export function SendResetEmail() {
       </div>
 
       <div className="flex flex-wrap justify-between text-xs">
-            <div>
-              Don't want to reset?{" "}
-              <Button variant="link" size="sm" className="p-0 h-auto">
-                <Link href={Paths.Login} className="text-blue-500">Log in</Link>
-              </Button>
-            </div>
+          <div>
+            Don't want to reset?{" "}
+            <Button variant="link" size="sm" className="p-0 h-auto">
+              <Link href={Paths.Login} className="text-blue-500">Log in</Link>
+            </Button>
+          </div>
       </div>
 
       <SubmitButton className="mt-4 w-full shadow-md" disabled={!isDirty}>

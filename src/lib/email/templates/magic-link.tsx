@@ -118,7 +118,7 @@ const text = {
 };
 
 const buttonContainer = {
-  
+
 }
 
 const button = {
@@ -133,7 +133,8 @@ const button = {
 };
 
 const expirationText = {
-  fontSize: "11px",
+  fontSize: "10px",
+  color: "#a1a1aa",
   lineHeight: "24px",
   margin: "0px 0 0px 0",
   textAlign: "center" as const,

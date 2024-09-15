@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { MoonIcon, SunIcon } from "@/components/icons";
 import { useTheme } from "next-themes";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { SheetClose } from "@/components/ui/sheet";
 
 export const UserDropdownNavBar = ({
   fullname,
@@ -184,29 +185,33 @@ export const UserDropdownNavBar = ({
                 </kbd>
               </div>
             </DropdownMenuItem>
-            <Link href={Paths.Billing}>
-              <DropdownMenuItem className="cursor-pointer font-medium text-muted-foreground hover:text-primary" asChild>
+            <SheetClose asChild>
+              <Link href={Paths.Billing}>
+                <DropdownMenuItem className="cursor-pointer font-medium text-muted-foreground hover:text-primary" asChild>
+                  <div className="flex items-center w-full">
+                    <CreditCardIcon className="h-4 w-4 mr-2"/>
+                    Billing
+                  </div>
+                </DropdownMenuItem>
+              </Link>
+            </SheetClose>
+            <SheetClose asChild>
+              <Link href={Paths.Settings}>
+                <DropdownMenuItem className="cursor-pointer font-medium text-muted-foreground hover:text-primary" asChild>
+                  <div className="flex items-center w-full">
+                  <Settings2 className="h-4 w-4 mr-2"/>
+                  Settings
+                  </div>
+                </DropdownMenuItem>
+              </Link>
+            </SheetClose>
+            <DropdownMenuSeparator />
+              <DropdownMenuItem className="cursor-pointer font-medium text-muted-foreground hover:text-primary" onClick={handleSignout}>
                 <div className="flex items-center w-full">
-                  <CreditCardIcon className="h-4 w-4 mr-2"/>
-                  Billing
+                  <LogOut className="h-4 w-4 mr-2"/>
+                  Logout
                 </div>
               </DropdownMenuItem>
-            </Link>
-            <Link href={Paths.Settings}>
-            <DropdownMenuItem className="cursor-pointer font-medium text-muted-foreground hover:text-primary" asChild>
-              <div className="flex items-center w-full">
-              <Settings2 className="h-4 w-4 mr-2"/>
-              Settings
-              </div>
-            </DropdownMenuItem>
-            </Link>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer font-medium text-muted-foreground hover:text-primary" onClick={handleSignout}>
-            <div className="flex items-center w-full">
-              <LogOut className="h-4 w-4 mr-2"/>
-              Logout
-            </div>
-          </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
@@ -264,23 +269,27 @@ export const UserDropdownNavBar = ({
                 </kbd>
               </div>
             </DropdownMenuItem>
-            <Link href={Paths.Signup}>
-              <DropdownMenuItem className="cursor-pointer font-medium text-muted-foreground hover:text-primary" asChild>
-                <div className="flex items-center w-full">
-                  <Pencil className="h-4 w-4 mr-2"/>
-                  Register
-                </div>
-              </DropdownMenuItem>
-            </Link>
+            <SheetClose asChild>
+              <Link href={Paths.Signup}>
+                <DropdownMenuItem className="cursor-pointer font-medium text-muted-foreground hover:text-primary" asChild>
+                  <div className="flex items-center w-full">
+                    <Pencil className="h-4 w-4 mr-2"/>
+                    Register
+                  </div>
+                </DropdownMenuItem>
+              </Link>
+            </SheetClose>
             <DropdownMenuSeparator />
-            <Link href={Paths.Login}>
-            <DropdownMenuItem className="cursor-pointer font-medium text-muted-foreground hover:text-primary" asChild>
-              <div className="flex items-center w-full">
-              <LogIn className="h-4 w-4 mr-2"/>
-              Login
-              </div>
-            </DropdownMenuItem>
-            </Link>
+            <SheetClose asChild>
+              <Link href={Paths.Login}>
+                <DropdownMenuItem className="cursor-pointer font-medium text-muted-foreground hover:text-primary" asChild>
+                  <div className="flex items-center w-full">
+                  <LogIn className="h-4 w-4 mr-2"/>
+                  Login
+                  </div>
+                </DropdownMenuItem>
+              </Link>
+            </SheetClose>
           </DropdownMenuContent>
         </DropdownMenu>
       )}

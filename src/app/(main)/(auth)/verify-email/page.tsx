@@ -8,7 +8,7 @@ import {
 import { redirect } from "next/navigation";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { VerifyCode } from "./verify-code";
-import { Paths } from "@/lib/constants";
+import { APP_TITLE, Paths } from "@/lib/constants";
 import Link from "next/link";
 import { ArrowLeftIcon } from "@/components/icons";
 import { env } from "@/env";
@@ -27,28 +27,20 @@ export default async function VerifyEmailPage() {
 
   return (
     <div className="flex items-center justify-center">
-      <div className="flex flex-col gap-6 mx-auto max-w-5xl px-6">
-        <div className="w-full max-w-md mt-20">
-          <Card>
-            <CardHeader>
-              <Link
+      <div className="flex flex-col gap-6 mx-auto max-w-5xl px-4 md:px-2">
+        <div className="w-full max-w-md py-8 md:py-20">
+        <Card className="py-2">
+          <CardHeader>
+              {/* <Link
                 href={Paths.Dashboard}
-                className="mb-3 flex items-center text-sm text-muted-foreground hover:underline"
+                className="pb-2 flex items-center text-sm text-muted-foreground hover:underline"
                 >
                 <ArrowLeftIcon className="h-5 w-5 mr-1" /> Back
-              </Link>
-              {/* <Breadcrumb className="mb-3">
-                <BreadcrumbList>
-                  <BreadcrumbItem>
-                    <BreadcrumbLink href={Paths.Dashboard}>Home</BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator />
-                  <BreadcrumbItem>
-                    <BreadcrumbPage>Verify Email</BreadcrumbPage>
-                  </BreadcrumbItem>
-                </BreadcrumbList>
-              </Breadcrumb> */}
+              </Link> */}
+              {/* <CardTitle className="text-[38px] font-extrabold text-primary/90 text-center">{APP_TITLE}</CardTitle> */}
+              
               <CardTitle>Verify Email</CardTitle>
+
               <CardDescription>
                 A verification code was sent to <strong>{user.email}</strong><br />
                 Check your spam folder if you can't find the email.
@@ -57,7 +49,7 @@ export default async function VerifyEmailPage() {
             <CardContent>
               <VerifyCode />
             </CardContent>
-          </Card>
+        </Card>
         </div>
       </div>
     </div>

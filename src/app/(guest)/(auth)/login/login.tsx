@@ -49,14 +49,14 @@ export function Login() {
   }
 
   return (
-    <div className="w-full max-w-md mt-20">
-      <Card>
+    <div className="w-full max-w-md py-8 md:py-20">
+      <Card className="py-2">
         <CardHeader className="text-center">
-          <CardTitle>{APP_TITLE}</CardTitle>
+          <CardTitle className="text-[38px] font-extrabold text-primary/90">{APP_TITLE}</CardTitle>
           {/* <CardDescription>Log in to your account to access your dashboard</CardDescription> */}
         </CardHeader>
         <CardContent>
-        <CardContent className="space-y-2">
+        <div className="space-y-2 md:px-6">
           <Button variant="outline" onClick={() => handleSocial("google")} className="w-full bg-secondary/30 shadow">
               <FontAwesomeIcon icon={faGoogle} className="mr-2 h-5 w-5" />
               Log in with Google
@@ -69,8 +69,8 @@ export function Login() {
               <GitHubLogoIcon className="mr-2 h-5 w-5" />
               Log in with GitHub
           </Button>
-        </CardContent>
-        <div className="my-2 mt-2 mb-8 flex items-center">
+        </div>
+        <div className="py-6 flex items-center">
           <div className="flex-grow border-t border-muted" />
           <div className="mx-2 text-sm text-muted-foreground">or continue with</div>
           <div className="flex-grow border-t border-muted" />
@@ -142,7 +142,7 @@ export function Login() {
         </form>
         </CardContent>
       </Card>
-      <div className="text-center text-[10.6px] text-muted-foreground mt-4 px-6 pb-6">
+      <div className="text-center text-[10.6px] text-muted-foreground pt-4">
         By signing in, you agree to our{" "}
         <Link href={Paths.TermsOfService} className="hover:underline text-blue-500" prefetch={false}>
           terms of service

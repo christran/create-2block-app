@@ -139,7 +139,7 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
                 </p>
               ) : null}
             </CardContent>
-            <CardFooter className="border-t px-6 py-4 gap-2">
+            <CardFooter className="border-t px- py-4 gap-2">
             <SubmitButton formAction={formAction} disabled={!isDirty}>Update Account</SubmitButton>
             <AlertDialog open={open} onOpenChange={setOpen}>
               <AlertDialogTrigger asChild>

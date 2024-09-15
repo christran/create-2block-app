@@ -45,6 +45,10 @@ export default function EmailVerificationTemplate({fullname, code}: EmailVerific
             <br/>
 
             <Link style={link} href={env.NEXT_PUBLIC_APP_URL + Paths.VerifyEmail}>or click here to verify</Link>
+
+            <Text style={expirationText}>
+              This link will expire in 30 minutes
+            </Text>
           </Section>
         </Container>
         <Text style={footer}>
@@ -133,6 +137,14 @@ const button = {
   padding: "10px 62px",
   margin: "0 0 8px 0",
 };
+
+const expirationText = {
+  fontSize: "10px",
+  color: "#a1a1aa",
+  lineHeight: "24px",
+  margin: "0px 0 0px 0",
+  textAlign: "center" as const,
+}
 
 const link = {
   color: "#0366d6",

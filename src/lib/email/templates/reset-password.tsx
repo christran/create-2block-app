@@ -50,9 +50,9 @@ export default function ResetPasswordTemplate({ fullname, url }: ResetPasswordTe
           
           <Link style={link} href={url}>or click here to reset</Link>
 
-        {/* <Text style={text}>
-            If you didn't request this, you may ignore this email.
-        </Text> */}
+          <Text style={expirationText}>
+            This link will expire in 10 minutes
+          </Text>
         </Section>
       </Container>
       <Text style={footer}>
@@ -122,6 +122,14 @@ const button = {
   padding: "10px 62px",
   margin: "10px 0 10px 0",
 };
+
+const expirationText = {
+  fontSize: "10px",
+  color: "#a1a1aa",
+  lineHeight: "24px",
+  margin: "0px 0 0px 0",
+  textAlign: "center" as const,
+}
 
 const link = {
   color: "#0366d6",

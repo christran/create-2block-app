@@ -14,6 +14,7 @@ import { UserDropdownNavBar } from "../(main)/_components/user-dropdown-navbar";
 import { Badge } from "@/components/ui/badge";
 import { EmailVerificationWarning } from "../(main)/(dashboard)/_components/email-verification-warning";
 import { LandingPageNavbar } from "./_components/landing-page-navbar";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const MainLayout = async ({ children }: { children: ReactNode }) => {
   return (
@@ -21,9 +22,18 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
       <nav className="bg-secondary/20">
         <aside className="dark:bg-root hidden h-screen w-[250px] flex-shrink-0 flex-col justify-between border-r px-4 pb-6 md:flex">
           <div className="flex h-[60px] items-center">
-            <Link className={`flex items-center text-lg font-extrabold text-primary/75 hover:text-yellow-400/90`} href={Paths.Dashboard}>
-              <PiHandPeaceLight className="h-7 w-7" />{APP_TITLE_UNSTYLED}
-            </Link>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link className={`flex items-center text-lg font-extrabold text-primary/75 hover:text-yellow-400/90`} href={Paths.Home}>
+                    <PiHandPeaceLight className="h-7 w-7" />{APP_TITLE_UNSTYLED}
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent className="font-bold text-xs">
+                    ✌️BLOCK!
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <div className="ml-auto">
             {/* <ThemeToggle /> */}
             </div>
@@ -66,15 +76,13 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
           avatar={"/avatars/01.png"}
           userRole={'guest'} 
         />
-        <div className="scrollContainer h-[calc(100vh-60px)] overflow-auto">
-          <div className="flex items-center justify-center">
-            <div className="flex flex-col gap-6 mx-auto max-w-5xl px-6">
+        <div className="scrollContainer h-[calc(100vh-60px)] md:overflow-auto">
+            <div className="flex flex-col gap-6 mx-auto max-w-5xl px-4 md:px-2 items-center">
               {children}
               
               {/* todo: sticky footer? */}
               {/* <Footer />  */}
             </div>
-          </div>
         </div>
       </div>
     </div>

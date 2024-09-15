@@ -56,7 +56,7 @@ export const VerifyCode = () => {
         </div>
         {/* Remove the Input component */}
         {/* <Input className="mt-2" type="text" id="code" name="code" required /> */}
-        <div className="flex justify-center mt-2">
+        <div className="flex justify-center pt-4">
           <InputOTP
             ref={inputOTPRef} 
             id="code" 
@@ -95,5 +95,5 @@ export const VerifyCode = () => {
         </Button>
       </form>
     </div>
-  );
+  );  
 };

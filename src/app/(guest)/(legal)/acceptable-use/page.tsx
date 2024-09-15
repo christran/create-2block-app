@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 const AcceptableUsePolicyPage = () => {
   return (
-    <section className="flex flex-col mx-auto max-w-5xl px-6 mt-8 mb-16">
+    <section className="flex flex-col mx-auto max-w-5xl py-8">
       <h1 className="mb-2 text-4xl font-bold text-center">Acceptable Use Policy</h1>
       <p className="mb-8 text-sm text-muted-foreground text-center">Last updated: August 18th, 2024</p>
       <div className="space-y-6 text-muted-foreground">

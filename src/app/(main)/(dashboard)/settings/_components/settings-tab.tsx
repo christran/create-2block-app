@@ -89,21 +89,24 @@ export function SettingsTab({ user, isPasswordLess, magicLinkAuth }: { user: Use
 
   return (
     <>
-      <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList className="mb-8 dark:bg-secondary/70">
-          {tabs.map((tab) => (
-            <TabsTrigger key={tab.value} value={tab.value}>
-              {tab.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        
-        {tabs.map((tab) => (
-          <TabsContent key={tab.value} value={tab.value}>
-            {tab.content}
-          </TabsContent>
-        ))}
+    <Tabs value={activeTab} onValueChange={handleTabChange}>
+      <div className="relative">
+        <div className="flex overflow-x-auto scrollbar-hide">
+          <TabsList className="mb-2 dark:bg-secondary/70">
+            {tabs.map((tab) => (
+              <TabsTrigger key={tab.value} value={tab.value} className="flex-shrink-0">
+                {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
+      </div>
+      {tabs.map((tab) => (
+        <TabsContent key={tab.value} value={tab.value}>
+          {tab.content}
+        </TabsContent>
+      ))}
     </Tabs>
-    </>
+  </>
   )
 }

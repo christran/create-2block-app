@@ -50,9 +50,11 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
             </SheetTrigger>
           </div>
           <SheetContent side="left" onOpenAutoFocus={(event) => event.preventDefault()} className="w-[280px] md:w-[320px] flex flex-col">
-            <Link className="flex items-center justify-center font-bold" href={Paths.Dashboard}>
-              <PiHandPeaceLight className="h-5 w-5" />{APP_TITLE_UNSTYLED}
-            </Link>
+            <SheetClose asChild>
+              <Link className="flex items-center justify-center font-bold" href={Paths.Dashboard}>
+                <PiHandPeaceLight className="h-5 w-5" />{APP_TITLE_UNSTYLED}
+              </Link>
+            </SheetClose>
             <nav className="flex-1 overflow-scroll scrollbar-hide">
               <ul className="flex flex-col gap-2">
                 {navbarItems.map((category) => (
@@ -109,19 +111,21 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
                   <>
                     <div className="flex flex-col gap-1 mb-1">
                       <Separator/>
-                        <Link key="admin" href={Paths.Admin}>
-                          <span
-                            className={cn(
-                              inactiveLinkClass,
-                              path === Paths.Admin ? activeLinkClass : ""
-                            )}
-                          >
-                            <span className="flex items-center">
-                                <LockClosedIcon className="mr-2 h-5 w-5" />
-                                <span>Admin</span>
+                        <SheetClose asChild>
+                          <Link key="admin" href={Paths.Admin}>
+                            <span
+                              className={cn(
+                                inactiveLinkClass,
+                                path === Paths.Admin ? activeLinkClass : ""
+                              )}
+                            >
+                              <span className="flex items-center">
+                                  <LockClosedIcon className="mr-2 h-5 w-5" />
+                                  <span>Admin</span>
+                              </span>
                             </span>
-                          </span>
-                        </Link>
+                          </Link>
+                        </SheetClose>
                     </div>
                   </>
                 )}
@@ -152,9 +156,11 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
               </SheetTrigger>
             </div>
           <SheetContent side="left" onOpenAutoFocus={(event) => event.preventDefault()} className="w-[280px] md:w-[320px] flex flex-col">
-            <Link className="flex items-center justify-center font-bold" href={Paths.Dashboard}>
-              <PiHandPeaceLight className="h-5 w-5" />{APP_TITLE_UNSTYLED}
-            </Link>
+            <SheetClose asChild>
+              <Link className="flex items-center justify-center font-bold" href={Paths.Dashboard}>
+                <PiHandPeaceLight className="h-5 w-5" />{APP_TITLE_UNSTYLED}
+              </Link>
+            </SheetClose>
             <nav className="mt-2 flex-1">
               <ul className="flex flex-col gap-2">
               {guestNavBarItems.map((item) => (
@@ -179,9 +185,9 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
               </ul>
             </nav>
             <UserDropdownNavBar
-                fullname={"Guest"} 
-                email={"hello@2block.co"} 
-                avatar={"/avatars/01.png"}
+              fullname={"Guest"} 
+              email={"hello@2block.co"} 
+              avatar={"/avatars/01.png"}
             />
             </SheetContent>
           </Sheet>

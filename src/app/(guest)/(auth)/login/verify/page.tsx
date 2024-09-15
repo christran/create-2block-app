@@ -31,12 +31,12 @@ export default async function MagicLinkPage({
   if (!email) redirect(Paths.Login);
 
   return (
-    <div className="w-full max-w-md mt-20">
-      <Card>
+    <div className="w-full max-w-md py-8 md:py-20">
+      <Card className="py-2">
         <CardHeader>
           <Link
             href={Paths.Login}
-            className="mb-3 flex items-center text-sm text-muted-foreground hover:underline"
+            className="pb-4 flex items-center text-sm text-muted-foreground hover:underline"
             >
             <ArrowLeftIcon className="h-5 w-5 mr-1" /> Back
           </Link>

@@ -53,14 +53,18 @@ export function MagicLink() {
   }
 
   return (
-    <div className="w-full max-w-md mt-20">
-      <Card>
+    <div className="w-full max-w-md py-8 md:py-20">
+      <Card className="py-2">
+      {/* <div className="flex flex-col items-center py-4 text-center">
+        <h2 className="text-2xl font-semibold mb-2">{APP_TITLE}</h2>
+        <p className="text-sm text-muted-foreground">Log in to your account to access your dashboard</p>
+      </div> */}
         <CardHeader className="text-center">
-          <CardTitle>{APP_TITLE}</CardTitle>
+          <CardTitle className="text-[38px] font-extrabold text-primary/90">{APP_TITLE}</CardTitle>
           {/* <CardDescription>Log in to your account to access your dashboard</CardDescription> */}
         </CardHeader>
         <CardContent>
-        <CardContent className="space-y-2">
+        <div className="space-y-2 md:px-6">
           <Button variant="outline" onClick={() => handleSocial("google")} className="w-full bg-secondary/30 shadow">
               <FontAwesomeIcon icon={faGoogle} className="mr-2 h-5 w-5" />
               Log in with Google
@@ -73,14 +77,14 @@ export function MagicLink() {
               <GitHubLogoIcon className="mr-2 h-5 w-5" />
               Log in with GitHub
           </Button>
-        </CardContent>
-        <div className="my-2 mt-2 mb-8 flex items-center">
+        </div>
+        <div className="py-6 flex items-center">
           <div className="flex-grow border-t border-muted" />
           <div className="mx-2 text-sm text-muted-foreground">or continue with</div>
           <div className="flex-grow border-t border-muted" />
         </div>
-        <form action={formAction} className="grid gap-4">
-          <div className="space-y-2">
+        <form action={formAction}>
+          <div className="mb-4">
             {/* <Label htmlFor="email">Email</Label> */}
             <Input
               className="bg-secondary/30"
@@ -93,6 +97,9 @@ export function MagicLink() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
+            <div className="flex flex-wrap items-center justify-between pt-2 text-xs text-muted-foreground">
+              A magic link will be sent to your email
+            </div>
           </div>
 
           {/* <SubmitButton className="w-full" aria-label="submit-btn" disabled={!isDirty}> */}
@@ -102,15 +109,10 @@ export function MagicLink() {
               <ArrowRightIcon className="h-5 w-5" />
             </span>
           </SubmitButton>
-          <div className="flex flex-wrap items-center justify-between text-xs text-muted-foreground">
-            <div>
-              A magic link will be sent to your email
-            </div>
-          </div>
         </form>
         </CardContent>
       </Card>
-      <div className="text-center text-[10.6px] text-muted-foreground mt-4 px-6 pb-6">
+      <div className="text-center text-[10.6px] text-muted-foreground pt-4">
         By signing in, you agree to our{" "}
         <Link href={Paths.TermsOfService} className="hover:underline text-blue-500" prefetch={false}>
           terms of service

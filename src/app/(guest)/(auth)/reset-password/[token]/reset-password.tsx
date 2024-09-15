@@ -18,7 +18,7 @@ export function ResetPassword({ token }: { token: string }) {
   }, [state?.error]);
 
   return (
-    <form action={formAction} className="space-y-4">
+    <form action={formAction} className="flex flex-col gap-4">
       <input type="hidden" name="token" value={token} />
       <div className="space-y-2">
         {/* <Label>Password</Label> */}

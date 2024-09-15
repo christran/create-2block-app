@@ -16,11 +16,11 @@ const HomePage = async () => {
   const { user } = await validateRequest();
 
   return (
-      <div className="flex flex-col mx-auto max-w-5xl px-6 mt-48">
-          <h1 className="text-balance bg-gradient-to-tr from-black/70 via-black to-black/60 bg-clip-text text-center text-3xl font-bold dark:from-zinc-400/10 dark:via-white/90 dark:to-white/20 sm:text-5xl md:text-6xl lg:text-7xl">
+      <div className="flex flex-col mx-auto max-w-5xl px-4 md:px-2 mt-48 md:mt-60">
+          <h1 className="text-6xl md:text-7xl font-extrabold text-primary/90 text-center">
             ✌️BLOCK
           </h1>
-          <p className="text-balance mb-10 mt-4 text-center text-muted-foreground md:text-lg lg:text-xl">
+          <p className="py-4 text-sm md:text-xl text-center text-muted-foreground">
             The quick brown fox jumped over the lazy dog.
           </p>
           <div className="flex justify-center gap-4">

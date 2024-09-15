@@ -63,7 +63,7 @@ export const Header = ({ fullname, email, avatar, userRole }: HeaderProps) => {
   };
 
   return (
-    <header className="flex h-[60px] items-center justify-between border-b px-6">
+    <header className="flex h-[60px] items-center justify-between border-b px-6 bg-background/85 backdrop-blur-sm sticky top-0 z-50">
       <MobileSheetNavbar 
         fullname={fullname ?? ''} 
         email={email ?? ''} 
@@ -71,7 +71,9 @@ export const Header = ({ fullname, email, avatar, userRole }: HeaderProps) => {
         userRole={userRole ?? "guest"} 
       />
       <div className="hidden w-full items-center md:flex">
-        <div className="flex-1" />
+        <div className="flex-1">
+        
+        </div>
         <SearchForm />
         <div className="flex-1 flex justify-end">
           <Link href={Paths.GitHub}>

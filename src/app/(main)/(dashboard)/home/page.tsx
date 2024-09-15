@@ -42,13 +42,13 @@ export default async function DashboardPage({ searchParams }: Props) {
 
   return (
     <>
-      <div className="mx-auto max-w-5xl px-6 py-8">
+      <div className="mx-auto max-w-5xl px-4 md:px-2 py-8">
         <div className="flex items-center">
           <h1 className="text-[28px] leading-[34px] tracking-[-0.416px] text-slate-12 font-bold">Dashboard</h1>
         </div>
       </div>
       
-      <div className="flex flex-col gap-6 mx-auto max-w-5xl px-6">
+      <div className="flex flex-col gap-6 mx-auto max-w-5xl px-4 md:px-2 pb-8">
         <Card>
           <CardHeader>
             <CardTitle>Posts</CardTitle>

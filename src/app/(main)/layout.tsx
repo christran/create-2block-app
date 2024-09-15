@@ -13,6 +13,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { UserDropdownNavBar } from "./_components/user-dropdown-navbar";
 import { Badge } from "@/components/ui/badge";
 import { EmailVerificationWarning } from "./(dashboard)/_components/email-verification-warning";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const MainLayout = async ({ children }: { children: ReactNode }) => {
   const { user } = await validateRequest();
@@ -22,9 +23,18 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
       <nav className="bg-secondary/20">
         <aside className="dark:bg-root hidden h-screen w-[250px] flex-shrink-0 flex-col justify-between border-r px-4 pb-6 md:flex">
           <div className="flex h-[60px] items-center">
-            <Link className={`flex items-center text-lg font-extrabold text-primary/75 hover:text-yellow-400/90`} href={Paths.Dashboard}>
-              <PiHandPeaceLight className="h-7 w-7" />{APP_TITLE_UNSTYLED}
-            </Link>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link className={`flex items-center text-lg font-extrabold text-primary/75 hover:text-yellow-400/90`} href={Paths.Dashboard}>
+                    <PiHandPeaceLight className="h-7 w-7" />{APP_TITLE_UNSTYLED}
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent className="font-bold text-xs">
+                    ✌️BLOCK!
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <div className="ml-auto">
             {/* <ThemeToggle /> */}
             </div>
@@ -79,10 +89,10 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
           avatar={user?.avatar ?? ''}
           userRole={user?.role ?? 'guest'} 
         />
-        <div className="scrollContainer h-[calc(100vh-60px)] overflow-auto">
+        <div className="scrollContainer h-[calc(100vh-60px)] md:overflow-auto">
           {user?.emailVerified === false && (
-            <div className="mx-auto px-6 mt-8">
-              <div className="flex flex-col gap-6 mx-auto max-w-5xl px-6">
+            <div className="mx-auto pt-8">
+              <div className="flex flex-col gap-6 mx-auto max-w-5xl px-4 md:px-2">
                 <EmailVerificationWarning />
               </div>
             </div>
