@@ -1,0 +1,1 @@
+ALTER TABLE "2block_files" DROP COLUMN IF EXISTS "unique_filename";

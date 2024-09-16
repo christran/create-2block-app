@@ -13,7 +13,7 @@ import { cookies } from "next/headers";
 import { env } from "@/env";
 
 // const GeistSans = localFont({
-//   src: "./fonts/GeistVF.woff",
+//   src: "../../fonts/GeistVF.woff",
 //   variable: "--font-geist-sans",
 //   weight: "100 900",
 // });

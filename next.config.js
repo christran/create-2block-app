@@ -19,6 +19,10 @@ const config = {
         unoptimized: true,
     },
 
+    experimental: {
+        swrDelta: 31536000
+    },
+    
     async headers() {
         if (process.env.NODE_ENV !== 'production') {
             return [];

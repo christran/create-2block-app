@@ -36,8 +36,8 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
       {userRole !== "guest" ? (
         <Sheet>
           <div className="flex items-center justify-between w-full md:hidden">
-            <Link className="flex items-center text-xl font-extrabold text-primary/75" href={Paths.Dashboard}>
-              <PiHandPeaceLight className="h-7 w-7" />{APP_TITLE_UNSTYLED}
+            <Link className="flex items-center text-md font-extrabold text-primary/75" href={Paths.Dashboard}>
+              <PiHandPeaceLight className="h-6 w-6" />{APP_TITLE_UNSTYLED}
             </Link>
 
             <form>
@@ -157,8 +157,8 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
         ) : (
           <Sheet>
             <div className="flex items-center justify-between w-full md:hidden">
-              <Link className="flex items-center text-xl font-extrabold text-primary/75" href={Paths.Dashboard}>
-                <PiHandPeaceLight className="h-7 w-7" />{APP_TITLE_UNSTYLED}
+              <Link className="flex items-center text-md font-extrabold text-primary/75" href={Paths.Dashboard}>
+                <PiHandPeaceLight className="h-6 w-6" />{APP_TITLE_UNSTYLED}
               </Link>
 
               <form>

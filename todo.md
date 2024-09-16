@@ -10,3 +10,8 @@
 - windows firewall inbound port allow 3000
 - connectaddress = wsl hostname -I or hostname -I
 - netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=3000 connectaddress=192.168.186.138 connectport=3000
+
+
+file uploading
+[ ] generate uuid for file and save it to db along side original file name
+[ ] 

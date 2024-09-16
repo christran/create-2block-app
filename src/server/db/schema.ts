@@ -7,6 +7,7 @@ import {
   text,
   timestamp,
   varchar,
+  uuid,
 } from "drizzle-orm/pg-core";
 import { DATABASE_PREFIX as prefix } from "@/lib/constants";
 
@@ -58,6 +59,13 @@ export const sessions = pgTable(
     userIdx: index("session_user_idx").on(t.userId),
   }),
 );
+
+export const files = pgTable('files', {
+  id: uuid('id').primaryKey(),
+  userId: varchar("user_id", { length: 21 }).notNull(),
+  originalFilename: varchar('original_filename', { length: 255 }).notNull(),
+  contentType: varchar('content_type', { length: 100 }).notNull(),
+});
 
 export const emailVerificationCodes = pgTable(
   "email_verification_codes",
