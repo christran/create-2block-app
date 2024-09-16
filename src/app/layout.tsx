@@ -4,7 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { APP_TITLE, APP_TITLE_PLAIN } from "@/lib/constants";
 import localFont from "next/font/local";
-import { cn } from "@/lib/utils";
+import { absoluteUrl, cn } from "@/lib/utils";
 import { TRPCReactProvider } from "@/trpc/react";
 import type { Metadata, Viewport } from "next";
 import { AnalyticsScript } from "./analytics";
@@ -19,13 +19,13 @@ import { env } from "@/env";
 // });
 
 const Inter = localFont({
-  src: "./fonts/Inter.woff2",
+  src: "../../public/fonts/Inter.woff2",
   variable: "--font-sans",
   weight: "100 900",
 })
 
 // const InterItalic = localFont({
-//   src: "./fonts/Inter-Italic.woff2",
+//   src: "../../public/fonts/Inter-Italic.woff2",
 //   variable: "--font-sans",
 //   weight: "100 900",
 //   style: "italtic"
