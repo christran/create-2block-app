@@ -41,8 +41,8 @@ export async function Billing({ stripePromises }: BillingProps) {
   return (
     <>
       <section>
-        <Card className="space-y-2 p-8 rounded-lg border">
-          <h3 className="text-lg font-semibold sm:text-xl">Subscription</h3>
+        <Card className="space-y-2 p-8">
+          <CardTitle>Subscription</CardTitle>
           <h4 className="text-lg font-semibold sm:text-xl">{plan?.name ?? "Free"}</h4>
           <p className="text-sm text-muted-foreground">
           {!plan?.isPro && !plan?.isProPlus
@@ -82,21 +82,21 @@ export async function Billing({ stripePromises }: BillingProps) {
       </div> */}
       <section className="grid gap-6 lg:grid-cols-3">
         {plans.map((item) => (
-          <Card key={item.name} className="flex flex-col p-2 rounded-lg border">
+          <Card key={item.name} className="flex flex-col p-2">
             <CardHeader>
-              <CardTitle className="text-xl font-bold">{item.name}</CardTitle>
+              <CardTitle className="text-4xl font-extrabold text-primary">{item.name}</CardTitle>
               <CardDescription className="h-12 text-sm">{item.description}</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 space-y-6">
               <div className="flex items-baseline">
-                <span className="text-3xl font-bold">{item.price}</span>
-                <span className="ml-1 text-sm text-muted-foreground">/ month</span>
+                <span className="text-4xl font-bold text-primary">{item.price}</span>
+                <span className="text-sm text-muted-foreground">/month</span>
               </div>
               <ul className="space-y-2">
                 {item.features.map((feature) => (
                   <li key={feature} className="flex items-center gap-2">
                     <CheckCircledIcon className="h-4 w-4 text-primary" aria-hidden="true" />
-                    <span className="text-sm">{feature}</span>
+                    <span className="text-sm font-medium">{feature}</span>
                   </li>
                 ))}
               </ul>
