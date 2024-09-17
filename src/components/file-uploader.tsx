@@ -139,9 +139,9 @@ export function FileUploader(props: FileUploaderProps) {
       if (rejectedFiles.length > 0) {
         rejectedFiles.forEach(({ file, errors }) => {
           if (errors.some((error) => error.code === 'file-too-large')) {
-            toast.error(`File ${file.name} is too large. Maximum size is ${formatBytes(maxSize)}`)
+            toast.error(`${file.name} is too large. Maximum size is ${formatBytes(maxSize)}`)
           } else {
-            toast.error(`File ${file.name} was rejected`)
+            toast.error(`${file.name} is not allowed`)
           }
         })
       }

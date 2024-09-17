@@ -1,14 +1,4 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { FileUploader } from '@/components/file-uploader';
-import { UploadedFilesCard } from './uploaded-files-card';
-import ManageFiles from './manage-files';
-
-const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+import { useState } from "react";
 
 export interface UploadedFile {
   id: string;
@@ -16,23 +6,19 @@ export interface UploadedFile {
   url: string;
 }
 
-interface UploadFilesProps {
-  initialUserFiles: { id: string }[];
+interface UseUploadFileProps {
+  defaultUploadedFiles?: UploadedFile[];
+  onUploadComplete?: (fileUrl: string) => void;
 }
 
-interface PresignedUrlInfo {
-  id: string;
-  filename: string;
-  url: string;
-}
-
-export function UploadFiles({ initialUserFiles }: UploadFilesProps) {
+export function useUploadFile({ defaultUploadedFiles = [], onUploadComplete }: UseUploadFileProps = {}) {
   const [isUploading, setIsUploading] = useState(false);
   const [progresses, setProgresses] = useState<Record<string, number>>({});
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>(defaultUploadedFiles);
 
   const onUpload = async (files: File[]) => {
     setIsUploading(true);
+
     try {
       // Step 1: Get the signed URLs for upload
       const response = await fetch('/api/upload', {
@@ -50,7 +36,7 @@ export function UploadFiles({ initialUserFiles }: UploadFilesProps) {
       const { presignedUrls } = await response.json();
 
       // Step 2: Upload to R2 using the signed URLs
-      const uploadedFiles = await Promise.all(presignedUrls.map(async ({ id, filename, url, metadata }, index) => {
+      const newUploadedFiles = await Promise.all(presignedUrls.map(async ({ id, filename, url, metadata }, index) => {
         const file = files[index];
         const xhr = new XMLHttpRequest();
         xhr.open('PUT', url, true);
@@ -82,54 +68,35 @@ export function UploadFiles({ initialUserFiles }: UploadFilesProps) {
         }
         const { url: getUrl } = await getUrlResponse.json();
 
-        return {
+        const uploadedFile = {
           id,
           originalFilename: filename,
           url: getUrl,
         };
+
+        // Call the onUploadComplete callback with the new file URL
+        if (onUploadComplete) {
+          onUploadComplete(getUrl);
+        }
+
+        return uploadedFile;
       }));
 
-      setUploadedFiles(prev => [...prev, ...uploadedFiles]);
+      setUploadedFiles(prev => [...prev, ...newUploadedFiles]);
+      return newUploadedFiles;
     } catch (err) {
       console.error('Upload error:', err);
+      throw err;
     } finally {
       setIsUploading(false);
       setProgresses({});
     }
   };
 
-  const handleDeleteFile = (fileId: string) => {
-    setUploadedFiles(prev => prev.filter(file => file.id !== fileId));
-  };
-
-  return (
-    <>
-      <Card>
-        <CardHeader>
-          <CardTitle>Upload</CardTitle>
-          <CardDescription>Upload your files here</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <FileUploader
-            maxFileCount={10}
-            maxSize={MAX_FILE_SIZE}
-            accept={{
-              'image/jpeg': ['.jpg', '.jpeg'],
-              'image/png': ['.png'],
-              'image/gif': ['.gif']
-            }}
-            progresses={progresses}
-            onUpload={onUpload}
-            disabled={isUploading}
-          />
-        </CardContent>
-      </Card>
-
-      <UploadedFilesCard 
-        initialUserFiles={initialUserFiles}
-        newUploadedFiles={uploadedFiles}
-        onDeleteFile={handleDeleteFile}
-      />
-    </>
-  );
+  return {
+    onUpload,
+    uploadedFiles,
+    progresses,
+    isUploading,
+  }
 }

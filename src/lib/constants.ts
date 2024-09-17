@@ -1,6 +1,7 @@
 import { DesktopIcon, LockClosedIcon, PersonIcon } from "@radix-ui/react-icons";
 import { BrainCircuit, CreditCardIcon, Folder, Home, LogIn, Settings2 } from "lucide-react";
 import { PiFolder, PiOpenAiLogo, PiRobot } from "react-icons/pi";
+import type { User } from "@/server/db/schema";
 
 export const APP_TITLE = "✌️BLOCK";
 export const APP_DESCRIPTION = "2BLOCK"
@@ -38,7 +39,21 @@ export enum Paths {
   GitHub = "https://github.com/christran",
 }
 
-export const navbarItems = [
+interface NavbarItem {
+  title: string;
+  href: string;
+  icon: React.ElementType;
+  roles: User['role'][];
+  beta?: boolean;
+}
+
+interface NavbarCategory {
+  category: string;
+  items: NavbarItem[];
+}
+
+// Update navbarItems to use the defined types
+export const navbarItems: NavbarCategory[] = [
   {
     category: "Main",
     items: [
@@ -52,7 +67,8 @@ export const navbarItems = [
         title: "Files",
         href: Paths.Files,
         icon: Folder,
-        roles: ["default", "member", "premium", "admin"]
+        roles: ["default", "member", "premium", "admin"],
+        beta: true
       },
     ]
   },

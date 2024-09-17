@@ -47,7 +47,7 @@ export const UserDropdownHeader = ({
             <Tooltip>
               <TooltipTrigger>
                 <Avatar>
-                  <AvatarImage src={avatar} alt={fullname} />
+                  <AvatarImage src={avatar} alt={fullname} className="object-cover w-full h-full" />
                   <AvatarFallback delayMs={100}>{fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}</AvatarFallback>
                 </Avatar>
                 <span className="sr-only">Toggle user menu</span>

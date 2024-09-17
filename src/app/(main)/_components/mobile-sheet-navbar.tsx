@@ -15,6 +15,7 @@ import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/s
 import { ThemeToggle } from "@/components/theme-toggle";
 import { UserDropdownNavBar } from "./user-dropdown-navbar";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 
 type UserRole = User['role'];
 
@@ -98,14 +99,18 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
                                     <span className={item.roles && !item.roles.some((r) => userRole.includes(r)) ? "line-through" : ""}>
                                       {item.title}
                                     </span>
-                                      {/* PRO label for non-default items */}
-                                      {item.roles && !item.roles.includes("default") && (
-                                        <span className="ml-1 text-[10px] font-bold text-yellow-500">
-                                          {item.roles.includes("premium") && !item.roles.includes("member") ? "PRO+" : "PRO"}
-                                        </span>
-                                      )}
-                                    </span>
                                   </span>
+                                  {item.roles && !item.roles.includes("default") && (
+                                    <Badge variant="default" className="text-[9px] px-1.5 py-0.1 rounded-lg font-extrabold text-yellow-400 hover:text-yellow-500 dark:text-yellow-500 bg-primary/75 dark:bg-accent/50 hover:bg-yellow-400/15 dark:hover:bg-yellow-400/20">
+                                      {item.roles.includes("premium") && !item.roles.includes("member") ? "PRO+" : "PRO"}
+                                    </Badge>
+                                  )}
+                                  {item.beta && (
+                                    <Badge variant="outline" className="text-[9px] px-1.5 py-0.1 rounded-lg font-extrabold text-blue-400 hover:text-blue-500 dark:text-blue-500 border-blue-400/50 dark:border-blue-500/50 hover:bg-blue-400/15 dark:hover:bg-blue-400/20">
+                                      BETA
+                                    </Badge>
+                                  )}
+                                </span>
                               </TooltipTrigger>
                               {/* Tooltip content for items user can't access */}
                               {item.roles && !item.roles.some((r) => userRole.includes(r)) && (

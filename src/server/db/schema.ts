@@ -65,6 +65,8 @@ export const files = pgTable('files', {
   userId: varchar("user_id", { length: 21 }).notNull(),
   originalFilename: varchar('original_filename', { length: 255 }).notNull(),
   contentType: varchar('content_type', { length: 100 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).$onUpdate(() => new Date()),
 });
 
 export const emailVerificationCodes = pgTable(

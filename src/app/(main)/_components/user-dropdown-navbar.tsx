@@ -141,7 +141,7 @@ export const UserDropdownNavBar = ({
             <div className="cursor-pointer flex h-9 items-center justify-between rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all duration-300 hover:text-primary">
               <div className="flex items-center">
                 <Avatar className="h-7 w-7 drop-shadow-md">
-                  <AvatarImage src={avatar} alt={fullname} />
+                  <AvatarImage src={avatar} alt={fullname} className="object-cover w-full h-full" />
                   <AvatarFallback delayMs={100}>
                     {fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}
                   </AvatarFallback>
@@ -158,7 +158,7 @@ export const UserDropdownNavBar = ({
             <DropdownMenuLabel>
               <div className="flex items-center">
                 <Avatar className="h-8 w-8 mr-2 drop-shadow-md">
-                  <AvatarImage src={avatar} alt={fullname} />
+                  <AvatarImage src={avatar} alt={fullname} className="object-cover w-full h-full" />
                   <AvatarFallback delayMs={100}>
                     {fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}
                   </AvatarFallback>
@@ -225,7 +225,7 @@ export const UserDropdownNavBar = ({
             <div className="cursor-pointer flex h-9 items-center justify-between rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all duration-300 hover:text-primary">
               <div className="flex items-center">
                 <Avatar className="h-7 w-7 drop-shadow-md">
-                  <AvatarImage src={avatar} alt={fullname} />
+                  <AvatarImage src={avatar} alt={fullname} className="object-cover w-full h-full" />
                   <AvatarFallback delayMs={100}>
                     {fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}
                   </AvatarFallback>
@@ -242,7 +242,7 @@ export const UserDropdownNavBar = ({
             <DropdownMenuLabel>
               <div className="flex items-center">
                 <Avatar className="h-8 w-8 mr-2 drop-shadow-md">
-                  <AvatarImage src={avatar} alt={fullname} />
+                  <AvatarImage src={avatar} alt={fullname} className="object-cover w-full h-full" />
                   <AvatarFallback delayMs={100}>
                     {fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}
                   </AvatarFallback>

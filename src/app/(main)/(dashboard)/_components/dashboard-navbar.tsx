@@ -59,6 +59,11 @@ export function DashboardNavbar({ userRole }: DashboardNavbarProps) {
                                 {item.roles.includes("premium") && !item.roles.includes("member") ? "PRO+" : "PRO"}
                               </Badge>
                             )}
+                            {item.beta && (
+                              <Badge variant="outline" className="text-[9px] px-1.5 py-0.1 rounded-lg font-extrabold text-blue-400 hover:text-blue-500 dark:text-blue-500 border-blue-400/50 dark:border-blue-500/50 hover:bg-blue-400/15 dark:hover:bg-blue-400/20">
+                                BETA
+                              </Badge>
+                            )}
                           </span>
                         </TooltipTrigger>
                         {/* Tooltip content for items user can't access */}

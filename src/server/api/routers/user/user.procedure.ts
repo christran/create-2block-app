@@ -77,6 +77,22 @@ export const userRouter = createTRPCRouter({
     return updatedUser;
   }),
 
+  updateAvatar: protectedProcedure
+  .input(z.object({
+    avatar: z.string().nullable()
+  }))
+  .mutation(async ({ ctx, input }) => {
+    const [updatedUser] = await ctx.db
+      .update(users)
+      .set({
+        avatar: input.avatar
+      })
+      .where(eq(users.id, ctx.user.id))
+      .returning();
+
+    return updatedUser;
+  }),
+
   removeSocialAccounts: protectedProcedure
     .input(z.object({
       google: z.boolean().optional(),

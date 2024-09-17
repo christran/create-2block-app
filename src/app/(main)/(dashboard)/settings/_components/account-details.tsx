@@ -28,23 +28,45 @@ import { useRouter } from "next/navigation"
 import { AccountDetailsSkeleton } from "./account-details-skeleton"
 import { LoadingButton } from "@/components/loading-button";
 import { SubmitButton } from "@/components/submit-button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { FileUploader } from "@/components/file-uploader";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { UploadedFilesCard } from "../../files/uploaded-files-card";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useUploadFile } from "@/lib/hooks/use-upload-file";
+import { Paths } from "@/lib/constants";
+import { api } from "@/trpc/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface AccountDetailsProps {
   id: string
   fullname: string
   email: string
+  avatar: string
+}
+
+export interface UploadedFile {
+  id: string;
+  originalFilename: string;
+  url: string;
 }
 
 export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsProps; isPasswordLess: boolean }) {  
   const [fullname, setFullname] = useState(user?.fullname ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
+  const [files, setFiles] = useState<File[]>([])
+  const [avatar, setAvatar] = useState(user?.avatar || null);
 
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const [state, formAction] = useFormState(updateAccount, null);
 
-  // const userMutation = api.user.deleteAccountByUserId.useMutation();
+  const userMutation = api.user.updateAvatar.useMutation(); 
 
   const isDirty = useMemo(() => {
     return fullname !== user?.fullname || email !== user?.email;
@@ -69,7 +91,6 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
     }
 };
 
-
   useEffect(() => {
     if (state?.success) {
       setFullname(fullname);
@@ -82,6 +103,86 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
       toast.error(state?.error);
     }
   }, [state]);
+
+    const schema = z.object({
+      images: z.array(z.instanceof(File)),
+    })
+    
+    type Schema = z.infer<typeof schema>
+  
+    const queryClient = useQueryClient();
+
+    const handleAvatarUpdate = (fileUrl: string | null) => {
+      setAvatar(fileUrl);
+    
+      userMutation.mutateAsync({
+        avatar: fileUrl
+      }).then(() => {
+        // queryClient.invalidateQueries(['user']);
+        router.refresh();
+      });
+    };
+    
+    const deleteMutation = useMutation({
+      mutationFn: async (fileId: string) => {
+        const response = await fetch(`/api/files/${fileId}`, { method: 'DELETE' });
+        if (!response.ok) throw new Error('Failed to delete file');
+        return fileId;
+      },
+      onSuccess: (fileId) => {
+        toast.success("Profile picture deleted successfully");
+      },
+      onError: (error) => {
+        console.error('Error deleting file:', error);
+        toast.error("Failed to delete file");
+      },
+    });
+
+
+    const getFileIdFromUrl = (url: string | null): string => {
+      const parts = url?.split('/');
+      return parts?.[parts.length - 1] ?? "";
+    };
+  
+    const handleAvatarDelete = () => {
+      const fileId = getFileIdFromUrl(avatar);
+      handleAvatarUpdate(null);
+      
+      deleteMutation.mutate(fileId);
+  
+      setDialogOpen(false);
+    };
+
+    const { onUpload, uploadedFiles, progresses, isUploading } = useUploadFile({ 
+      defaultUploadedFiles: [], 
+      onUploadComplete: handleAvatarUpdate 
+    });
+
+    const form = useForm<Schema>({
+      resolver: zodResolver(schema),
+      defaultValues: {
+        images: [],
+      },
+    })
+
+    const handleSubmit = (data: Schema) => {
+      setIsLoading(true)
+
+      toast.promise(onUpload(data.images), {
+        loading: "Uploading picture...",
+        success: () => {
+          form.reset()
+          setIsLoading(false)
+          setDialogOpen(false) // Close the dialog
+          setFiles([])
+          return "Profile picture uploaded"
+        },
+        error: (err) => {
+          setIsLoading(false)
+          return "Error uploading profile picture"
+        },
+      })
+    }
 
   return (
     <>
@@ -96,6 +197,99 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
           <form>
             <CardContent>
               <div className="w-full md:w-[380px] space-y-2 pt-4">
+
+                <div className="space-y-2">
+                  <Label>Profile Picture</Label>
+                  <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Avatar className="w-24 h-24 rounded-full drop-shadow-md cursor-pointer hover:opacity-75">
+                        <AvatarImage 
+                          src={avatar ?? ""} 
+                          alt={fullname} 
+                          className="object-cover w-full h-full"
+                        />
+                        <AvatarFallback delayMs={100}>
+                          {user.fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      {/* <Button variant="outline" size="sm">
+                        Upload
+                      </Button> */}
+                    </DialogTrigger>
+                    <DialogContent className="max-w-md md:max-w-lg rounded-lg">
+                      <DialogHeader>
+                        <DialogTitle>Upload profile picture</DialogTitle>
+                        <DialogDescription>
+                          Drag and drop your picture here or click to browse.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <Form {...form}>
+                        <form
+                          onSubmit={form.handleSubmit(handleSubmit)}
+                          className="flex w-full flex-col gap-6"
+                        >
+                        <FormField
+                          control={form.control}
+                          name="images"
+                          render={({ field }) => (
+                            <div className="space-y-6">
+                              <FormItem className="w-full">
+                                <FormControl>
+                                  <FileUploader
+                                    value={field.value}
+                                    onValueChange={(files) => {
+                                      field.onChange(files);
+                                      setFiles(files);
+                                    }}
+                                    accept={{
+                                      'image/jpeg': ['.jpg', '.jpeg'],
+                                      'image/png': ['.png'],
+                                      'image/gif': ['.gif']
+                                    }}
+                                    maxFileCount={1}
+                                    maxSize={3 * 1024 * 1024}
+                                    progresses={progresses}
+                                    // pass the onUpload function here for direct upload
+                                    // onUpload={uploadFiles}
+                                    disabled={isUploading}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            </div>
+                          )}
+                        />
+    
+                        </form>
+
+                        <div className="flex gap-2">
+                          <Button 
+                            type="button" 
+                            variant="default" 
+                            className="flex-1" 
+                            disabled={isLoading || files.length === 0}
+                            onClick={form.handleSubmit(handleSubmit)}
+                          >
+                            Upload
+                          </Button>
+                          <Button 
+                            type="button"
+                            variant="destructive" 
+                            onClick={handleAvatarDelete} 
+                            className="flex-1" 
+                            disabled={isLoading || avatar === ""}
+                          >
+                            Delete
+                          </Button>
+                        </div>
+
+                      </Form>
+                    </DialogContent>
+                  </Dialog>
+                  {/* <Button variant="link" size="sm" onClick={handleDeletePicture}>
+                    Delete
+                  </Button> */}
+                </div>
                 <div className="space-y-2">
                   <Label>Full Name</Label>
                   <Input

@@ -36,6 +36,13 @@
       "when": 1726482881891,
       "tag": "0004_boring_jubilee",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1726512031245,
+      "tag": "0005_crazy_ozymandias",
+      "breakpoints": true
     }
   ]
 }
