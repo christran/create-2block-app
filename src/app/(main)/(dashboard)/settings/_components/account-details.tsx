@@ -169,13 +169,13 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
       setIsLoading(true)
 
       toast.promise(onUpload(data.images), {
-        loading: "Uploading picture...",
+        loading: "Uploading profile picture...",
         success: () => {
           form.reset()
           setIsLoading(false)
           setDialogOpen(false) // Close the dialog
           setFiles([])
-          return "Profile picture uploaded"
+          return "Profile picture updated"
         },
         error: (err) => {
           setIsLoading(false)

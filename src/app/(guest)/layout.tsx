@@ -3,7 +3,7 @@ import { Header } from "../(main)/_components/header";
 import { Footer } from "./_components/footer";
 import Link from "next/link";
 import { PiHandPeaceLight } from "@/components/icons";
-import { APP_TITLE_UNSTYLED, Paths } from "@/lib/constants";
+import { APP_TITLE_UNSTYLED, dotsBG, Paths } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
 import { DashboardNavbar } from "../(main)/(dashboard)/_components/dashboard-navbar";
@@ -77,13 +77,13 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
           avatar={"/avatars/01.png"}
           userRole={'guest'} 
         />
-        <div className="scrollContainer h-[calc(100vh-60px)] md:overflow-auto">
-            <div className="flex flex-col gap-6 mx-auto max-w-5xl px-4 md:px-2 items-center">
-              {children}
-              
-              {/* todo: sticky footer? */}
-              {/* <Footer />  */}
-            </div>
+        <div className={`scrollContainer h-[calc(100vh-60px)] md:overflow-auto ${dotsBG}`}>
+          <div className="flex flex-col gap-6 mx-auto max-w-5xl px-4 md:px-2 items-center">
+            {children}
+            
+            {/* todo: sticky footer? */}
+            {/* <Footer />  */}
+          </div>
         </div>
       </div>
     </div>

@@ -3,7 +3,7 @@ import { Header } from "./_components/header";
 import { Footer } from "./_components/footer";
 import Link from "next/link";
 import { PiHandPeaceLight } from "@/components/icons";
-import { APP_TITLE_UNSTYLED, Paths } from "@/lib/constants";
+import { APP_TITLE_UNSTYLED, Paths, dotsBG, gridBG } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
 import { DashboardNavbar } from "./(dashboard)/_components/dashboard-navbar";
@@ -90,7 +90,7 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
           avatar={user?.avatar ?? ''}
           userRole={user?.role ?? 'guest'} 
         />
-        <div className="scrollContainer h-[calc(100vh-60px)] md:overflow-auto">
+        <div className={`scrollContainer h-[calc(100vh-60px)] md:overflow-auto ${dotsBG}`}>
           {user?.emailVerified === false && (
             <div className="mx-auto pt-8">
               <div className="flex flex-col gap-6 mx-auto max-w-5xl px-4 md:px-2">

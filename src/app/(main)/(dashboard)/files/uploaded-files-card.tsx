@@ -105,7 +105,7 @@ export function UploadedFilesCard({ initialUserFiles, newUploadedFiles, onDelete
           className="w-full"
         />
       ) : (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-3.5">
           {allFiles?.map((file, index) => (
             file && file.url ? (
               <div key={file.id} className="relative aspect-square group">
@@ -115,18 +115,18 @@ export function UploadedFilesCard({ initialUserFiles, newUploadedFiles, onDelete
                   fill
                   sizes="(max-width: 768px) 33vw, 25vw"
                   loading="lazy"
-                  className="rounded-md object-cover"
+                  className="rounded-md object-cover shadow-md"
                 />
-                <Button
+          <Button
                   variant="destructive"
-                  size="icon"
-                  className="absolute top-2 left-2 opacity-0 group-hover:opacity-90 transition-opacity"
+                  size="sm"
+                  className="absolute top-1 left-1  md:top-2 md:left-2 opacity-0 group-hover:opacity-90 transition-opacity h-7 w-7 md:h-9 md:w-9 p-0"
                   onClick={() => handleDelete(file.id)}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
                 <div className="absolute bottom-0 left-0 right-0 text-center bg-black bg-opacity-50 text-white p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <p className="text-xs truncate">{file.filename || file.originalFilename}</p>
+                  <p className="text-xs font-medium truncate">{file.filename || file.originalFilename}</p>
                 </div>
               </div>
             ) : null

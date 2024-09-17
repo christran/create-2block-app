@@ -15,6 +15,9 @@ export const EMAIL_SENDER = '✌️BLOCK <hello@2block.co>';
 export const EMAIL_UNSUBSCRIBE = "You received this email because you agreed to receive emails from 2BLOCK. If you no longer wish to receive emails like this,"
 export const EMAIL_FOOTER = '2BLOCK Co. ・1337 Legit Sreet ・Los Angeles, CA 90015';
 
+export const dotsBG = "@apply [background-image:radial-gradient(hsla(0,0%,86%,0.3)1px,transparent_0)] [background-size:12px_12px] dark:[background-image:radial-gradient(hsla(0,0%,100%,0.02)1px,transparent_0)]"
+export const gridBG = "@apply [background-image:linear-gradient(to_right,hsla(0,0%,86%,0.15)_1px,transparent_1px),linear-gradient(to_bottom,hsla(0,0%,86%,0.15)_1px,transparent_1px)] [background-size:42px_42px] dark:[background-image:linear-gradient(to_right,hsla(0,0%,100%,0.015)_1px,transparent_1px),linear-gradient(to_bottom,hsla(0,0%,100%,0.015)_1px,transparent_1px)]"
+
 export enum Paths {
   Home = "/",
   Login = "/login",
