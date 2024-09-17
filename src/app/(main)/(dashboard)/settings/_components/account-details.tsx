@@ -28,7 +28,7 @@ import { useRouter } from "next/navigation"
 import { AccountDetailsSkeleton } from "./account-details-skeleton"
 import { LoadingButton } from "@/components/loading-button";
 import { SubmitButton } from "@/components/submit-button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { FileUploader } from "@/components/file-uploader";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
@@ -335,32 +335,32 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
             </CardContent>
             <CardFooter className="border-t px- py-4 gap-2">
             <SubmitButton formAction={formAction} disabled={!isDirty}>Update Account</SubmitButton>
-            <AlertDialog open={open} onOpenChange={setOpen}>
-              <AlertDialogTrigger asChild>
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
                 <Button variant="link" size="sm">
                   Delete Account
                 </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="w-[90vw] md:max-w rounded-lg">
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
+              </DialogTrigger>
+              <DialogContent className="w-[90vw] md:max-w rounded-lg" showCloseButton={false}>
+                <DialogHeader className="flex flex-col space-y-2 text-center sm:text-left">
+                  <DialogTitle className="text-lg font-semibold">
                     Are you absolutely sure?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
+                  </DialogTitle>
+                  <DialogDescription className="text-sm text-muted-foreground">
                     This action cannot be undone. This will permanently delete your
                     account and remove your data from our servers.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2">
                   <Button variant="outline" onClick={() => setOpen(false)}>
                     Cancel
                   </Button>
-                  <LoadingButton variant="destructive" className="mb-2 md:mb-0" loading={isLoading} onClick={accountDelete}>
+                  <LoadingButton variant="destructive" loading={isLoading} onClick={accountDelete}>
                     Delete Account
                   </LoadingButton>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+                </div>
+              </DialogContent>
+            </Dialog>
           </CardFooter>
           </form>
         </Suspense>
