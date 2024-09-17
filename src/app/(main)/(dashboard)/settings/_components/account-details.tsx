@@ -277,7 +277,7 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
                             variant="destructive" 
                             onClick={handleAvatarDelete} 
                             className="flex-1" 
-                            disabled={isLoading || avatar === ""}
+                            disabled={isLoading || avatar === null}
                           >
                             Delete
                           </Button>
@@ -286,7 +286,7 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
                       </Form>
                     </DialogContent>
                   </Dialog>
-                  {/* <Button variant="link" size="sm" onClick={handleDeletePicture}>
+                  {/* <Button variant="link" size="sm" onClick={handleAvatarDelete}>
                     Delete
                   </Button> */}
                 </div>
