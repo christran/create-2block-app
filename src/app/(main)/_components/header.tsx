@@ -27,16 +27,20 @@ export const Header = ({ fullname, email, avatar, userRole }: HeaderProps) => {
     const inputRef = useRef<HTMLInputElement>(null);
   
     useEffect(() => {
-      const down = (e: KeyboardEvent) => {
+      const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
           e.preventDefault();
           setIsFocused(true);
           inputRef.current?.focus();
+        } else if (e.key === "Escape" && isFocused) {
+          e.preventDefault();
+          inputRef.current?.blur();
+          setIsFocused(false);
         }
       };
-      document.addEventListener("keydown", down);
-      return () => document.removeEventListener("keydown", down);
-    }, []);
+      document.addEventListener("keydown", handleKeyDown);
+      return () => document.removeEventListener("keydown", handleKeyDown);
+    }, [isFocused]);
   
     return (
       <form className="w-full max-w-md">
