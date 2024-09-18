@@ -1,9 +1,16 @@
 import { protectedProcedure, createTRPCRouter } from "@/server/api/trpc";
 import { emailVerificationCodes, passwordResetTokens, sessions, users } from "@/server/db/schema";
 import { eq, sql } from "drizzle-orm";
-import { z } from "zod";
 import { tasks } from "@trigger.dev/sdk/v3";
 import type { accountDeletedTask } from "@/trigger/email";
+import {
+  getUserByEmailInput,
+  getUserFilesByFolderInput,
+  updateContactIdInput,
+  updateAvatarInput,
+  removeSocialAccountsInput,
+  deleteAccountByUserIdInput
+} from "./user.input";
 
 export const userRouter = createTRPCRouter({
   getUser: protectedProcedure
@@ -27,27 +34,25 @@ export const userRouter = createTRPCRouter({
     }),
 
   getUserByEmail: protectedProcedure
-  .input(z.object({
-    email: z.string().min(1)
-  }))
-  .query(async ({ ctx, input }) => {
-    const user = await ctx.db.query.users.findFirst({
-      where: (table, { eq }) => eq(table.email, input.email),
-      columns: {
-        id: true,
-        fullname: true,
-        email: true,
-        emailVerified: true,
-        contactId: true,
-        googleId: true,
-        discordId: true,
-        githubId: true,
-        avatar: true,
-      },
-    });
+    .input(getUserByEmailInput)
+    .query(async ({ ctx, input }) => {
+      const user = await ctx.db.query.users.findFirst({
+        where: (table, { eq }) => eq(table.email, input.email),
+        columns: {
+          id: true,
+          fullname: true,
+          email: true,
+          emailVerified: true,
+          contactId: true,
+          googleId: true,
+          discordId: true,
+          githubId: true,
+          avatar: true,
+        },
+      });
   
-    return user;
-  }),
+      return user;
+    }),
 
   getUserFiles: protectedProcedure
     .query(({ ctx }) => {
@@ -68,6 +73,28 @@ export const userRouter = createTRPCRouter({
       });
     }),
 
+  getUserFilesByFolder: protectedProcedure
+    .input(getUserFilesByFolderInput)
+    .query(async ({ ctx, input }) => {
+      const files = await ctx.db.query.files.findMany({
+        where: (table, { eq, and, like }) => and(
+          eq(table.userId, ctx.user.id),
+          like(table.key, sql`'files/${ctx.user.id}/${input.folder}/%'`)
+        ),
+        orderBy: (table, { desc }) => desc(table.createdAt),
+        columns: {
+          id: true,
+          originalFilename: true,
+          contentType: true,
+          fileSize: true,
+          createdAt: true,
+          key: true,
+        },
+      });
+
+      return files;
+    }),
+
   isPasswordLess: protectedProcedure
     .query(async ({ ctx }) => {
       const user = await ctx.db.query.users.findFirst({
@@ -81,43 +108,35 @@ export const userRouter = createTRPCRouter({
     }),
 
   updateContactId: protectedProcedure
-  .input(z.object({
-    contactId: z.string().min(1)
-  }))
-  .mutation(async ({ ctx, input }) => {
-    const [updatedUser] = await ctx.db
-      .update(users)
-      .set({
-        contactId: input.contactId
-      })
-      .where(eq(users.id, ctx.user.id))
-      .returning();
+    .input(updateContactIdInput)
+    .mutation(async ({ ctx, input }) => {
+      const [updatedUser] = await ctx.db
+        .update(users)
+        .set({
+          contactId: input.contactId
+        })
+        .where(eq(users.id, ctx.user.id))
+        .returning();
 
-    return updatedUser;
-  }),
+      return updatedUser;
+    }),
 
   updateAvatar: protectedProcedure
-  .input(z.object({
-    avatar: z.string().nullable()
-  }))
-  .mutation(async ({ ctx, input }) => {
-    const [updatedUser] = await ctx.db
-      .update(users)
-      .set({
-        avatar: input.avatar
-      })
-      .where(eq(users.id, ctx.user.id))
-      .returning();
+    .input(updateAvatarInput)
+    .mutation(async ({ ctx, input }) => {
+      const [updatedUser] = await ctx.db
+        .update(users)
+        .set({
+          avatar: input.avatar
+        })
+        .where(eq(users.id, ctx.user.id))
+        .returning();
 
-    return updatedUser;
-  }),
+      return updatedUser;
+    }),
 
   removeSocialAccounts: protectedProcedure
-    .input(z.object({
-      google: z.boolean().optional(),
-      discord: z.boolean().optional(),
-      github: z.boolean().optional(),
-    }))
+    .input(removeSocialAccountsInput)
     .mutation(async ({ ctx, input }) => {
       const updateData: Partial<typeof users.$inferSelect> = {};
       
@@ -139,9 +158,7 @@ export const userRouter = createTRPCRouter({
     }),
 
   deleteAccountByUserId: protectedProcedure
-    .input(z.object({
-      id: z.string(),
-    }))
+    .input(deleteAccountByUserIdInput)
     .mutation(async ({ ctx, input }) => {
       const userData = await ctx.db.query.users.findFirst({
         where: (table, { eq }) => eq(table.id, ctx.user.id),
