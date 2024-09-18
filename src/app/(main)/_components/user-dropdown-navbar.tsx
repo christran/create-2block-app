@@ -22,6 +22,7 @@ import { MoonIcon, SunIcon } from "@/components/icons";
 import { useTheme } from "next-themes";
 import { useCallback, useEffect, useRef, useState, Fragment } from "react";
 import { SheetClose } from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
 
 interface UserDropdownNavBarProps {
   fullname: string;
@@ -87,15 +88,15 @@ export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, is
       };
 
       checkTruncation();
-      window.addEventListener('resize', checkTruncation);
-      return () => window.removeEventListener('resize', checkTruncation);
+      window.addEventListener("resize", checkTruncation);
+      return () => window.removeEventListener("resize", checkTruncation);
     }, [text]);
 
     const handleCopy = () => {
       navigator.clipboard.writeText(text).then(() => {
         toast.success("Copied to clipboard");
       }).catch((err) => {
-        console.error('Failed to copy text: ', err);
+        console.error("Failed to copy text: ", err);
         toast.error("Failed to copy text");
       });
     };
@@ -141,7 +142,7 @@ export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, is
                 <Avatar className={`transition-all duration-300 ease-in-out ${isCollapsed ? "h-8 w-8" : "h-7 w-7"} drop-shadow-md`}>
                   <AvatarImage src={avatar} alt={fullname} className="object-cover w-full h-full" />
                   <AvatarFallback delayMs={100}>
-                    {fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}
+                    {fullname.split(" ").map(name => name.charAt(0).toUpperCase()).join("")}
                   </AvatarFallback>
                 </Avatar>
                 {!isCollapsed && (
@@ -154,13 +155,13 @@ export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, is
               <span className="sr-only">Toggle user menu</span>
             </div>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="center" className="w-[230px]">
+          <DropdownMenuContent align="center" className={cn("w-[230px]", isCollapsed ? "ml-2" : "")}>
             <DropdownMenuLabel>
               <div className="flex items-center">
                 <Avatar className="h-8 w-8 mr-2 drop-shadow-md">
                   <AvatarImage src={avatar} alt={fullname} className="object-cover w-full h-full" />
                   <AvatarFallback delayMs={100}>
-                    {fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}
+                    {fullname.split(" ").map(name => name.charAt(0).toUpperCase()).join("")}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
@@ -227,7 +228,7 @@ export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, is
                 <Avatar className={`transition-all duration-300 ease-in-out ${isCollapsed ? "h-8 w-8" : "h-7 w-7"} drop-shadow-md`}>
                   <AvatarImage src={avatar} alt={fullname} className="object-cover w-full h-full" />
                   <AvatarFallback delayMs={100}>
-                    {fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}
+                    {fullname.split(" ").map(name => name.charAt(0).toUpperCase()).join("")}
                   </AvatarFallback>
                 </Avatar>
                 {!isCollapsed && (
@@ -246,7 +247,7 @@ export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, is
                 <Avatar className="h-8 w-8 mr-2 drop-shadow-md">
                   <AvatarImage src={avatar} alt={fullname} className="object-cover w-full h-full" />
                   <AvatarFallback delayMs={100}>
-                    {fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}
+                    {fullname.split(" ").map(name => name.charAt(0).toUpperCase()).join("")}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">

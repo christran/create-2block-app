@@ -17,7 +17,7 @@ import { UserDropdownNavBar } from "./user-dropdown-navbar";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 
-type UserRole = User['role'];
+type UserRole = User["role"];
 
 interface MobileSheetNavbarProps {
   fullname: string,
@@ -127,7 +127,7 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
                   </li>
                 ))}
                 
-                {userRole === 'admin' && (
+                {userRole === "admin" && (
                   <>
                     <div className="flex flex-col gap-1 mb-1">
                       <Separator/>
