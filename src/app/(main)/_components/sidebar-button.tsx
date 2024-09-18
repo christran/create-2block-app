@@ -14,7 +14,8 @@ export function SidebarToggle({ isClosed, setIsClosed }: SidebarToggleProps) {
     <Button
       variant="ghost"
       size="icon"
-      className="absolute w-7 h-7 -right-3.5 top-4 z-40 rounded-lg drop-shadow bg-background/100"
+      // className="absolute w-6 h-6 -right-3 top-[1.1rem] z-40 rounded-lg drop-shadow bg-background/100 dark:border"
+      className="absolute w-7 h-7 -right-[0.85rem] top-[1rem] z-40 rounded-lg drop-shadow bg-background/100 dark:border"
       onClick={() => setIsClosed?.()}
     >
     <ChevronLeft 
