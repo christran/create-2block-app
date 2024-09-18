@@ -5,6 +5,12 @@ import { PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from "@aws-sd
 import { env } from '@/env';
 import { formatBytes } from './utils';
 
+export interface PresignedUrl {
+  id: string;
+  filename: string;
+  url: string;
+}
+
 const S3 = new S3Client({
   region: "auto",
   endpoint: `https://${env.CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,

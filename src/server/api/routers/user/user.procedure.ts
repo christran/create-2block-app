@@ -1,6 +1,6 @@
 import { protectedProcedure, createTRPCRouter } from "@/server/api/trpc";
 import { emailVerificationCodes, passwordResetTokens, sessions, users } from "@/server/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { tasks } from "@trigger.dev/sdk/v3";
 import type { accountDeletedTask } from "@/trigger/email";
@@ -52,7 +52,10 @@ export const userRouter = createTRPCRouter({
   getUserFiles: protectedProcedure
     .query(({ ctx }) => {
       return ctx.db.query.files.findMany({
-        where: (table, { eq }) => eq(table.userId, ctx.user.id),
+        where: (table, { eq, and, like }) => and(
+          eq(table.userId, ctx.user.id),
+          like(table.key, sql`'files/%'`)  // This matches strings starting with "files/"
+        ),
         orderBy: (table, { desc }) => desc(table.createdAt),
         columns: {
           id: true,
@@ -60,6 +63,7 @@ export const userRouter = createTRPCRouter({
           contentType: true,
           fileSize: true,
           createdAt: true,
+          key: true,  // Included key in the returned columns
         },
       });
     }),

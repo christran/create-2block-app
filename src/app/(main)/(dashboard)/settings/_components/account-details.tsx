@@ -166,8 +166,9 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
             const fileId = getFileIdFromUrl(avatar);
             
             await fetch(`/api/files/${fileId}`, { method: 'DELETE' });
-          } 
-          handleAvatarUpdate(files[0].url);    
+          }
+
+          handleAvatarUpdate(files?.[0]?.url ?? null);
         }
         return "Profile picture updated";
       },

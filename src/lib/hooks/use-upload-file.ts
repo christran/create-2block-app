@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { UploadedFile } from "../types/file-upload";
+import { PresignedUrl } from "../r2";
 
 interface UseUploadFileProps {
   defaultUploadedFiles?: UploadedFile[];
@@ -40,7 +41,7 @@ export function useUploadFile({
         throw new Error(`${error}`);
       }
 
-      const { presignedUrls } = await response.json();
+      const { presignedUrls }: { presignedUrls: PresignedUrl[] } = await response.json();
 
       // Step 2: Upload to R2 using the signed URLs
       const newUploadedFiles = await Promise.all(presignedUrls.map(async ({ id, filename, url }, index) => {

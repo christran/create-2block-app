@@ -6,6 +6,7 @@ import { files } from '@/server/db/schema';
 import { validateRequest } from '@/lib/auth/validate-request';
 import { formatBytes } from '@/lib/utils';
 
+// todo: move to .env
 const MAX_TOTAL_FILES = 25;
 const MAX_TOTAL_SIZE = 25 * 1024 * 1024;
 
