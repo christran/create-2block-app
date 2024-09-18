@@ -23,17 +23,15 @@ import { useTheme } from "next-themes";
 import { useCallback, useEffect, useRef, useState, Fragment } from "react";
 import { SheetClose } from "@/components/ui/sheet";
 
-export const UserDropdownNavBar = ({
-  fullname,
-  email,
-  avatar,
-  withSheetClose,
-}: {
+interface UserDropdownNavBarProps {
   fullname: string;
   email: string;
-  avatar?: string | undefined;
-  withSheetClose: any
-}) => {
+  avatar: string;
+  withSheetClose: boolean;
+  isCollapsed: boolean;
+}
+
+export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, isCollapsed }: UserDropdownNavBarProps) {
   const [SheetCloseWrapper, shetCloseWrapperProps] = withSheetClose
     ? [SheetClose, { asChild: true }]
     : [Fragment, {}];
@@ -138,19 +136,21 @@ export const UserDropdownNavBar = ({
       {fullname !== "Guest" ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <div className="cursor-pointer flex h-9 items-center justify-between rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all duration-300 hover:text-primary">
-              <div className="flex items-center">
-                <Avatar className="h-7 w-7 drop-shadow-md">
+            <div className={`cursor-pointer flex h-9 items-center rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all duration-200 hover:text-primary ${isCollapsed ? "justify-center" : "justify-between"}`}>
+              <div className={`flex items-center ${isCollapsed ? "justify-center w-full" : ""}`}>
+                <Avatar className={`transition-all duration-300 ease-in-out ${isCollapsed ? "h-8 w-8" : "h-7 w-7"} drop-shadow-md`}>
                   <AvatarImage src={avatar} alt={fullname} className="object-cover w-full h-full" />
                   <AvatarFallback delayMs={100}>
                     {fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}
                   </AvatarFallback>
                 </Avatar>
-                <span className="inline-block ml-2 text-sm truncate max-w-[140px]">
-                  {isEmail(fullname) ? email : fullname}
-                </span>
+                {!isCollapsed && (
+                  <span className="inline-block ml-2 text-sm truncate max-w-[140px]">
+                    {isEmail(fullname) ? email : fullname}
+                  </span>
+                )}
               </div>
-              <EllipsisVertical className="h-4 w-4 text-muted-foreground ml-2"/>
+              {!isCollapsed && <EllipsisVertical className="h-4 w-4 text-muted-foreground ml-2"/>}
               <span className="sr-only">Toggle user menu</span>
             </div>
           </DropdownMenuTrigger>
@@ -222,19 +222,21 @@ export const UserDropdownNavBar = ({
       ) : (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <div className="cursor-pointer flex h-9 items-center justify-between rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all duration-300 hover:text-primary">
-              <div className="flex items-center">
-                <Avatar className="h-7 w-7 drop-shadow-md">
+            <div className={`cursor-pointer flex h-9 items-center rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all duration-200 hover:text-primary ${isCollapsed ? "justify-center" : "justify-between"}`}>
+              <div className={`flex items-center ${isCollapsed ? "justify-center w-full" : ""}`}>
+                <Avatar className={`transition-all duration-300 ease-in-out ${isCollapsed ? "h-8 w-8" : "h-7 w-7"} drop-shadow-md`}>
                   <AvatarImage src={avatar} alt={fullname} className="object-cover w-full h-full" />
                   <AvatarFallback delayMs={100}>
                     {fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}
                   </AvatarFallback>
                 </Avatar>
-                <span className="inline-block ml-2 text-sm truncate max-w-[140px]">
-                  {isEmail(fullname) ? email : fullname}
-                </span>
+                {!isCollapsed && (
+                  <span className="inline-block ml-2 text-sm truncate max-w-[140px]">
+                    {isEmail(fullname) ? email : fullname}
+                  </span>
+                )}
               </div>
-              <EllipsisVertical className="h-4 w-4 text-muted-foreground ml-2"/>
+              {!isCollapsed && <EllipsisVertical className="h-4 w-4 text-muted-foreground ml-2"/>}
               <span className="sr-only">Toggle user menu</span>
             </div>
           </DropdownMenuTrigger>

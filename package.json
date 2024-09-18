@@ -85,7 +85,8 @@
     "trigger.dev": "3.0.0-beta.56",
     "uuid": "^10.0.0",
     "vaul": "^0.8.9",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zustand": "5.0.0-rc.2"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^14.2.8",
