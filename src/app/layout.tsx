@@ -4,7 +4,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { APP_TITLE, APP_TITLE_PLAIN } from "@/lib/constants";
 import localFont from "next/font/local";
-import { absoluteUrl, cn } from "@/lib/utils";
 import { TRPCReactProvider } from "@/trpc/react";
 import type { Metadata, Viewport } from "next";
 import { AnalyticsScript } from "./analytics";
@@ -55,8 +54,8 @@ export default async function RootLayout({
   const { user } = await validateRequest();
 
   const userData = {
-    userId: user?.id ?? cookies().get("lastKnownUserId")?.value ?? 'N/A',
-    email: user?.email ?? cookies().get("lastKnownEmail")?.value ?? 'N/A'
+    userId: user?.id ?? cookies().get("lastKnownUserId")?.value ?? "N/A",
+    email: user?.email ?? cookies().get("lastKnownEmail")?.value ?? "N/A"
   };
 
   return (

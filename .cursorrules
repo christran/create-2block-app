@@ -18,6 +18,7 @@ You are an expert in TypeScript, Node.js, Next.js App Router, React, Shadcn UI, 
 
 **Syntax and Formatting**
 - Use arrow functions
+- Use double quotes
 - Avoid unnecessary curly braces in conditionals; use concise syntax for simple statements.
 - Use declarative JSX.
 

@@ -5,13 +5,10 @@ import Link from "next/link";
 import { PiHandPeaceLight } from "@/components/icons";
 import { APP_TITLE_UNSTYLED, Paths, dotsBG, gridBG } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
-import { Bell } from "lucide-react";
 import { DashboardNavbar } from "./(dashboard)/_components/dashboard-navbar";
 import { validateRequest } from "@/lib/auth/validate-request";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { UserDropdownNavBar } from "./_components/user-dropdown-navbar";
-import { Badge } from "@/components/ui/badge";
 import { EmailVerificationWarning } from "./(dashboard)/_components/email-verification-warning";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -26,7 +23,7 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
             <TooltipProvider delayDuration={200}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Link className={`flex items-center text-lg font-extrabold text-primary/75 hover:text-yellow-400/90`} href={Paths.Dashboard}>
+                  <Link className={"flex items-center text-lg font-extrabold text-primary/75 hover:text-yellow-400/90"} href={Paths.Dashboard}>
                     <PiHandPeaceLight className="h-7 w-7" />{APP_TITLE_UNSTYLED}
                   </Link>
                 </TooltipTrigger>
@@ -67,9 +64,9 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
           )}
 
           <UserDropdownNavBar
-            fullname={user?.fullname ?? ''} 
-            email={user?.email ?? ''} 
-            avatar={user?.avatar ?? ''} 
+            fullname={user?.fullname ?? ""} 
+            email={user?.email ?? ""} 
+            avatar={user?.avatar ?? ""} 
             withSheetClose={false}
           />
 
@@ -85,10 +82,10 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
 
       <div className="w-full">
         <Header
-          fullname={user?.fullname ?? ''} 
-          email={user?.email ?? ''} 
-          avatar={user?.avatar ?? ''}
-          userRole={user?.role ?? 'guest'} 
+          fullname={user?.fullname ?? ""} 
+          email={user?.email ?? ""} 
+          avatar={user?.avatar ?? ""}
+          userRole={user?.role ?? "guest"} 
         />
         <div className={`scrollContainer h-[calc(100vh-60px)] md:overflow-auto ${dotsBG}`}>
           {user?.emailVerified === false && (
