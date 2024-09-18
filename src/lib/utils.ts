@@ -26,7 +26,7 @@ export const getExceptionType = (error: unknown) => {
   return UnknownException;
 };
 
-export function formatBytes(bytes: number, clean = false): string {
+export function formatBytes(bytes: number, clean = true): string {
   if (bytes === 0) return '0 Bytes';
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];

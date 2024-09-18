@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,47 +8,66 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { updateAccount, deleteAccount } from "@/lib/auth/actions"
-import { useState, useEffect, useMemo, Suspense } from "react"
-import { useFormState } from "react-dom"
-import { toast } from "sonner"
-import { useRouter } from "next/navigation"
-import { AccountDetailsSkeleton } from "./account-details-skeleton"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { updateAccount, deleteAccount } from "@/lib/auth/actions";
+import { useState, useEffect, useMemo, Suspense } from "react";
+import { useFormState } from "react-dom";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { AccountDetailsSkeleton } from "./account-details-skeleton";
 import { LoadingButton } from "@/components/loading-button";
 import { SubmitButton } from "@/components/submit-button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { FileUploader } from "@/components/file-uploader";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUploadFile } from "@/lib/hooks/use-upload-file";
 import { api } from "@/trpc/react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { fileUploadSchema, FileUploadSchema } from "@/lib/types/file-upload";
+import { useMutation } from "@tanstack/react-query";
+import { fileUploadSchema, type FileUploadSchema } from "@/lib/types/file-upload";
 
 interface AccountDetailsProps {
-  id: string
-  fullname: string
-  email: string
-  avatar: string
+  id: string;
+  fullname: string;
+  email: string;
+  avatar: string;
 }
 
 const ALLOWED_FILE_TYPES = {
-  'image/jpeg': ['.jpg', '.jpeg'],
-  'image/png': ['.png'],
-  'image/gif': ['.gif']
+  "image/jpeg": [".jpg", ".jpeg"],
+  "image/png": [".png"],
+  "image/gif": [".gif"],
 };
 
 const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3 MB
 
-export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsProps; isPasswordLess: boolean }) {  
+export function AccountDetails({
+  user,
+  isPasswordLess,
+}: {
+  user: AccountDetailsProps;
+  isPasswordLess: boolean;
+}) {
   const [fullname, setFullname] = useState(user?.fullname ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
-  const [files, setFiles] = useState<File[]>([])
+  const [files, setFiles] = useState<File[]>([]);
   const [avatar, setAvatar] = useState(user?.avatar || null);
 
   const [open, setOpen] = useState(false);
@@ -57,7 +76,7 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
 
   const [state, formAction] = useFormState(updateAccount, null);
 
-  const userMutation = api.user.updateAvatar.useMutation(); 
+  const userMutation = api.user.updateAvatar.useMutation();
 
   const isDirty = useMemo(() => {
     return fullname !== user?.fullname || email !== user?.email;
@@ -69,7 +88,7 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
     setIsLoading(true);
     try {
       await deleteAccount();
-      toast.success("You account has been successfully deleted")
+      toast.success("You account has been successfully deleted");
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -94,53 +113,57 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
   }, [state]);
 
   const getFileIdFromUrl = (url: string | null): string => {
-    const parts = url?.split('/');
+    const parts = url?.split("/");
     return parts?.[parts.length - 1] ?? "";
   };
 
   const deleteMutation = useMutation({
     mutationFn: async (fileId: string) => {
-      const response = await fetch(`/api/files/${fileId}`, { method: 'DELETE' });
+      await fetch(`/api/files/${fileId}`, { method: "DELETE" });
       return fileId;
     },
-    onSuccess: (fileId) => {
+    onSuccess: () => {
       toast.success("Profile picture deleted successfully");
     },
     onError: (error) => {
-      console.error('Error deleting file:', error);
+      console.error("Error deleting file:", error);
       toast.error("Failed to delete file");
     },
   });
 
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
-  const handleAvatarUpdate = (fileUrl: string | null) => {
-    userMutation.mutateAsync({
-      avatar: fileUrl
-    }).then(async () => {
-      // queryClient.invalidateQueries(['user']);
+  const handleAvatarUpdate = async (fileUrl: string | null) => {
+    await userMutation
+      .mutateAsync({
+        avatar: fileUrl,
+      })
+      .then(async () => {
+        // queryClient.invalidateQueries(['user']);
 
-      setAvatar(fileUrl);
+        setAvatar(fileUrl);
 
-      router.refresh();
-    });
+        router.refresh();
+      });
   };
 
-  const handleAvatarDelete = () => {
+  const handleAvatarDelete = async () => {
     const fileId = getFileIdFromUrl(avatar);
-    handleAvatarUpdate(null);
-    
+    await handleAvatarUpdate(null);
+
     deleteMutation.mutate(fileId);
 
     setDialogOpen(false);
   };
 
-  const { onUpload, uploadedFiles, progresses, isUploading } = useUploadFile({ 
-    defaultUploadedFiles: [], 
-    onUploadComplete: handleAvatarUpdate,
+  const { onUpload, progresses, isUploading } = useUploadFile({
+    defaultUploadedFiles: [],
+    onUploadComplete: (fileUrl: string | null) => {
+      void handleAvatarUpdate(fileUrl);
+    },
     prefix: "avatars/",
     allowedFileTypes: ALLOWED_FILE_TYPES,
-    maxFileSize: MAX_FILE_SIZE
+    maxFileSize: MAX_FILE_SIZE,
   });
 
   const form = useForm<FileUploadSchema>({
@@ -148,7 +171,11 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
     defaultValues: {
       files: [],
     },
-  })
+  });
+
+  interface UploadedFile {
+    url: string;
+  }
 
   const handleSubmit = (data: FileUploadSchema) => {
     setIsLoading(true);
@@ -164,11 +191,12 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
         if (files && files.length > 0) {
           if (avatar) {
             const fileId = getFileIdFromUrl(avatar);
-            
-            await fetch(`/api/files/${fileId}`, { method: 'DELETE' });
+
+            await fetch(`/api/files/${fileId}`, { method: "DELETE" });
           }
 
-          handleAvatarUpdate(files?.[0]?.url ?? null);
+          const uploadedFile = files[0] as UploadedFile;
+          await handleAvatarUpdate(uploadedFile.url);
         }
         return "Profile picture updated";
       },
@@ -188,31 +216,31 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
       <Card>
         <CardHeader className="border-b px-6 py-4">
           <CardTitle>Account Details</CardTitle>
-          <CardDescription>
-            Update your account information
-          </CardDescription>
+          <CardDescription>Update your account information</CardDescription>
         </CardHeader>
         <Suspense fallback={<AccountDetailsSkeleton />}>
           <form>
             <CardContent>
-              <div className="w-full md:w-[380px] space-y-2 pt-4">
-
+              <div className="w-full space-y-2 pt-4 md:w-[380px]">
                 <div className="space-y-2">
                   <Label>Profile Picture</Label>
                   <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                     <DialogTrigger asChild>
-                      <Avatar className="w-24 h-24 rounded-full drop-shadow-md cursor-pointer hover:opacity-75">
-                        <AvatarImage 
-                          src={avatar ?? ""} 
-                          alt={fullname} 
-                          className="object-cover w-full h-full"
+                      <Avatar className="h-24 w-24 cursor-pointer rounded-full drop-shadow-md hover:opacity-75">
+                        <AvatarImage
+                          src={avatar ?? ""}
+                          alt={fullname}
+                          className="h-full w-full object-cover"
                         />
                         <AvatarFallback delayMs={100}>
-                          {user.fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}
+                          {user.fullname
+                            .split(" ")
+                            .map((name) => name.charAt(0).toUpperCase())
+                            .join("")}
                         </AvatarFallback>
                       </Avatar>
                     </DialogTrigger>
-                    <DialogContent className="max-w-md md:max-w-lg rounded-lg">
+                    <DialogContent className="max-w-md rounded-lg md:max-w-lg">
                       <DialogHeader>
                         <DialogTitle>Upload profile picture</DialogTitle>
                         <DialogDescription>
@@ -224,55 +252,53 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
                           onSubmit={form.handleSubmit(handleSubmit)}
                           className="flex w-full flex-col gap-6"
                         >
-                        <FormField
-                          control={form.control}
-                          name="files"
-                          render={({ field }) => (
-                            <div className="space-y-6">
-                              <FormItem className="w-full">
-                                <FormControl>
-                                  <FileUploader
-                                    value={field.value}
-                                    onValueChange={(files) => {
-                                      field.onChange(files);
-                                      setFiles(files);
-                                    }}
-                                    accept={ALLOWED_FILE_TYPES}
-                                    maxFileCount={1}
-                                    maxSize={MAX_FILE_SIZE}
-                                    progresses={progresses}
-                                    disabled={isUploading}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            </div>
-                          )}
-                        />
-    
+                          <FormField
+                            control={form.control}
+                            name="files"
+                            render={({ field }) => (
+                              <div className="space-y-6">
+                                <FormItem className="w-full">
+                                  <FormControl>
+                                    <FileUploader
+                                      value={field.value}
+                                      onValueChange={(files) => {
+                                        field.onChange(files);
+                                        setFiles(files);
+                                      }}
+                                      accept={ALLOWED_FILE_TYPES}
+                                      maxFileCount={1}
+                                      maxSize={MAX_FILE_SIZE}
+                                      progresses={progresses}
+                                      disabled={isUploading}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              </div>
+                            )}
+                          />
                         </form>
 
                         <div className="flex gap-2">
-                          <Button 
-                            type="button" 
-                            variant="default" 
-                            className="flex-1" 
+                          <Button
+                            type="button"
+                            variant="default"
+                            className="flex-1"
                             disabled={isLoading || files.length === 0}
                             onClick={form.handleSubmit(handleSubmit)}
                           >
                             Upload
                           </Button>
-                          <Button 
+                          <Button
                             type="button"
-                            variant="destructive" 
-                            onClick={handleAvatarDelete} 
-                            className="flex-1" 
+                            variant="destructive"
+                            onClick={handleAvatarDelete}
+                            className="flex-1"
                             disabled={isLoading || avatar === null}
                           >
                             Delete
                           </Button>
                         </div>
-
                       </Form>
                     </DialogContent>
                   </Dialog>
@@ -310,7 +336,7 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
               </div>
 
               {state?.fieldError ? (
-                <ul className="w-full md:w-1/2 mt-4 list-disc space-y-1 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
+                <ul className="mt-4 w-full list-disc space-y-1 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive md:w-1/2">
                   {Object.values(state.fieldError).map((err) => (
                     <li className="ml-4" key={err}>
                       {err}
@@ -318,43 +344,49 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
                   ))}
                 </ul>
               ) : state?.formError ? (
-                <p className="w-full md:w-1/2 mt-4 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
+                <p className="mt-4 w-full rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive md:w-1/2">
                   {state?.formError}
                 </p>
               ) : null}
             </CardContent>
-            <CardFooter className="border-t px- py-4 gap-2">
-            <SubmitButton formAction={formAction} disabled={!isDirty}>Update Account</SubmitButton>
-            <Dialog open={open} onOpenChange={setOpen}>
-              <DialogTrigger asChild>
-                <Button variant="link" size="sm">
-                  Delete Account
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="w-[90vw] md:max-w rounded-lg" showCloseButton={false}>
-                <DialogHeader className="flex flex-col space-y-2 text-center sm:text-left">
-                  <DialogTitle className="text-lg font-semibold">
-                    Are you absolutely sure?
-                  </DialogTitle>
-                  <DialogDescription className="text-sm text-muted-foreground">
-                    This action cannot be undone. This will permanently delete your
-                    account and remove your data from our servers.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2">
-                  <Button variant="outline" onClick={() => setOpen(false)}>
-                    Cancel
-                  </Button>
-                  <LoadingButton variant="destructive" loading={isLoading} onClick={accountDelete}>
+            <CardFooter className="px- gap-2 border-t py-4">
+              <SubmitButton formAction={formAction} disabled={!isDirty}>
+                Update Account
+              </SubmitButton>
+              <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="link" size="sm">
                     Delete Account
-                  </LoadingButton>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </CardFooter>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="md:max-w w-[90vw] rounded-lg" showCloseButton={false}>
+                  <DialogHeader className="flex flex-col space-y-2 text-center sm:text-left">
+                    <DialogTitle className="text-lg font-semibold">
+                      Are you absolutely sure?
+                    </DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground">
+                      This action cannot be undone. This will permanently delete your account and
+                      remove your data from our servers.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2">
+                    <Button variant="outline" onClick={() => setOpen(false)}>
+                      Cancel
+                    </Button>
+                    <LoadingButton
+                      variant="destructive"
+                      loading={isLoading}
+                      onClick={accountDelete}
+                    >
+                      Delete Account
+                    </LoadingButton>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </CardFooter>
           </form>
         </Suspense>
       </Card>
     </>
-  )
+  );
 }

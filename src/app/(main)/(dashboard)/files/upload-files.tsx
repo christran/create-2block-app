@@ -1,48 +1,47 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { FileUploader } from '@/components/file-uploader';
-import { UploadedFilesCard } from './uploaded-files-card';
-import { toast } from 'sonner';
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { FileUploader } from "@/components/file-uploader";
+import { UploadedFilesCard } from "./uploaded-files-card";
+import { toast } from "sonner";
 import { useUploadFile } from "@/lib/hooks/use-upload-file";
 import { Form, FormField, FormItem, FormControl, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { fileUploadSchema, FileUploadSchema } from '@/lib/types/file-upload';
+import { fileUploadSchema, type FileUploadSchema } from "@/lib/types/file-upload";
 
 interface InitialUserFilesProps {
-  initialUserFiles: { 
-    id: string
-    originalFilename: string
-    contentType: string
-    fileSize: number
-    createdAt: Date
+  initialUserFiles: {
+    id: string;
+    originalFilename: string;
+    contentType: string;
+    fileSize: number;
+    createdAt: Date;
   }[];
 }
 
 const ALLOWED_FILE_TYPES = {
-  'image/jpeg': ['.jpg', '.jpeg'],
-  'image/png': ['.png'],
-  'image/gif': ['.gif']
+  "image/jpeg": [".jpg", ".jpeg"],
+  "image/png": [".png"],
+  "image/gif": [".gif"]
 };
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
 export function UploadFiles({ initialUserFiles }: InitialUserFilesProps) {
-  const [files, setFiles] = useState<File[]>([])
+  const [files, setFiles] = useState<File[]>([]);
 
-  const { onUpload, uploadedFiles, progresses, isUploading } = useUploadFile({ 
-    defaultUploadedFiles: [], 
-    onUploadComplete: (files) => {
+  const { onUpload, uploadedFiles, progresses, isUploading } = useUploadFile({
+    defaultUploadedFiles: [],
+    onUploadComplete: () => {
       toast.success("Files uploaded successfully");
       form.reset();
       setFiles([]);
     },
     prefix: "files/",
     allowedFileTypes: ALLOWED_FILE_TYPES,
-    maxFileSize: MAX_FILE_SIZE
+    maxFileSize: MAX_FILE_SIZE,
   });
 
   const form = useForm<FileUploadSchema>({
@@ -50,7 +49,7 @@ export function UploadFiles({ initialUserFiles }: InitialUserFilesProps) {
     defaultValues: {
       files: [],
     },
-  })
+  });
 
   useEffect(() => {
     if (files.length > 0) {
@@ -67,10 +66,6 @@ export function UploadFiles({ initialUserFiles }: InitialUserFilesProps) {
         return err instanceof Error ? err.message : "Error uploading files";
       },
     });
-  };
-
-  const handleDeleteFile = (fileId: string) => {
-    // Implement file deletion logic here
   };
 
   return (
@@ -111,10 +106,7 @@ export function UploadFiles({ initialUserFiles }: InitialUserFilesProps) {
         </CardContent>
       </Card>
 
-      <UploadedFilesCard 
-        initialUserFiles={initialUserFiles}
-        newUploadedFiles={uploadedFiles}
-      />
+      <UploadedFilesCard initialUserFiles={initialUserFiles} newUploadedFiles={uploadedFiles} />
     </>
   );
 }

@@ -32,6 +32,8 @@ const config = {
         checksVoidReturn: { attributes: false },
       },
     ],
+    "quotes": ["error", "double"],
+    "@typescript-eslint/quotes": ["error", "double"],
   },
   ignorePatterns: ["*.js"],
 };
