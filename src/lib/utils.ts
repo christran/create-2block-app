@@ -26,22 +26,18 @@ export const getExceptionType = (error: unknown) => {
   return UnknownException;
 };
 
-export function formatBytes(
-  bytes: number,
-  opts: {
-    decimals?: number
-    sizeType?: "accurate" | "normal"
-  } = {}
-) {
-  const { decimals = 0, sizeType = "normal" } = opts
-
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB"]
-  const accurateSizes = ["Bytes", "KiB", "MiB", "GiB", "TiB"]
-  if (bytes === 0) return "0 Byte"
-  const i = Math.floor(Math.log(bytes) / Math.log(1024))
-  return `${(bytes / Math.pow(1024, i)).toFixed(decimals)} ${
-    sizeType === "accurate" ? accurateSizes[i] ?? "Bytest" : sizes[i] ?? "Bytes"
-  }`
+export function formatBytes(bytes: number, clean = false): string {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  const value = bytes / Math.pow(k, i);
+  
+  if (clean) {
+    return Math.round(value) + ' ' + sizes[i];
+  }
+  
+  return value.toFixed(2) + ' ' + sizes[i];
 }
 
 export function formatDate(

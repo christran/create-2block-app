@@ -8,6 +8,7 @@ import {
   timestamp,
   varchar,
   uuid,
+  bigint,
 } from "drizzle-orm/pg-core";
 import { DATABASE_PREFIX as prefix } from "@/lib/constants";
 
@@ -62,12 +63,16 @@ export const sessions = pgTable(
 
 export const files = pgTable('files', {
   id: uuid('id').primaryKey(),
+  key: varchar('key', { length: 255 }).notNull(),
   userId: varchar("user_id", { length: 21 }).notNull(),
   originalFilename: varchar('original_filename', { length: 255 }).notNull(),
   contentType: varchar('content_type', { length: 100 }).notNull(),
+  fileSize: bigint('file_size', { mode: 'number' }).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date" }).$onUpdate(() => new Date()),
 });
+
+export type File = typeof files.$inferSelect;
 
 export const emailVerificationCodes = pgTable(
   "email_verification_codes",

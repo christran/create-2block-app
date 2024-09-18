@@ -3,6 +3,7 @@ import { createPresignedPost } from '@aws-sdk/s3-presigned-post';
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { env } from '@/env';
+import { formatBytes } from './utils';
 
 const S3 = new S3Client({
   region: "auto",
@@ -15,21 +16,28 @@ const S3 = new S3Client({
 
 const BUCKET_NAME = env.R2_BUCKET_NAME!;
 
-// Define allowed file types and max file size
-const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-
-export async function generatePresignedUrl(key: string, contentType: string, metadata?: Record<string, string>) {
-  if (!ALLOWED_FILE_TYPES.includes(contentType)) {
+export async function generatePresignedUrl(
+  key: string, 
+  contentType: string, 
+  contentLength: number,
+  allowedFileTypes: string[],
+  maxFileSize: number
+) {
+  if (!allowedFileTypes.includes(contentType)) {
     console.error(`Invalid file type: ${contentType}`);
-    throw new Error('Invalid file type');
+    throw new Error(`Invalid file type: ${contentType}`);
+  }
+
+  if (contentLength > maxFileSize) {
+    console.error(`File size ${formatBytes(contentLength)} exceeds maximum allowed: ${formatBytes(maxFileSize)}`);
+    throw new Error(`File size ${formatBytes(contentLength)} exceeds maximum allowed: ${formatBytes(maxFileSize)}`);
   }
 
   const command = new PutObjectCommand({
     Bucket: BUCKET_NAME,
     Key: key,
     ContentType: contentType,
-    Metadata: metadata,
+    ContentLength: contentLength,
   });
 
   try {
@@ -40,8 +48,6 @@ export async function generatePresignedUrl(key: string, contentType: string, met
         expiresIn: 600 // URL expires in 10 minutes
       });
 
-    // console.log('Presigned POST URL generated successfully:', url);
-    // console.log('Presigned POST fields:', JSON.stringify(fields, null, 2));
     return { url };
   } catch (error) {
     console.error('Error generating presigned POST URL:', error);

@@ -1,0 +1,1 @@
+ALTER TABLE "2block_files" ADD COLUMN "filesize" bigint DEFAULT 0 NOT NULL;

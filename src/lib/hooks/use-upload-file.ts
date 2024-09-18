@@ -1,17 +1,21 @@
 import { useState } from "react";
-
-export interface UploadedFile {
-  id: string;
-  originalFilename: string;
-  url: string;
-}
+import { UploadedFile } from "../types/file-upload";
 
 interface UseUploadFileProps {
   defaultUploadedFiles?: UploadedFile[];
   onUploadComplete?: (fileUrl: string) => void;
+  prefix: string;
+  allowedFileTypes: Record<string, string[]>;
+  maxFileSize: number;
 }
 
-export function useUploadFile({ defaultUploadedFiles = [], onUploadComplete }: UseUploadFileProps = {}) {
+export function useUploadFile({ 
+  defaultUploadedFiles = [], 
+  onUploadComplete,
+  prefix,
+  allowedFileTypes,
+  maxFileSize
+}: UseUploadFileProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [progresses, setProgresses] = useState<Record<string, number>>({});
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>(defaultUploadedFiles);
@@ -25,22 +29,25 @@ export function useUploadFile({ defaultUploadedFiles = [], onUploadComplete }: U
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          files: files.map(f => ({ filename: f.name, contentType: f.type }))
+          files: files.map(f => ({ prefix, filename: f.name, contentType: f.type, fileSize: f.size })),
+          allowedFileTypes,
+          maxFileSize
         }),
       });
       
       if (!response.ok) {
-        throw new Error(`Failed to get upload URLs: ${response.status}`);
+        const { error } = await response.json();
+        throw new Error(`${error}`);
       }
 
       const { presignedUrls } = await response.json();
 
       // Step 2: Upload to R2 using the signed URLs
-      const newUploadedFiles = await Promise.all(presignedUrls.map(async ({ id, filename, url, metadata }, index) => {
+      const newUploadedFiles = await Promise.all(presignedUrls.map(async ({ id, filename, url }, index) => {
         const file = files[index];
         const xhr = new XMLHttpRequest();
         xhr.open('PUT', url, true);
-        xhr.setRequestHeader('Content-Type', file.type);
+        xhr.setRequestHeader('Content-Type', file?.type || "");
 
         xhr.upload.onprogress = (event) => {
           if (event.lengthComputable) {
@@ -70,8 +77,11 @@ export function useUploadFile({ defaultUploadedFiles = [], onUploadComplete }: U
 
         const uploadedFile = {
           id,
-          originalFilename: filename,
           url: getUrl,
+          originalFilename: filename,
+          contentType: file?.type || "",
+          fileSize: file?.size || 0,
+          createdAt: new Date(),
         };
 
         // Call the onUploadComplete callback with the new file URL

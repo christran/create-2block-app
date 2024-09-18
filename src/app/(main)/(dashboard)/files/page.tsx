@@ -6,6 +6,7 @@ import ManageFiles from './manage-files';
 import { db } from '@/server/db';
 import { files } from '@/server/db/schema';
 import { eq } from "drizzle-orm";
+import { api } from '@/trpc/server';
 
 export default async function UploadPage() {
   const { user } = await validateRequest();
@@ -13,11 +14,7 @@ export default async function UploadPage() {
   if (!user) redirect(Paths.Login);
   if (user?.role !== "admin") redirect(Paths.Dashboard);
 
-  const userFiles = await db.select({
-    id: files.id,
-  })
-  .from(files)
-  .where(eq(files.userId, user.id))
+  const userFiles = await api.user.getUserFiles.query();
 
   return (
     <div className="mx-auto max-w-5xl px-4 md:px-2 py-8 space-y-8">

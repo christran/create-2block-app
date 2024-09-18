@@ -37,10 +37,10 @@ export async function GET(
     }
 
     if (publicBucket) { // https://media.2block.co/
-      return NextResponse.json({ url: `https://media.2block.co/${fileRecord.id}`, filename: fileRecord.originalFilename });
+      return NextResponse.json({ url: `https://media.2block.co/${fileRecord.key}`, filename: fileRecord.originalFilename });
     }
 
-    const presignedUrl = await generatePresignedGetUrl(fileRecord.id);
+    const presignedUrl = await generatePresignedGetUrl(fileRecord.key);
     
     return NextResponse.json({ url: presignedUrl, filename: fileRecord.originalFilename });
   } catch (error) {
@@ -71,7 +71,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    await deleteFile(fileRecord.id);
+    await deleteFile(fileRecord.key);
     
     await db.delete(files).where(eq(files.id, params.id));
 

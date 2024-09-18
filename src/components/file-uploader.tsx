@@ -151,21 +151,21 @@ export function FileUploader(props: FileUploaderProps) {
         updatedFiles.length > 0 &&
         updatedFiles.length <= maxFileCount
       ) {
-        const target =
-          updatedFiles.length > 1 ? `${updatedFiles.length} files` : `1 file`
-
-        toast.promise(onUpload(updatedFiles), {
-          loading: `Uploading ${target}...`,
-          success: () => {
-            setFiles([])
-            return `${target} uploaded`
-          },
-          error: `Failed to upload ${target}`,
-        })
+        toast.promise(
+          onUpload(updatedFiles).catch((error) => {
+            // Remove the files if there's an error
+            setFiles((prevFiles) => prevFiles?.filter(f => !updatedFiles.includes(f)));
+            throw error; // Re-throw the error for the toast to catch
+          }),
+          {
+            loading: `Uploading ${updatedFiles.length > 1 ? `${updatedFiles.length} files` : '1 file'}...`,
+            success: (result) => `${updatedFiles.length} ${updatedFiles.length > 1 ? 'files' : 'file'} uploaded successfully`,
+            error: (error) => `Upload failed: ${error.message}`,
+          }
+        )
       }
     },
-
-    [files, maxFileCount, multiple, onUpload, setFiles]
+    [files, maxFileCount, multiple, onUpload, setFiles, maxSize]
   )
 
   function onRemove(index: number) {

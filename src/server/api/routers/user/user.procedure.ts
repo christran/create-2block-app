@@ -26,27 +26,42 @@ export const userRouter = createTRPCRouter({
       return user;
     }),
 
-    getUserByEmail: protectedProcedure
-    .input(z.object({
-      email: z.string().min(1)
-    }))
-    .query(async ({ ctx, input }) => {
-      const user = await ctx.db.query.users.findFirst({
-        where: (table, { eq }) => eq(table.email, input.email),
+  getUserByEmail: protectedProcedure
+  .input(z.object({
+    email: z.string().min(1)
+  }))
+  .query(async ({ ctx, input }) => {
+    const user = await ctx.db.query.users.findFirst({
+      where: (table, { eq }) => eq(table.email, input.email),
+      columns: {
+        id: true,
+        fullname: true,
+        email: true,
+        emailVerified: true,
+        contactId: true,
+        googleId: true,
+        discordId: true,
+        githubId: true,
+        avatar: true,
+      },
+    });
+  
+    return user;
+  }),
+
+  getUserFiles: protectedProcedure
+    .query(({ ctx }) => {
+      return ctx.db.query.files.findMany({
+        where: (table, { eq }) => eq(table.userId, ctx.user.id),
+        orderBy: (table, { desc }) => desc(table.createdAt),
         columns: {
           id: true,
-          fullname: true,
-          email: true,
-          emailVerified: true,
-          contactId: true,
-          googleId: true,
-          discordId: true,
-          githubId: true,
-          avatar: true,
+          originalFilename: true,
+          contentType: true,
+          fileSize: true,
+          createdAt: true,
         },
       });
-    
-      return user;
     }),
 
   isPasswordLess: protectedProcedure

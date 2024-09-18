@@ -1,105 +1,76 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Button } from "@/components/ui/button"
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { FileUploader } from '@/components/file-uploader';
 import { UploadedFilesCard } from './uploaded-files-card';
-import ManageFiles from './manage-files';
+import { toast } from 'sonner';
+import { useUploadFile } from "@/lib/hooks/use-upload-file";
+import { Form, FormField, FormItem, FormControl, FormMessage } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { fileUploadSchema, FileUploadSchema } from '@/lib/types/file-upload';
 
-const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
+interface InitialUserFilesProps {
+  initialUserFiles: { 
+    id: string
+    originalFilename: string
+    contentType: string
+    fileSize: number
+    createdAt: Date
+  }[];
+}
+
+const ALLOWED_FILE_TYPES = {
+  'image/jpeg': ['.jpg', '.jpeg'],
+  'image/png': ['.png'],
+  'image/gif': ['.gif']
+};
+
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
-export interface UploadedFile {
-  id: string;
-  originalFilename: string;
-  url: string;
-}
+export function UploadFiles({ initialUserFiles }: InitialUserFilesProps) {
+  const [files, setFiles] = useState<File[]>([])
 
-interface UploadFilesProps {
-  initialUserFiles: { id: string }[];
-}
+  const { onUpload, uploadedFiles, progresses, isUploading } = useUploadFile({ 
+    defaultUploadedFiles: [], 
+    onUploadComplete: (files) => {
+      toast.success("Files uploaded successfully");
+      form.reset();
+      setFiles([]);
+    },
+    prefix: "files/",
+    allowedFileTypes: ALLOWED_FILE_TYPES,
+    maxFileSize: MAX_FILE_SIZE
+  });
 
-interface PresignedUrlInfo {
-  id: string;
-  filename: string;
-  url: string;
-}
+  const form = useForm<FileUploadSchema>({
+    resolver: zodResolver(fileUploadSchema),
+    defaultValues: {
+      files: [],
+    },
+  })
 
-export function UploadFiles({ initialUserFiles }: UploadFilesProps) {
-  const [isUploading, setIsUploading] = useState(false);
-  const [progresses, setProgresses] = useState<Record<string, number>>({});
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
-
-  const onUpload = async (files: File[]) => {
-    setIsUploading(true);
-    try {
-      // Step 1: Get the signed URLs for upload
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          files: files.map(f => ({ filename: f.name, contentType: f.type }))
-        }),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to get upload URLs: ${response.status}`);
-      }
-
-      const { presignedUrls } = await response.json();
-
-      // Step 2: Upload to R2 using the signed URLs
-      const uploadedFiles = await Promise.all(presignedUrls.map(async ({ id, filename, url, metadata }, index) => {
-        const file = files[index];
-        const xhr = new XMLHttpRequest();
-        xhr.open('PUT', url, true);
-        xhr.setRequestHeader('Content-Type', file.type);
-
-        xhr.upload.onprogress = (event) => {
-          if (event.lengthComputable) {
-            const progress = Math.round((event.loaded / event.total) * 100);
-            setProgresses(prev => ({ ...prev, [filename]: progress }));
-          }
-        };
-
-        await new Promise((resolve, reject) => {
-          xhr.onload = () => {
-            if (xhr.status === 200) {
-              resolve(null);
-            } else {
-              reject(new Error(`Failed to upload file ${filename}: ${xhr.status}`));
-            }
-          };
-          xhr.onerror = () => reject(new Error(`Network error occurred while uploading ${filename}`));
-          xhr.send(file);
-        });
-
-        const getUrlResponse = await fetch(`/api/files/${id}`);
-
-        if (!getUrlResponse.ok) {
-          throw new Error(`Failed to get file URL: ${getUrlResponse.status}`);
-        }
-        const { url: getUrl } = await getUrlResponse.json();
-
-        return {
-          id,
-          originalFilename: filename,
-          url: getUrl,
-        };
-      }));
-
-      setUploadedFiles(prev => [...prev, ...uploadedFiles]);
-    } catch (err) {
-      console.error('Upload error:', err);
-    } finally {
-      setIsUploading(false);
-      setProgresses({});
+  useEffect(() => {
+    if (files.length > 0) {
+      handleUpload(files);
     }
+  }, [files]);
+
+  const handleUpload = (filesToUpload: File[]) => {
+    toast.promise(onUpload(filesToUpload), {
+      loading: "Uploading files",
+      error: (err) => {
+        form.reset();
+        setFiles([]);
+        return err instanceof Error ? err.message : "Error uploading files";
+      },
+    });
   };
 
   const handleDeleteFile = (fileId: string) => {
-    setUploadedFiles(prev => prev.filter(file => file.id !== fileId));
+    // Implement file deletion logic here
   };
 
   return (
@@ -110,25 +81,39 @@ export function UploadFiles({ initialUserFiles }: UploadFilesProps) {
           <CardDescription>Upload your files here</CardDescription>
         </CardHeader>
         <CardContent>
-          <FileUploader
-            maxFileCount={10}
-            maxSize={MAX_FILE_SIZE}
-            accept={{
-              'image/jpeg': ['.jpg', '.jpeg'],
-              'image/png': ['.png'],
-              'image/gif': ['.gif']
-            }}
-            progresses={progresses}
-            onUpload={onUpload}
-            disabled={isUploading}
-          />
+          <Form {...form}>
+            <form className="space-y-4">
+              <FormField
+                control={form.control}
+                name="files"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <FileUploader
+                        value={field.value}
+                        onValueChange={(newFiles) => {
+                          field.onChange(newFiles);
+                          setFiles(newFiles);
+                        }}
+                        maxFileCount={10}
+                        maxSize={MAX_FILE_SIZE}
+                        accept={ALLOWED_FILE_TYPES}
+                        progresses={progresses}
+                        disabled={isUploading}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </form>
+          </Form>
         </CardContent>
       </Card>
 
       <UploadedFilesCard 
         initialUserFiles={initialUserFiles}
         newUploadedFiles={uploadedFiles}
-        onDeleteFile={handleDeleteFile}
       />
     </>
   );

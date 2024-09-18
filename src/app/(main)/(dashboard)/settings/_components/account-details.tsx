@@ -9,15 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { updateAccount, deleteAccount } from "@/lib/auth/actions"
@@ -33,13 +24,11 @@ import { FileUploader } from "@/components/file-uploader";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { UploadedFilesCard } from "../../files/uploaded-files-card";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUploadFile } from "@/lib/hooks/use-upload-file";
-import { Paths } from "@/lib/constants";
 import { api } from "@/trpc/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { fileUploadSchema, FileUploadSchema } from "@/lib/types/file-upload";
 
 interface AccountDetailsProps {
   id: string
@@ -48,11 +37,13 @@ interface AccountDetailsProps {
   avatar: string
 }
 
-export interface UploadedFile {
-  id: string;
-  originalFilename: string;
-  url: string;
-}
+const ALLOWED_FILE_TYPES = {
+  'image/jpeg': ['.jpg', '.jpeg'],
+  'image/png': ['.png'],
+  'image/gif': ['.gif']
+};
+
+const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3 MB
 
 export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsProps; isPasswordLess: boolean }) {  
   const [fullname, setFullname] = useState(user?.fullname ?? "");
@@ -77,9 +68,7 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
   const accountDelete = async () => {
     setIsLoading(true);
     try {
-      // await userMutation.mutateAsync({ id: user.id })
       await deleteAccount();
-      // await logout();
       toast.success("You account has been successfully deleted")
     } catch (error) {
       if (error instanceof Error) {
@@ -89,7 +78,7 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
       setOpen(false);
       setIsLoading(false);
     }
-};
+  };
 
   useEffect(() => {
     if (state?.success) {
@@ -104,85 +93,94 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
     }
   }, [state]);
 
-    const schema = z.object({
-      images: z.array(z.instanceof(File)),
-    })
-    
-    type Schema = z.infer<typeof schema>
-  
-    const queryClient = useQueryClient();
+  const getFileIdFromUrl = (url: string | null): string => {
+    const parts = url?.split('/');
+    return parts?.[parts.length - 1] ?? "";
+  };
 
-    const handleAvatarUpdate = (fileUrl: string | null) => {
+  const deleteMutation = useMutation({
+    mutationFn: async (fileId: string) => {
+      const response = await fetch(`/api/files/${fileId}`, { method: 'DELETE' });
+      return fileId;
+    },
+    onSuccess: (fileId) => {
+      toast.success("Profile picture deleted successfully");
+    },
+    onError: (error) => {
+      console.error('Error deleting file:', error);
+      toast.error("Failed to delete file");
+    },
+  });
+
+  const queryClient = useQueryClient();
+
+  const handleAvatarUpdate = (fileUrl: string | null) => {
+    userMutation.mutateAsync({
+      avatar: fileUrl
+    }).then(async () => {
+      // queryClient.invalidateQueries(['user']);
+
       setAvatar(fileUrl);
+
+      router.refresh();
+    });
+  };
+
+  const handleAvatarDelete = () => {
+    const fileId = getFileIdFromUrl(avatar);
+    handleAvatarUpdate(null);
     
-      userMutation.mutateAsync({
-        avatar: fileUrl
-      }).then(() => {
-        // queryClient.invalidateQueries(['user']);
-        router.refresh();
-      });
-    };
-    
-    const deleteMutation = useMutation({
-      mutationFn: async (fileId: string) => {
-        const response = await fetch(`/api/files/${fileId}`, { method: 'DELETE' });
-        if (!response.ok) throw new Error('Failed to delete file');
-        return fileId;
+    deleteMutation.mutate(fileId);
+
+    setDialogOpen(false);
+  };
+
+  const { onUpload, uploadedFiles, progresses, isUploading } = useUploadFile({ 
+    defaultUploadedFiles: [], 
+    onUploadComplete: handleAvatarUpdate,
+    prefix: "avatars/",
+    allowedFileTypes: ALLOWED_FILE_TYPES,
+    maxFileSize: MAX_FILE_SIZE
+  });
+
+  const form = useForm<FileUploadSchema>({
+    resolver: zodResolver(fileUploadSchema),
+    defaultValues: {
+      files: [],
+    },
+  })
+
+  const handleSubmit = (data: FileUploadSchema) => {
+    setIsLoading(true);
+
+    toast.promise(onUpload(data.files), {
+      loading: "Uploading profile picture...",
+      success: async (files) => {
+        form.reset();
+        setIsLoading(false);
+        setDialogOpen(false);
+        setFiles([]);
+        // Use the first uploaded file's URL as the new avatar
+        if (files && files.length > 0) {
+          if (avatar) {
+            const fileId = getFileIdFromUrl(avatar);
+            
+            await fetch(`/api/files/${fileId}`, { method: 'DELETE' });
+          } 
+          handleAvatarUpdate(files[0].url);    
+        }
+        return "Profile picture updated";
       },
-      onSuccess: (fileId) => {
-        toast.success("Profile picture deleted successfully");
-      },
-      onError: (error) => {
-        console.error('Error deleting file:', error);
-        toast.error("Failed to delete file");
+      error: (err) => {
+        setIsLoading(false);
+        // Reset the form and clear the files on error
+        form.reset();
+        setFiles([]);
+        // If there's a specific error message, display it. Otherwise, use a generic message.
+        return err instanceof Error ? err.message : "Error uploading profile picture";
       },
     });
-
-
-    const getFileIdFromUrl = (url: string | null): string => {
-      const parts = url?.split('/');
-      return parts?.[parts.length - 1] ?? "";
-    };
-  
-    const handleAvatarDelete = () => {
-      const fileId = getFileIdFromUrl(avatar);
-      handleAvatarUpdate(null);
-      
-      deleteMutation.mutate(fileId);
-  
-      setDialogOpen(false);
-    };
-
-    const { onUpload, uploadedFiles, progresses, isUploading } = useUploadFile({ 
-      defaultUploadedFiles: [], 
-      onUploadComplete: handleAvatarUpdate 
-    });
-
-    const form = useForm<Schema>({
-      resolver: zodResolver(schema),
-      defaultValues: {
-        images: [],
-      },
-    })
-
-    const handleSubmit = (data: Schema) => {
-      setIsLoading(true)
-
-      toast.promise(onUpload(data.images), {
-        loading: "Uploading profile picture...",
-        success: () => {
-          form.reset()
-          setIsLoading(false)
-          setDialogOpen(false) // Close the dialog
-          setFiles([])
-          return "Profile picture updated"
-        },
-        error: (err) => {
-          setIsLoading(false)
-          return "Error uploading profile picture"
-        },
-      })
-    }
+  };
 
   return (
     <>
@@ -212,9 +210,6 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
                           {user.fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}
                         </AvatarFallback>
                       </Avatar>
-                      {/* <Button variant="outline" size="sm">
-                        Upload
-                      </Button> */}
                     </DialogTrigger>
                     <DialogContent className="max-w-md md:max-w-lg rounded-lg">
                       <DialogHeader>
@@ -230,7 +225,7 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
                         >
                         <FormField
                           control={form.control}
-                          name="images"
+                          name="files"
                           render={({ field }) => (
                             <div className="space-y-6">
                               <FormItem className="w-full">
@@ -241,16 +236,10 @@ export function AccountDetails({ user, isPasswordLess }: { user: AccountDetailsP
                                       field.onChange(files);
                                       setFiles(files);
                                     }}
-                                    accept={{
-                                      'image/jpeg': ['.jpg', '.jpeg'],
-                                      'image/png': ['.png'],
-                                      'image/gif': ['.gif']
-                                    }}
+                                    accept={ALLOWED_FILE_TYPES}
                                     maxFileCount={1}
-                                    maxSize={3 * 1024 * 1024}
+                                    maxSize={MAX_FILE_SIZE}
                                     progresses={progresses}
-                                    // pass the onUpload function here for direct upload
-                                    // onUpload={uploadFiles}
                                     disabled={isUploading}
                                   />
                                 </FormControl>
