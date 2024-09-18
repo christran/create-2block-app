@@ -29,10 +29,10 @@ interface UserDropdownNavBarProps {
   email: string;
   avatar: string;
   withSheetClose: boolean;
-  isCollapsed: boolean;
+  isClosed: boolean;
 }
 
-export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, isCollapsed }: UserDropdownNavBarProps) {
+export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, isClosed }: UserDropdownNavBarProps) {
   const [SheetCloseWrapper, shetCloseWrapperProps] = withSheetClose
     ? [SheetClose, { asChild: true }]
     : [Fragment, {}];
@@ -137,25 +137,25 @@ export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, is
       {fullname !== "Guest" ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <div className={`cursor-pointer flex h-9 items-center rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all duration-200 hover:text-primary ${isCollapsed ? "justify-center" : "justify-between"}`}>
-              <div className={`flex items-center ${isCollapsed ? "justify-center w-full" : ""}`}>
-                <Avatar className={`transition-all duration-300 ease-in-out ${isCollapsed ? "h-8 w-8" : "h-7 w-7"} drop-shadow-md`}>
+            <div className={`cursor-pointer flex h-9 items-center rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all duration-200 hover:text-primary ${isClosed ? "justify-center" : "justify-between"}`}>
+              <div className={`flex items-center ${isClosed ? "justify-center w-full" : ""}`}>
+                <Avatar className={`transition-all duration-300 ease-in-out ${isClosed ? "h-8 w-8" : "h-7 w-7"} drop-shadow-md`}>
                   <AvatarImage src={avatar} alt={fullname} className="object-cover w-full h-full" />
                   <AvatarFallback delayMs={100}>
                     {fullname.split(" ").map(name => name.charAt(0).toUpperCase()).join("")}
                   </AvatarFallback>
                 </Avatar>
-                {!isCollapsed && (
+                {!isClosed && (
                   <span className="inline-block ml-2 text-sm truncate max-w-[140px]">
                     {isEmail(fullname) ? email : fullname}
                   </span>
                 )}
               </div>
-              {!isCollapsed && <EllipsisVertical className="h-4 w-4 text-muted-foreground ml-2"/>}
+              {!isClosed && <EllipsisVertical className="h-4 w-4 text-muted-foreground ml-2"/>}
               <span className="sr-only">Toggle user menu</span>
             </div>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="center" className={cn("w-[230px]", isCollapsed ? "ml-2" : "")}>
+          <DropdownMenuContent align="center" className={cn("w-[230px]", isClosed ? "ml-2" : "")}>
             <DropdownMenuLabel>
               <div className="flex items-center">
                 <Avatar className="h-8 w-8 mr-2 drop-shadow-md">
@@ -223,25 +223,25 @@ export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, is
       ) : (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <div className={`cursor-pointer flex h-9 items-center rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all duration-200 hover:text-primary ${isCollapsed ? "justify-center" : "justify-between"}`}>
-              <div className={`flex items-center ${isCollapsed ? "justify-center w-full" : ""}`}>
-                <Avatar className={`transition-all duration-300 ease-in-out ${isCollapsed ? "h-8 w-8" : "h-7 w-7"} drop-shadow-md`}>
+            <div className={`cursor-pointer flex h-9 items-center rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all duration-200 hover:text-primary ${isClosed ? "justify-center" : "justify-between"}`}>
+              <div className={`flex items-center ${isClosed ? "justify-center w-full" : ""}`}>
+                <Avatar className={`transition-all duration-300 ease-in-out ${isClosed ? "h-8 w-8" : "h-7 w-7"} drop-shadow-md`}>
                   <AvatarImage src={avatar} alt={fullname} className="object-cover w-full h-full" />
                   <AvatarFallback delayMs={100}>
                     {fullname.split(" ").map(name => name.charAt(0).toUpperCase()).join("")}
                   </AvatarFallback>
                 </Avatar>
-                {!isCollapsed && (
+                {!isClosed && (
                   <span className="inline-block ml-2 text-sm truncate max-w-[140px]">
                     {isEmail(fullname) ? email : fullname}
                   </span>
                 )}
               </div>
-              {!isCollapsed && <EllipsisVertical className="h-4 w-4 text-muted-foreground ml-2"/>}
+              {!isClosed && <EllipsisVertical className="h-4 w-4 text-muted-foreground ml-2"/>}
               <span className="sr-only">Toggle user menu</span>
             </div>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="center" className="w-[230px]">
+          <DropdownMenuContent align="center" className={cn("w-[230px]", isClosed ? "ml-2" : "")}>
             <DropdownMenuLabel>
               <div className="flex items-center">
                 <Avatar className="h-8 w-8 mr-2 drop-shadow-md">

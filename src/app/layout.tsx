@@ -10,6 +10,7 @@ import { AnalyticsScript } from "./analytics";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { cookies } from "next/headers";
 import { env } from "@/env";
+import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 
 // const GeistSans = localFont({
 //   src: "../../fonts/GeistVF.woff",
@@ -58,8 +59,23 @@ export default async function RootLayout({
     email: user?.email ?? cookies().get("lastKnownEmail")?.value ?? "N/A"
   };
 
+  // Get the initial sidebar state
+  const initialSidebarState = useSidebarToggle.getState().isClosed;
+
   return (
     <html lang="en" suppressHydrationWarning className={`${Inter.className} antialiased`}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                var isClosed = ${JSON.stringify(initialSidebarState)};
+                document.documentElement.style.setProperty('--sidebar-width', isClosed ? '75px' : '250px');
+              })();
+            `,
+          }}
+        />
+      </head>
       <body>
         <ThemeProvider
           attribute="class"
@@ -71,14 +87,10 @@ export default async function RootLayout({
           <Toaster position="bottom-right" duration={3500} />
         </ThemeProvider>
 
-      {/* 
-      - umami analytics 
-      - password-reset is getting sent along with the verificationToken which is bad
-      */}
-      <AnalyticsScript 
-        websiteId={env.UMAMI_WEBSITE_ID} 
-        userData={userData}  
-      />
+        <AnalyticsScript 
+          websiteId={env.UMAMI_WEBSITE_ID} 
+          userData={userData}  
+        />
       </body>
     </html>
   );

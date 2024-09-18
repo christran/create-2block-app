@@ -2,14 +2,14 @@ import { type ReactNode } from "react";
 import { Header } from "../(main)/_components/header";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { dotsBG } from "@/lib/constants";
-import { CollapsibleNavbar } from "../(main)/_components/collapsible-navbar";
+import { Sidebar } from "../(main)/_components/sidebar";
 
 const MainLayout = async ({ children }: { children: ReactNode }) => {
   const { user } = await validateRequest();
 
   return (
     <div className="flex">
-      <CollapsibleNavbar
+      <Sidebar
         userRole={user?.role ?? "guest"}
         fullname={user?.fullname ?? "Guest"}
         email={user?.email ?? "hello@2block.co"}

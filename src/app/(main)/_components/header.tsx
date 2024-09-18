@@ -12,7 +12,7 @@ import { MessageSquareText, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { User } from "@/server/db/schema";
 
-type UserRole = User['role'];
+type UserRole = User["role"];
 
 interface HeaderProps {
   fullname: string,
@@ -69,9 +69,9 @@ export const Header = ({ fullname, email, avatar, userRole }: HeaderProps) => {
   return (
     <header className="flex h-[60px] items-center justify-between border-b px-2 md:px-4 bg-background/85 backdrop-blur-sm sticky top-0 z-30">
       <MobileSheetNavbar 
-        fullname={fullname ?? ''} 
-        email={email ?? ''} 
-        avatar={avatar ?? ''} 
+        fullname={fullname ?? "Guest"} 
+        email={email ?? "hello@2block.co"} 
+        avatar={avatar ?? "/avatars/01.png"} 
         userRole={userRole ?? "guest"} 
       />
       <div className="hidden w-full items-center md:flex">
