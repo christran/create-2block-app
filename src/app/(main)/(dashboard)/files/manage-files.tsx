@@ -92,7 +92,7 @@ export default function ManageFiles({ initialUserFiles }: ManageFilesProps) {
         ) : (
           <div className="grid grid-cols-3 gap-4">
             {fileDetails.map((file) => (
-              <div key={file.id} className="relative aspect-square group">
+              <div key={file.id} className="relative aspect-square group relative">
                 <Image
                   src={file.url || ""}
                   alt={file.originalFilename || 'Uploaded file'}

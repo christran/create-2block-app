@@ -139,11 +139,11 @@ export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, is
           <DropdownMenuTrigger asChild>
             <div className={`cursor-pointer flex h-9 items-center rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all duration-200 hover:text-primary ${isClosed ? "justify-center" : "justify-between"}`}>
               <div className={`flex items-center ${isClosed ? "justify-center w-full" : ""}`}>
-                <Avatar className={`transition-all duration-300 ease-in-out ${isClosed ? "h-8 w-8" : "h-7 w-7"} drop-shadow-md`}>
+                <Avatar className={`relative transition-all duration-300 ease-in-out ${isClosed ? "h-8 w-8" : "h-7 w-7"} drop-shadow-md`}>
                   <AvatarImage 
                     src={avatar} 
                     alt={fullname} 
-                    className="object-cover w-full h-full" 
+                    className="object-cover" 
                     width={64}
                     height={64}
                   />
@@ -164,11 +164,11 @@ export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, is
           <DropdownMenuContent align="center" className={cn("w-[230px]", isClosed ? "ml-2" : "")}>
             <DropdownMenuLabel>
               <div className="flex items-center">
-                <Avatar className="h-8 w-8 mr-2 drop-shadow-md">
+                <Avatar className="h-8 w-8 mr-2 drop-shadow-md relative">
                   <AvatarImage 
                     src={avatar} 
                     alt={fullname} 
-                    className="object-cover w-full h-full" 
+                    className="object-cover"
                     width={64}
                     height={64}
                   />
@@ -237,11 +237,11 @@ export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, is
           <DropdownMenuTrigger asChild>
             <div className={`cursor-pointer flex h-9 items-center rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all duration-200 hover:text-primary ${isClosed ? "justify-center" : "justify-between"}`}>
               <div className={`flex items-center ${isClosed ? "justify-center w-full" : ""}`}>
-                <Avatar className={`transition-all duration-300 ease-in-out ${isClosed ? "h-8 w-8" : "h-7 w-7"} drop-shadow-md`}>
+                <Avatar className={`relative transition-all duration-300 ease-in-out ${isClosed ? "h-8 w-8" : "h-7 w-7"} drop-shadow-md`}>
                   <AvatarImage 
                     src={avatar} 
                     alt={fullname} 
-                    className="object-cover w-full h-full" 
+                    className="object-cover"
                     width={64}
                     height={64}
                   />
@@ -262,11 +262,11 @@ export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, is
           <DropdownMenuContent align="center" className={cn("w-[230px]", isClosed ? "ml-2" : "")}>
             <DropdownMenuLabel>
               <div className="flex items-center">
-                <Avatar className="h-8 w-8 mr-2 drop-shadow-md">
+                <Avatar className="h-8 w-8 mr-2 drop-shadow-md relative">
                   <AvatarImage 
                     src={avatar} 
                     alt={fullname} 
-                    className="object-cover w-full h-full" 
+                    className="object-cover"
                     width={64}
                     height={64}
                   />

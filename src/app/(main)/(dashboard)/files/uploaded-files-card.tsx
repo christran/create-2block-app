@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyCard } from "@/components/empty-card";
@@ -95,7 +97,7 @@ export function UploadedFilesCard({ initialUserFiles, newUploadedFiles }: Upload
   const handleDelete = (fileId: string) => {
     deleteMutation.mutate(fileId);
   };
-
+  
   return (
     <Card>
       <CardHeader>
@@ -118,20 +120,21 @@ export function UploadedFilesCard({ initialUserFiles, newUploadedFiles }: Upload
             className="w-full"
           />
         ) : (
-          <div className="grid grid-cols-3 gap-3.5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5">
             {allFiles?.map((file) =>
               file?.url ? (
                 <div
                   key={file.id}
-                  className="group relative aspect-square overflow-hidden rounded-md bg-slate-100 shadow-md"
+                  className="group aspect-square overflow-hidden rounded-md bg-slate-100 shadow-md relative"
                 >
                   {file.contentType.startsWith("image/") ? (
                     <Image
                       unoptimized={file.contentType === "image/gif"} // TODO: remove if using cloudflare images
+                      quality={100}
                       src={file.url || ""}
                       alt={file.originalFilename}
                       fill
-                      sizes="(max-width: 768px) 33vw, 25vw"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       loading="lazy"
                       className="object-cover"
                     />

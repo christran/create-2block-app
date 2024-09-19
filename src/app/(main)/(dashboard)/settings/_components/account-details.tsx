@@ -227,14 +227,14 @@ export function AccountDetails({
                   <Label>Profile Picture</Label>
                   <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                     <DialogTrigger asChild>
-                      <Avatar className="h-24 w-24 cursor-pointer rounded-full drop-shadow-md hover:opacity-75">
+                      <Avatar className="h-24 w-24 cursor-pointer rounded-full drop-shadow-md hover:opacity-75 relative">
                         <AvatarImage 
                         unoptimized={false}
                         src={avatar ?? ""}
                         width={256}
                         height={256}
                         alt={fullname}
-                        className="object-cover w-full h-full"
+                        className="object-cover"
                         />
                         <AvatarFallback delayMs={100}>
                           {user.fullname
