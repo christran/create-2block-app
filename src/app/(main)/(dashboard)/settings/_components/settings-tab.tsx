@@ -1,7 +1,6 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { User } from "@/server/db/schema";
 import { AccountDetails } from "./account-details";
 import { UpdatePassword } from "./update-password";
 import { MultiFactorAuth } from "./multifactorauth";
@@ -9,17 +8,11 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { LinkedAccounts } from "./linked-accounts";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@/lib/auth/user-provider";
 
-interface UserSettingsProps {
-  id: string | '',
-  fullname: string | '',
-  email: string | '',
-  googleId: string | null,
-  discordId: string | null,
-  githubId: string | null,
-}
+export function SettingsTab({ isPasswordLess, magicLinkAuth }: { isPasswordLess: boolean, magicLinkAuth: boolean }) {
+  const user = useUser();
 
-export function SettingsTab({ user, isPasswordLess, magicLinkAuth }: { user: UserSettingsProps, isPasswordLess: boolean, magicLinkAuth: boolean }) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -51,7 +44,7 @@ export function SettingsTab({ user, isPasswordLess, magicLinkAuth }: { user: Use
     },
     { value: "linked-accounts", label: "Linked Accounts", content: 
       <div className="flex flex-col gap-6">
-        <LinkedAccounts user={user} isPasswordLess={isPasswordLess} magicLinkAuth={magicLinkAuth} /> 
+        <LinkedAccounts isPasswordLess={isPasswordLess} magicLinkAuth={magicLinkAuth} /> 
       </div>
     },
     { value: "usage", label: "Usage", content: 
@@ -72,7 +65,7 @@ export function SettingsTab({ user, isPasswordLess, magicLinkAuth }: { user: Use
   useEffect(() => {
     const tabValues = tabs.map(tab => tab.value);
     if (!tabValues.includes(activeTab)) {
-      router.replace(`?tab=account`);
+      router.replace("?tab=account");
     }
 
     // Prefetch other tabs

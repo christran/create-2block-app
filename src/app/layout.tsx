@@ -10,7 +10,8 @@ import { AnalyticsScript } from "./analytics";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { cookies } from "next/headers";
 import { env } from "@/env";
-import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
+import { UserProvider } from "@/lib/auth/user-provider";
+import { api } from "@/trpc/server";
 
 // const GeistSans = localFont({
 //   src: "../../fonts/GeistVF.woff",
@@ -54,28 +55,15 @@ export default async function RootLayout({
 }) {
   const { user } = await validateRequest();
 
+  const userPromise = api.user.getUser.query();
+
   const userData = {
     userId: user?.id ?? cookies().get("lastKnownUserId")?.value ?? "N/A",
     email: user?.email ?? cookies().get("lastKnownEmail")?.value ?? "N/A"
   };
 
-  // Get the initial sidebar state
-  const initialSidebarState = useSidebarToggle.getState().isClosed;
-
   return (
     <html lang="en" suppressHydrationWarning className={`${Inter.className} antialiased`}>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                var isClosed = ${JSON.stringify(initialSidebarState)};
-                document.documentElement.style.setProperty('--sidebar-width', isClosed ? '75px' : '250px');
-              })();
-            `,
-          }}
-        />
-      </head>
       <body>
         <ThemeProvider
           attribute="class"
@@ -83,7 +71,9 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <TRPCReactProvider>{children}</TRPCReactProvider>
+          <UserProvider userPromise={userPromise}>
+            <TRPCReactProvider>{children}</TRPCReactProvider>
+          </UserProvider>
           <Toaster position="bottom-right" duration={3500} />
         </ThemeProvider>
 

@@ -8,7 +8,7 @@ export default async function UploadPage() {
   const { user } = await validateRequest();
 
   if (!user) redirect(Paths.Login);
-  if (user?.role !== "admin") redirect(Paths.Dashboard);
+  if (user?.role !== "admin") redirect(Paths.Dashboard); // TODO: Remove this when we have a proper permissions system
 
   const userFiles = await api.user.getUserFiles.query();
 

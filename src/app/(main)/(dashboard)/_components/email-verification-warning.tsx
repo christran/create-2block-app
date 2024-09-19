@@ -1,13 +1,11 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { validateRequest } from "@/lib/auth/validate-request";
 import { MailWarning } from "lucide-react";
 import Link from "next/link";
 
-export async function EmailVerificationWarning() {
-  const { user } = await validateRequest();
+export async function EmailVerificationWarning({ emailVerified }: { emailVerified: boolean }) {
 
-  return user?.emailVerified === false ? (
+  return emailVerified === false ? (
     <Alert className="p-4 sm:p-6 [&>svg]:left-4 [&>svg]:top-4 sm:[&>svg]:left-6 sm:[&>svg]:top-6 [&>svg~*]:pl-8 sm:[&>svg~*]:pl-10">
       <MailWarning className="h-5 w-5 sm:h-6 sm:w-6" />
       <div className="flex flex-col sm:flex-row sm:items-center gap-4">

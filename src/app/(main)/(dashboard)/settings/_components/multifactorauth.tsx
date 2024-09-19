@@ -19,7 +19,7 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 
 export function MultiFactorAuth() {
-  const [oneTimeCode, setOneTimeCode] = useState('');
+  const [oneTimeCode, setOneTimeCode] = useState("");
   const [state, formAction] = useFormState(updateTwoFactorAuth, null);
 
   const router = useRouter();
@@ -34,7 +34,7 @@ export function MultiFactorAuth() {
   }, [state, router]);
 
   const handleSubmit = (formData: FormData) => {
-    setOneTimeCode('');
+    setOneTimeCode("");
 
     formAction(formData);
   };

@@ -22,15 +22,22 @@ export const userRouter = createTRPCRouter({
           fullname: true,
           email: true,
           emailVerified: true,
+          role: true,
           contactId: true,
           googleId: true,
           discordId: true,
           githubId: true,
           avatar: true,
+          stripeSubscriptionId: true,
+          stripePriceId: true,
+          stripeCustomerId: true,
+          stripeCurrentPeriodEnd: true,
+          createdAt: true,
+          updatedAt: true,
         },
       });
-    
-      return user;
+      
+      return user ?? null;
     }),
 
   getUserByEmail: protectedProcedure
@@ -43,11 +50,18 @@ export const userRouter = createTRPCRouter({
           fullname: true,
           email: true,
           emailVerified: true,
+          role: true,
           contactId: true,
           googleId: true,
           discordId: true,
           githubId: true,
           avatar: true,
+          stripeSubscriptionId: true,
+          stripePriceId: true,
+          stripeCustomerId: true,
+          stripeCurrentPeriodEnd: true,
+          createdAt: true,
+          updatedAt: true,
         },
       });
   

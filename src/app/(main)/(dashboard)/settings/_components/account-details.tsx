@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,7 +16,6 @@ import { useState, useEffect, useMemo, Suspense } from "react";
 import { useFormState } from "react-dom";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { AccountDetailsSkeleton } from "./account-details-skeleton";
 import { LoadingButton } from "@/components/loading-button";
 import { SubmitButton } from "@/components/submit-button";
 import {
@@ -43,13 +41,7 @@ import { useUploadFile } from "@/lib/hooks/use-upload-file";
 import { api } from "@/trpc/react";
 import { useMutation } from "@tanstack/react-query";
 import { fileUploadSchema, type FileUploadSchema } from "@/lib/types/file-upload";
-
-interface AccountDetailsProps {
-  id: string;
-  fullname: string;
-  email: string;
-  avatar: string;
-}
+import { type UserWithoutPassword } from "@/server/db/schema";
 
 const ALLOWED_FILE_TYPES = {
   "image/jpeg": [".jpg", ".jpeg"],
@@ -63,13 +55,13 @@ export function AccountDetails({
   user,
   isPasswordLess,
 }: {
-  user: AccountDetailsProps;
+  user: UserWithoutPassword | null;
   isPasswordLess: boolean;
 }) {
   const [fullname, setFullname] = useState(user?.fullname ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
   const [files, setFiles] = useState<File[]>([]);
-  const [avatar, setAvatar] = useState(user?.avatar || null);
+  const [avatar, setAvatar] = useState(user?.avatar ?? null);
 
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -219,177 +211,175 @@ export function AccountDetails({
           <CardTitle>Account Details</CardTitle>
           <CardDescription>Update your account information</CardDescription>
         </CardHeader>
-        <Suspense fallback={<AccountDetailsSkeleton />}>
-          <form>
-            <CardContent>
-              <div className="w-full space-y-2 pt-4 md:w-[380px]">
-                <div className="space-y-2">
-                  <Label>Profile Picture</Label>
-                  <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Avatar className="h-24 w-24 cursor-pointer rounded-full drop-shadow-md hover:opacity-75 relative">
-                        <AvatarImage 
-                        unoptimized={false}
-                        src={avatar ?? ""}
-                        width={256}
-                        height={256}
-                        alt={fullname}
-                        className="object-cover"
+        <form>
+          <CardContent>
+            <div className="w-full space-y-2 pt-4 md:w-[380px]">
+              <div className="space-y-2">
+                <Label>Profile Picture</Label>
+                <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Avatar className="h-24 w-24 cursor-pointer rounded-full drop-shadow-md hover:opacity-75 relative">
+                      <AvatarImage 
+                      unoptimized={false}
+                      src={avatar ?? ""}
+                      width={256}
+                      height={256}
+                      alt={fullname}
+                      className="object-cover"
+                      />
+                      <AvatarFallback delayMs={100}>
+                        {user?.fullname
+                          .split(" ")
+                          .map((name) => name.charAt(0).toUpperCase())
+                          .join("")}
+                      </AvatarFallback>
+                    </Avatar>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-md rounded-lg md:max-w-lg">
+                    <DialogHeader>
+                      <DialogTitle>Upload profile picture</DialogTitle>
+                      <DialogDescription>
+                        Drag and drop your picture here or click to browse.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <Form {...form}>
+                      <form
+                        onSubmit={form.handleSubmit(handleSubmit)}
+                        className="flex w-full flex-col gap-6"
+                      >
+                        <FormField
+                          control={form.control}
+                          name="files"
+                          render={({ field }) => (
+                            <div className="space-y-6">
+                              <FormItem className="w-full">
+                                <FormControl>
+                                  <FileUploader
+                                    value={field.value}
+                                    onValueChange={(files) => {
+                                      field.onChange(files);
+                                      setFiles(files);
+                                    }}
+                                    accept={ALLOWED_FILE_TYPES}
+                                    maxFileCount={1}
+                                    maxSize={MAX_FILE_SIZE}
+                                    progresses={progresses}
+                                    disabled={isUploading}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            </div>
+                          )}
                         />
-                        <AvatarFallback delayMs={100}>
-                          {user.fullname
-                            .split(" ")
-                            .map((name) => name.charAt(0).toUpperCase())
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-md rounded-lg md:max-w-lg">
-                      <DialogHeader>
-                        <DialogTitle>Upload profile picture</DialogTitle>
-                        <DialogDescription>
-                          Drag and drop your picture here or click to browse.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <Form {...form}>
-                        <form
-                          onSubmit={form.handleSubmit(handleSubmit)}
-                          className="flex w-full flex-col gap-6"
+                      </form>
+
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          variant="default"
+                          className="flex-1"
+                          disabled={isLoading || files.length === 0}
+                          onClick={form.handleSubmit(handleSubmit)}
                         >
-                          <FormField
-                            control={form.control}
-                            name="files"
-                            render={({ field }) => (
-                              <div className="space-y-6">
-                                <FormItem className="w-full">
-                                  <FormControl>
-                                    <FileUploader
-                                      value={field.value}
-                                      onValueChange={(files) => {
-                                        field.onChange(files);
-                                        setFiles(files);
-                                      }}
-                                      accept={ALLOWED_FILE_TYPES}
-                                      maxFileCount={1}
-                                      maxSize={MAX_FILE_SIZE}
-                                      progresses={progresses}
-                                      disabled={isUploading}
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              </div>
-                            )}
-                          />
-                        </form>
-
-                        <div className="flex gap-2">
-                          <Button
-                            type="button"
-                            variant="default"
-                            className="flex-1"
-                            disabled={isLoading || files.length === 0}
-                            onClick={form.handleSubmit(handleSubmit)}
-                          >
-                            Upload
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            onClick={handleAvatarDelete}
-                            className="flex-1"
-                            disabled={isLoading || avatar === null}
-                          >
-                            Delete
-                          </Button>
-                        </div>
-                      </Form>
-                    </DialogContent>
-                  </Dialog>
-                  {/* <Button variant="link" size="sm" onClick={handleAvatarDelete}>
-                    Delete
-                  </Button> */}
-                </div>
-                <div className="space-y-2">
-                  <Label>Full Name</Label>
-                  <Input
-                    className="bg-secondary/30"
-                    required
-                    placeholder="Jeon Jungkook"
-                    autoComplete="name"
-                    name="fullname"
-                    type="text"
-                    value={fullname}
-                    onChange={(e) => setFullname(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Email</Label>
-                  <Input
-                    className="bg-secondary/30"
-                    // required={isPasswordLess}
-                    placeholder="hello@2block.co"
-                    autoComplete="email"
-                    name="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={isPasswordLess}
-                  />
-                </div>
+                          Upload
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          onClick={handleAvatarDelete}
+                          className="flex-1"
+                          disabled={isLoading || avatar === null}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </Form>
+                  </DialogContent>
+                </Dialog>
+                {/* <Button variant="link" size="sm" onClick={handleAvatarDelete}>
+                  Delete
+                </Button> */}
               </div>
+              <div className="space-y-2">
+                <Label>Full Name</Label>
+                <Input
+                  className="bg-secondary/30"
+                  required
+                  placeholder="Jeon Jungkook"
+                  autoComplete="name"
+                  name="fullname"
+                  type="text"
+                  value={fullname}
+                  onChange={(e) => setFullname(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Email</Label>
+                <Input
+                  className="bg-secondary/30"
+                  // required={isPasswordLess}
+                  placeholder="hello@2block.co"
+                  autoComplete="email"
+                  name="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isPasswordLess}
+                />
+              </div>
+            </div>
 
-              {state?.fieldError ? (
-                <ul className="mt-4 w-full list-disc space-y-1 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive md:w-1/2">
-                  {Object.values(state.fieldError).map((err) => (
-                    <li className="ml-4" key={err}>
-                      {err}
-                    </li>
-                  ))}
-                </ul>
-              ) : state?.formError ? (
-                <p className="mt-4 w-full rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive md:w-1/2">
-                  {state?.formError}
-                </p>
-              ) : null}
-            </CardContent>
-            <CardFooter className="px- gap-2 border-t py-4">
-              <SubmitButton formAction={formAction} disabled={!isDirty}>
-                Update Account
-              </SubmitButton>
-              <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="link" size="sm">
-                    Delete Account
+            {state?.fieldError ? (
+              <ul className="mt-4 w-full list-disc space-y-1 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive md:w-1/2">
+                {Object.values(state.fieldError).map((err) => (
+                  <li className="ml-4" key={err}>
+                    {err}
+                  </li>
+                ))}
+              </ul>
+            ) : state?.formError ? (
+              <p className="mt-4 w-full rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive md:w-1/2">
+                {state?.formError}
+              </p>
+            ) : null}
+          </CardContent>
+          <CardFooter className="px- gap-2 border-t py-4">
+            <SubmitButton formAction={formAction} disabled={!isDirty}>
+              Update Account
+            </SubmitButton>
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
+                <Button variant="link" size="sm">
+                  Delete Account
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="md:max-w w-[90vw] rounded-lg" showCloseButton={false}>
+                <DialogHeader className="flex flex-col space-y-2 text-center sm:text-left">
+                  <DialogTitle className="text-lg font-semibold">
+                    Are you absolutely sure?
+                  </DialogTitle>
+                  <DialogDescription className="text-sm text-muted-foreground">
+                    This action cannot be undone. This will permanently delete your account and
+                    remove your data from our servers.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2">
+                  <Button variant="outline" onClick={() => setOpen(false)}>
+                    Cancel
                   </Button>
-                </DialogTrigger>
-                <DialogContent className="md:max-w w-[90vw] rounded-lg" showCloseButton={false}>
-                  <DialogHeader className="flex flex-col space-y-2 text-center sm:text-left">
-                    <DialogTitle className="text-lg font-semibold">
-                      Are you absolutely sure?
-                    </DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      This action cannot be undone. This will permanently delete your account and
-                      remove your data from our servers.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2">
-                    <Button variant="outline" onClick={() => setOpen(false)}>
-                      Cancel
-                    </Button>
-                    <LoadingButton
-                      variant="destructive"
-                      loading={isLoading}
-                      onClick={accountDelete}
-                    >
-                      Delete Account
-                    </LoadingButton>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </CardFooter>
-          </form>
-        </Suspense>
+                  <LoadingButton
+                    variant="destructive"
+                    loading={isLoading}
+                    onClick={accountDelete}
+                  >
+                    Delete Account
+                  </LoadingButton>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </CardFooter>
+        </form>
       </Card>
     </>
   );

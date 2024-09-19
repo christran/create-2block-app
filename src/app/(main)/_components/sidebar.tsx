@@ -10,15 +10,18 @@ import { SidebarToggle } from "./sidebar-button";
 import { cn } from "@/lib/utils";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import { useStore } from "@/store/use-store";
+import type { User } from "@/server/db/schema";
+
+type UserRole = User["role"];
 
 interface SidebarProps {
-  userRole: string;
   fullname: string;
   email: string;
+  userRole: UserRole;
   avatar: string;
 }
 
-export function Sidebar({ userRole, fullname, email, avatar }: SidebarProps) {
+export function Sidebar({ fullname, email, userRole, avatar, }: SidebarProps) {
   const sidebar = useStore(useSidebarToggle, (state) => state);
 
   // if(!sidebar) return null;

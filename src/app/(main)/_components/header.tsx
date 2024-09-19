@@ -1,9 +1,5 @@
 "use client"
 
-import { PiHandPeaceLight } from "@/components/icons";
-import { APP_TITLE_UNSTYLED, Paths } from "@/lib/constants";
-import { UserDropdownHeader } from "@/app/(main)/_components/user-dropdown-header";
-import { validateRequest } from "@/lib/auth/validate-request";
 import Link from "next/link"
 import { MobileSheetNavbar } from "./mobile-sheet-navbar";
 import { Button } from "@/components/ui/button";
@@ -11,14 +7,15 @@ import { Input } from "@/components/ui/input";
 import { MessageSquareText, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { User } from "@/server/db/schema";
+import { Paths } from "@/lib/constants";
 
 type UserRole = User["role"];
 
 interface HeaderProps {
   fullname: string,
   email: string,
-  avatar: string,
   userRole: UserRole;
+  avatar: string,
 }
 
 export const Header = ({ fullname, email, avatar, userRole }: HeaderProps) => {

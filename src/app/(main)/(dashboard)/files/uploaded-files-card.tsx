@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyCard } from "@/components/empty-card";

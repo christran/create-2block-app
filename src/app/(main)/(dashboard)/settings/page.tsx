@@ -19,10 +19,6 @@ export default async function SettingsPage() {
     redirect(Paths.Login);
   }
 
-  // const userData = await api.user.getUser.query();
-
-  // if (!userData) notFound();
-
   const isPasswordLess = await api.user.isPasswordLess.query();
 
   return (
@@ -34,7 +30,7 @@ export default async function SettingsPage() {
       </div>
       
       <div className="flex flex-col gap-6 mx-auto max-w-5xl px-4 md:px-2 pb-8">
-        <SettingsTab user={user} isPasswordLess={isPasswordLess} magicLinkAuth={env.MAGIC_LINK_AUTH} />
+        <SettingsTab isPasswordLess={isPasswordLess} magicLinkAuth={env.MAGIC_LINK_AUTH} />
       </div>
     </>
   );

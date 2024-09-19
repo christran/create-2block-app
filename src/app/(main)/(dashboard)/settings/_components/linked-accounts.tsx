@@ -13,27 +13,21 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { DiscordLogoIcon, faGoogle, FontAwesomeIcon, GitHubLogoIcon } from "@/components/icons"
-import { APP_TITLE } from "@/lib/constants";
+import { useUser } from "@/lib/auth/user-provider";
 
-interface LinkedAccountProps {
-  googleId: string | null
-  discordId: string | null
-  githubId: string | null
-}
-
-export function LinkedAccounts({ user, isPasswordLess, magicLinkAuth }: { user: LinkedAccountProps; isPasswordLess: boolean, magicLinkAuth: boolean }) {
+export function LinkedAccounts({ isPasswordLess, magicLinkAuth }: { isPasswordLess: boolean, magicLinkAuth: boolean }) {
+  const user = useUser();
   const [authError, setAuthError] = useState<string | null>(null);
-  // const formRef = useRef<HTMLFormElement>(null);
 
   const router = useRouter();
 
   useEffect(() => {
-    const cookies = document.cookie.split(';');
-    const authErrorCookie = cookies.find(cookie => cookie.trim().startsWith('auth_error='));
+    const cookies = document.cookie.split(";");
+    const authErrorCookie = cookies.find(cookie => cookie.trim().startsWith("auth_error="));
     if (authErrorCookie) {
-      const errorMessage = decodeURIComponent(authErrorCookie.split('=')[1]!);
+      const errorMessage = decodeURIComponent(authErrorCookie.split("=")[1]!);
       setAuthError(errorMessage);
-      document.cookie = 'auth_error=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      document.cookie = "auth_error=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     }
   }, []);
 
@@ -43,16 +37,16 @@ export function LinkedAccounts({ user, isPasswordLess, magicLinkAuth }: { user: 
     }
   }, [authError]);
 
-  function handleSocial(provider: 'google' | 'discord' | 'github') {
-    const connectedAccountsCount = ['googleId', 'discordId', 'githubId'].filter(id => user[id as keyof LinkedAccountProps]).length;
+  function handleSocial(provider: "google" | "discord" | "github") {
+    const connectedAccountsCount = ["googleId", "discordId", "githubId"].filter(id => user[id as keyof LinkedAccountProps]).length;
     
     if(!magicLinkAuth) {
-      if (isPasswordLess && user[`${provider}Id`] && connectedAccountsCount <= 1) {
-        return toast.error(`You can't remove this account without setting a password or connecting another account.`);
+      if (isPasswordLess && user?.[`${provider}Id`] && connectedAccountsCount <= 1) {
+        return toast.error("You can't remove this account without setting a password or connecting another account.");
       }
     }
 
-    const url = user[`${provider}Id`] ? `/login/${provider}?disconnect=1` : `/login/${provider}`;
+    const url = user?.[`${provider}Id`] ? `/login/${provider}?disconnect=1` : `/login/${provider}`;
     router.push(url);
   }
 
@@ -68,7 +62,7 @@ export function LinkedAccounts({ user, isPasswordLess, magicLinkAuth }: { user: 
         <div className="w-full md:w-1/2 space-y-2 pt-5">
           <Button
             variant="outline"
-            onClick={() => handleSocial('google')}
+            onClick={() => handleSocial("google")}
             className="w-full bg-secondary/30"
           >
             <FontAwesomeIcon icon={faGoogle} className="mr-2 h-5 w-5" />
@@ -76,7 +70,7 @@ export function LinkedAccounts({ user, isPasswordLess, magicLinkAuth }: { user: 
           </Button>
           <Button
             variant="outline"
-            onClick={() => handleSocial('discord')}
+            onClick={() => handleSocial("discord")}
             className="w-full bg-secondary/30"
           >
             <DiscordLogoIcon className="mr-2 h-5 w-5" />
@@ -84,7 +78,7 @@ export function LinkedAccounts({ user, isPasswordLess, magicLinkAuth }: { user: 
           </Button>
           <Button
             variant="outline"
-            onClick={() => handleSocial('github')}
+            onClick={() => handleSocial("github")}
             className="w-full bg-secondary/30"
           >
             <GitHubLogoIcon className="mr-2 h-5 w-5" />

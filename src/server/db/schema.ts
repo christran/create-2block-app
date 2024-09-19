@@ -47,6 +47,7 @@ export const users = pgTable(
 );
 
 export type User = typeof users.$inferSelect;
+export type UserWithoutPassword = Omit<User, "hashedPassword">;
 export type NewUser = typeof users.$inferInsert;
 
 export const sessions = pgTable(
@@ -61,13 +62,13 @@ export const sessions = pgTable(
   }),
 );
 
-export const files = pgTable('files', {
-  id: uuid('id').primaryKey(),
-  key: varchar('key', { length: 255 }).notNull(),
+export const files = pgTable("files", {
+  id: uuid("id").primaryKey(),
+  key: varchar("key", { length: 255 }).notNull(),
   userId: varchar("user_id", { length: 21 }).notNull(),
-  originalFilename: varchar('original_filename', { length: 255 }).notNull(),
-  contentType: varchar('content_type', { length: 100 }).notNull(),
-  fileSize: bigint('file_size', { mode: 'number' }).notNull(),
+  originalFilename: varchar("original_filename", { length: 255 }).notNull(),
+  contentType: varchar("content_type", { length: 100 }).notNull(),
+  fileSize: bigint("file_size", { mode: "number" }).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date" }).$onUpdate(() => new Date()),
 });
