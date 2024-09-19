@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { logout } from "@/lib/auth/actions";;
 import { toast } from "sonner";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/next-avatar";
 import { Paths } from "@/lib/constants";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Copy, CreditCardIcon, EllipsisVertical, LogIn, LogOut, Pencil, Settings2 } from "lucide-react";
@@ -140,7 +140,13 @@ export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, is
             <div className={`cursor-pointer flex h-9 items-center rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all duration-200 hover:text-primary ${isClosed ? "justify-center" : "justify-between"}`}>
               <div className={`flex items-center ${isClosed ? "justify-center w-full" : ""}`}>
                 <Avatar className={`transition-all duration-300 ease-in-out ${isClosed ? "h-8 w-8" : "h-7 w-7"} drop-shadow-md`}>
-                  <AvatarImage src={avatar} alt={fullname} className="object-cover w-full h-full" />
+                  <AvatarImage 
+                    src={avatar} 
+                    alt={fullname} 
+                    className="object-cover w-full h-full" 
+                    width={64}
+                    height={64}
+                  />
                   <AvatarFallback delayMs={100}>
                     {fullname.split(" ").map(name => name.charAt(0).toUpperCase()).join("")}
                   </AvatarFallback>
@@ -159,7 +165,13 @@ export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, is
             <DropdownMenuLabel>
               <div className="flex items-center">
                 <Avatar className="h-8 w-8 mr-2 drop-shadow-md">
-                  <AvatarImage src={avatar} alt={fullname} className="object-cover w-full h-full" />
+                  <AvatarImage 
+                    src={avatar} 
+                    alt={fullname} 
+                    className="object-cover w-full h-full" 
+                    width={64}
+                    height={64}
+                  />
                   <AvatarFallback delayMs={100}>
                     {fullname.split(" ").map(name => name.charAt(0).toUpperCase()).join("")}
                   </AvatarFallback>
@@ -226,7 +238,13 @@ export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, is
             <div className={`cursor-pointer flex h-9 items-center rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all duration-200 hover:text-primary ${isClosed ? "justify-center" : "justify-between"}`}>
               <div className={`flex items-center ${isClosed ? "justify-center w-full" : ""}`}>
                 <Avatar className={`transition-all duration-300 ease-in-out ${isClosed ? "h-8 w-8" : "h-7 w-7"} drop-shadow-md`}>
-                  <AvatarImage src={avatar} alt={fullname} className="object-cover w-full h-full" />
+                  <AvatarImage 
+                    src={avatar} 
+                    alt={fullname} 
+                    className="object-cover w-full h-full" 
+                    width={64}
+                    height={64}
+                  />
                   <AvatarFallback delayMs={100}>
                     {fullname.split(" ").map(name => name.charAt(0).toUpperCase()).join("")}
                   </AvatarFallback>
@@ -245,7 +263,13 @@ export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, is
             <DropdownMenuLabel>
               <div className="flex items-center">
                 <Avatar className="h-8 w-8 mr-2 drop-shadow-md">
-                  <AvatarImage src={avatar} alt={fullname} className="object-cover w-full h-full" />
+                  <AvatarImage 
+                    src={avatar} 
+                    alt={fullname} 
+                    className="object-cover w-full h-full" 
+                    width={64}
+                    height={64}
+                  />
                   <AvatarFallback delayMs={100}>
                     {fullname.split(" ").map(name => name.charAt(0).toUpperCase()).join("")}
                   </AvatarFallback>

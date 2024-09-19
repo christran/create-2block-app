@@ -29,7 +29,7 @@ const getUserGitHubEmail = async (accessToken: string): Promise<GitHubUserEmail 
 }
 
 function redirectWithError(path: string, error: string): Response {
-  cookies().set('auth_error', error, { maxAge: 5, path: '/' });
+  cookies().set("auth_error", error, { maxAge: 5, path: "/" });
   return new Response(null, { status: 302, headers: { Location: path } });
 }
 
@@ -44,7 +44,7 @@ async function handleAccountLinking(githubUser: GitHubUser, userId: string): Pro
 async function handleLogin(githubUser: GitHubUser, existingUser: { id: string; githubId: string | null, email: string }): Promise<Response> {
   // If the email
   if (existingUser.githubId === null) {
-    return redirectWithError(Paths.Login, `Please log in with your existing account and link your GitHub account in the security settings.`);
+    return redirectWithError(Paths.Login, "Please log in with your existing account and link your GitHub account in the security settings.");
   }
 
   const session = await lucia.createSession(existingUser.id, {});
@@ -66,7 +66,7 @@ async function createNewUser(githubUser: GitHubUser, githubUserEmail: GitHubUser
 
   // GitHub account is not linked to any account but the GitHub email already exists in the db
   if (existingUser) {
-    return redirectWithError(Paths.Login, 'Please log in with your existing account and link your Google account in the security settings.');
+    return redirectWithError(Paths.Login, "Please log in with your existing account and link your Google account in the security settings.");
   }
 
   const userId = generateId(21);
@@ -115,7 +115,7 @@ export async function GET(request: Request): Promise<Response> {
     const githubUserEmail = await getUserGitHubEmail(tokens.accessToken);
 
     if (!githubUserEmail?.email || !githubUserEmail?.verified) {
-      return redirectWithError(user ? Paths.Security : Paths.Login, 'Please verify your email on GitHub before continuing');
+      return redirectWithError(user ? Paths.LinkedAccounts : Paths.Login, "Please verify your email on GitHub before continuing");
     }
 
     const existingUser = await db.query.users.findFirst({
@@ -130,7 +130,7 @@ export async function GET(request: Request): Promise<Response> {
     if (user) {
       // If githubId exists in db and If userId in the db !== session user id
       return existingUser && existingUser.id !== user.id
-        ? redirectWithError(Paths.Security, 'GitHub account is already linked with another account')
+        ? redirectWithError(Paths.LinkedAccounts, "GitHub account is already linked with another account")
         : handleAccountLinking(githubUser, user.id);
     } else {
       // User is not logged in handle logiin or sign up

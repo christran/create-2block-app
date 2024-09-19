@@ -10,7 +10,6 @@ import { Paths } from "@/lib/constants";
 import { myPostsSchema } from "@/server/api/routers/post/post.input";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { AccountDetailsSkeleton } from "../settings/_components/account-details-skeleton";
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),

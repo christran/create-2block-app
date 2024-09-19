@@ -127,6 +127,7 @@ export function UploadedFilesCard({ initialUserFiles, newUploadedFiles }: Upload
                 >
                   {file.contentType.startsWith("image/") ? (
                     <Image
+                      unoptimized={file.contentType === "image/gif"} // TODO: remove if using cloudflare images
                       src={file.url || ""}
                       alt={file.originalFilename}
                       fill

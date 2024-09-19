@@ -15,8 +15,12 @@ const config = {
             protocol: "https",
             hostname: "2block.94b3308d853c120b7b7d21af8dc272e6.r2.cloudflarestorage.com",
           },
+          {
+            protocol: "https",
+            hostname: "media.2block.co",
+          },
         ],
-        unoptimized: true,
+        unoptimized: false,
     },
 
     experimental: {

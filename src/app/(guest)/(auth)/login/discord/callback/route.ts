@@ -20,7 +20,7 @@ async function getDiscordUser(code: string): Promise<DiscordUser> {
 }
 
 function redirectWithError(path: string, error: string): Response {
-  cookies().set('auth_error', error, { maxAge: 5, path: '/' });
+  cookies().set("auth_error", error, { maxAge: 5, path: "/" });
   return new Response(null, { status: 302, headers: { Location: path } });
 }
 
@@ -34,7 +34,7 @@ async function handleAccountLinking(discordUser: DiscordUser, userId: string): P
 
 async function handleLogin(discordUser: DiscordUser, existingUser: { id: string; discordId: string | null }): Promise<Response> {
   if (existingUser.discordId === null) {
-    return redirectWithError(Paths.Login, 'Please log in with your existing account and link your Discord account in the security settings.');
+    return redirectWithError(Paths.Login, "Please log in with your existing account and link your Discord account in the security settings.");
   }
 
   const session = await lucia.createSession(existingUser.id, {});
@@ -55,7 +55,7 @@ async function createNewUser(discordUser: DiscordUser): Promise<Response> {
   });
 
   if (existingUser) {
-    return redirectWithError(Paths.Login, 'Please log in with your existing account and link your Discord account in the security settings.');
+    return redirectWithError(Paths.Login, "Please log in with your existing account and link your Discord account in the security settings.");
   }
 
   const userId = generateId(21);
@@ -106,7 +106,7 @@ export async function GET(request: Request): Promise<Response> {
     const discordUser = await getDiscordUser(code);
 
     if (!discordUser.email || !discordUser.verified) {
-      return redirectWithError(user ? Paths.Security : Paths.Login, 'Please verify your email on Discord before continuing');
+      return redirectWithError(user ? Paths.LinkedAccounts : Paths.Login, "Please verify your email on Discord before continuing");
     }
 
     const existingUser = await db.query.users.findFirst({
@@ -120,7 +120,7 @@ export async function GET(request: Request): Promise<Response> {
     if (user) {
       // User is logged in and wants to link account
       return existingUser && existingUser.id !== user.id
-        ? redirectWithError(Paths.Security, 'Discord account is already linked with another account')
+        ? redirectWithError(Paths.LinkedAccounts, "Discord account is already linked with another account")
         : handleAccountLinking(discordUser, user.id);
     } else {
       // User is not logged in

@@ -159,6 +159,7 @@ export function DashboardNavbar({ userRole, isClosed }: DashboardNavbarProps) {
                         <TooltipTrigger asChild>
                           <span className={cn(
                             inactiveLinkClass, 
+                            path === item.href ? activeLinkClass : "",
                             isClosed ? "justify-center" : "",
                             "transition-none duration-300 ease-in-out"
                             )}>

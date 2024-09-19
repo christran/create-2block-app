@@ -40,7 +40,7 @@ export function Sidebar({ userRole, fullname, email, avatar }: SidebarProps) {
                       "flex items-center text-lg font-extrabold text-primary/75 hover:text-yellow-400/90",
                       sidebar?.isClosed? "justify-center w-8 h-8" : "w-full"
                     )}
-                    href={Paths.Dashboard}
+                    href={Paths.Home}
                   >
                     <PiHandPeaceLight className={cn(
                       "flex-shrink-0",

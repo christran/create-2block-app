@@ -20,7 +20,7 @@ async function getGoogleUser(code: string, codeVerifier: string): Promise<Google
 }
 
 function redirectWithError(path: string, error: string): Response {
-  cookies().set('auth_error', error, { maxAge: 5, path: '/' });
+  cookies().set("auth_error", error, { maxAge: 5, path: "/" });
   return new Response(null, { status: 302, headers: { Location: path } });
 }
 
@@ -34,7 +34,7 @@ async function handleAccountLinking(googleUser: GoogleUser, userId: string): Pro
 
 async function handleLogin(googleUser: GoogleUser, existingUser: { id: string; googleId: string | null }): Promise<Response> {
   if (existingUser.googleId === null) {
-    return redirectWithError(Paths.Login, 'Please log in with your existing account and link your Google account in the security settings.');
+    return redirectWithError(Paths.Login, "Please log in with your existing account and link your Google account in the security settings.");
   }
 
   const session = await lucia.createSession(existingUser.id, {});
@@ -55,7 +55,7 @@ async function createNewUser(googleUser: GoogleUser): Promise<Response> {
   });
 
   if (existingUser) {
-    return redirectWithError(Paths.Login, 'Please log in with your existing account and link your Google account in the security settings.');
+    return redirectWithError(Paths.Login, "Please log in with your existing account and link your Google account in the security settings.");
   }
 
   const userId = generateId(21);
@@ -89,7 +89,7 @@ export async function GET(request: Request): Promise<Response> {
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
   const storedState = cookies().get("google_oauth_state")?.value ?? null;
-  const storedCodeVerifier = cookies().get("google_code_verifier")?.value ?? '';
+  const storedCodeVerifier = cookies().get("google_code_verifier")?.value ?? "";
   const googleError = url.searchParams.get("error");
 
   if (!code || !state || !storedState || state !== storedState || googleError) {
@@ -103,7 +103,7 @@ export async function GET(request: Request): Promise<Response> {
     const googleUser = await getGoogleUser(code, storedCodeVerifier);
 
     if (!googleUser.email || !googleUser.email_verified) {
-      return redirectWithError(user ? Paths.Security : Paths.Login, 'Please verify your email on Google before continuing');
+      return redirectWithError(user ? Paths.LinkedAccounts : Paths.Login, "Please verify your email on Google before continuing");
     }
 
     const existingUser = await db.query.users.findFirst({
@@ -117,7 +117,7 @@ export async function GET(request: Request): Promise<Response> {
     if (user) {
       // User is logged in and wants to link account
       return existingUser && existingUser.id !== user.id
-        ? redirectWithError(Paths.Security, 'Google account is already linked with another account')
+        ? redirectWithError(Paths.LinkedAccounts, "Google account is already linked with another account")
         : handleAccountLinking(googleUser, user.id);
     } else {
       // User is not logged in

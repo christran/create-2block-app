@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -28,7 +29,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { FileUploader } from "@/components/file-uploader";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/next-avatar";
 import {
   Form,
   FormField,
@@ -227,10 +228,13 @@ export function AccountDetails({
                   <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                     <DialogTrigger asChild>
                       <Avatar className="h-24 w-24 cursor-pointer rounded-full drop-shadow-md hover:opacity-75">
-                        <AvatarImage
-                          src={avatar ?? ""}
-                          alt={fullname}
-                          className="h-full w-full object-cover"
+                        <AvatarImage 
+                        unoptimized={false}
+                        src={avatar ?? ""}
+                        width={256}
+                        height={256}
+                        alt={fullname}
+                        className="object-cover w-full h-full"
                         />
                         <AvatarFallback delayMs={100}>
                           {user.fullname
