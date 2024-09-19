@@ -1,7 +1,7 @@
 import { BrainCircuit, CreditCardIcon, Folder, Home, LogIn, Settings2 } from "lucide-react";
 import { PiOpenAiLogo, PiRobot } from "react-icons/pi";
 import type { User } from "@/server/db/schema";
-
+import { type ElementType } from "react";
 export const APP_TITLE = "✌️BLOCK";
 export const APP_DESCRIPTION = "2BLOCK"
 export const APP_TITLE_PLAIN = "2BLOCK"
@@ -44,7 +44,8 @@ export enum Paths {
 interface NavbarItem {
   title: string;
   href: string;
-  icon: React.ElementType;
+  icon: ElementType;
+  lottie?: string;
   roles: User["role"][];
   beta?: boolean;
 }
@@ -63,6 +64,7 @@ export const navbarItems: NavbarCategory[] = [
         title: "Dashboard",
         href: Paths.Dashboard,
         icon: Home,
+        // lottie: "home",
         roles: ["default", "member", "premium", "admin"]
       },
       {
@@ -116,15 +118,18 @@ export const navbarItems: NavbarCategory[] = [
   },
 ];
 
-export const guestNavBarItems = [
+export const guestNavBarItems: NavbarItem[] = [
   {
     title: "Home",
     href: Paths.Home,
     icon: Home,
+    // lottie: "home",
+    roles: ["guest"]
   },
   {
     title: "Login",
     href: Paths.Login,
     icon: LogIn,
+    roles: ["guest"]
   },
 ];

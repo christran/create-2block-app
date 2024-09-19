@@ -8,6 +8,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { LockClosedIcon } from "@radix-ui/react-icons";
+import { LottieIcon } from "@/components/lottie-icon";
 
 interface DashboardNavbarProps {
   userRole: string;
@@ -19,7 +20,7 @@ const activeLinkClass = "text-primary bg-zinc-600/10 dark:bg-zinc-800/70"
 
 export function DashboardNavbar({ userRole, isClosed }: DashboardNavbarProps) {
   const path = usePathname();
-  
+
   return (
     <>
       {userRole !== "guest" ? (
@@ -50,11 +51,23 @@ export function DashboardNavbar({ userRole, isClosed }: DashboardNavbarProps) {
                               )}
                             >
                               <span className="flex items-center">
-                                <item.icon className={cn(
-                                  "transition-all duration-300 ease-in-out",
-                                  isClosed ? "h-6 w-6" : "h-5 w-5 mr-2"
-                                )} 
-                              />
+                                {item.lottie ? (
+                                  <LottieIcon 
+                                    iconName={item.lottie}
+                                    playOnHover={true}
+                                    speed={1.5}
+                                    className={cn(
+                                      "transition-all duration-300 ease-in-out",
+                                      isClosed ? "h-7 w-7" : "h-5 w-5 mr-2"
+                                    )}
+                                  />
+                                ) : (
+                                  <item.icon className={cn(
+                                    "transition-all duration-300 ease-in-out",
+                                    isClosed ? "h-6 w-6" : "h-5 w-5 mr-2"
+                                  )} 
+                                  />
+                                )}
                                 <span 
                                   className={cn(
                                     "transition-all duration-300 ease-in-out whitespace-nowrap",
@@ -164,11 +177,23 @@ export function DashboardNavbar({ userRole, isClosed }: DashboardNavbarProps) {
                             "transition-none duration-300 ease-in-out"
                             )}>
                               <span className="flex items-center">
-                                <item.icon className={cn(
-                                  "transition-all duration-300 ease-in-out",
-                                  isClosed ? "h-6 w-6" : "h-5 w-5 mr-2"
-                              )}
-                              />
+                              {item.lottie ? (
+                                  <LottieIcon 
+                                    iconName={item.lottie}
+                                    playOnHover={true}
+                                    speed={1.5}
+                                    className={cn(
+                                      "transition-all duration-300 ease-in-out",
+                                      isClosed ? "h-7 w-7" : "h-5 w-5 mr-2"
+                                    )}
+                                  />
+                                ) : (
+                                  <item.icon className={cn(
+                                    "transition-all duration-300 ease-in-out",
+                                    isClosed ? "h-6 w-6" : "h-5 w-5 mr-2"
+                                  )} 
+                                  />
+                                )}
                               <span 
                                 className={cn(
                                   "transition-all duration-300 ease-in-out whitespace-nowrap",

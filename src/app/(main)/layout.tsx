@@ -1,14 +1,20 @@
-"use client";
-
 import { type ReactNode } from "react";
 import { Header } from "./_components/header";
 import { Sidebar } from "./_components/sidebar";
 import { EmailVerificationWarning } from "./(dashboard)/_components/email-verification-warning";
 import { dotsBG } from "@/lib/constants";
 import { useUser } from "@/lib/auth/user-provider";
+import { validateRequest } from "@/lib/auth/validate-request";
 
-const MainLayout = ({ children }: { children: ReactNode }) => {
-  const userData = useUser();
+const MainLayout = async ({ children }: { children: ReactNode }) => {
+  const { user: userData } = await validateRequest();
+
+  /*
+  This is a client component, so we need to use the server component to get the user data 
+  but trpc unauthorized bug when user is not logged in 
+  and trying to access the user data or any protected page 
+  */
+  // const userData = useUser(); 
 
   return (
     <div className="flex">

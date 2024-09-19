@@ -112,16 +112,20 @@ export function MagicLink() {
         </form>
         </CardContent>
       </Card>
-      <div className="text-center text-[10.6px] text-muted-foreground pt-4">
+      <div className="text-center text-[10.6px] text-muted-foreground pt-2">
         By signing in, you agree to our{" "}
         <Link href={Paths.TermsOfService} className="hover:underline text-blue-500" prefetch={false}>
-          terms of service
+          <Button variant="linkHover2" className="p-0 h-7 text-[10.6px] font-normal">
+            terms of service
+          </Button>
         </Link>
         {" "}
         and
         {" "}
         <Link href={Paths.PrivacyPolicy} className="hover:underline text-blue-500" prefetch={false}>
+          <Button variant="linkHover2" className="p-0 h-7 text-[10.6px] font-normal">
           privacy policy
+          </Button>
         </Link>
         .
       </div>

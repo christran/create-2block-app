@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { MailWarning } from "lucide-react";
 import Link from "next/link";
 
-export async function EmailVerificationWarning({ emailVerified }: { emailVerified: boolean }) {
+export function EmailVerificationWarning({ emailVerified }: { emailVerified: boolean }) {
 
   return emailVerified === false ? (
     <Alert className="p-4 sm:p-6 [&>svg]:left-4 [&>svg]:top-4 sm:[&>svg]:left-6 sm:[&>svg]:top-6 [&>svg~*]:pl-8 sm:[&>svg~*]:pl-10">

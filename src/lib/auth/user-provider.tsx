@@ -34,6 +34,7 @@ export function useUser() {
   if (!userPromise) {
     throw new Error("useUser must be used within a UserProvider");
   }
+  
   const user = use(userPromise);
   return user;
 }

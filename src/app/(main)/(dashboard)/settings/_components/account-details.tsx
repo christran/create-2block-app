@@ -344,13 +344,13 @@ export function AccountDetails({
               </p>
             ) : null}
           </CardContent>
-          <CardFooter className="px- gap-2 border-t py-4">
+          <CardFooter className="px-6 gap-2 border-t py-4">
             <SubmitButton formAction={formAction} disabled={!isDirty}>
               Update Account
             </SubmitButton>
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
-                <Button variant="link" size="sm">
+                <Button variant="linkHover2" className="ml-3 p-0 h-8 text-[12px]">
                   Delete Account
                 </Button>
               </DialogTrigger>

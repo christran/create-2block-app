@@ -108,13 +108,17 @@ export function Login() {
           <div className="mb-2 flex flex-wrap items-center justify-between text-xs text-muted-foreground">
             <div>
               Don't have an account?{" "}
-              <Button variant="link" size="sm" className="p-0 h-auto">
-                <Link href={Paths.Signup} className="text-blue-500">Sign up</Link>
-              </Button>
+              <Link href={Paths.Signup} className="text-blue-500">
+                <Button variant="linkHover2" className="p-0 h-0 after:-bottom-2 after:h-[0.8px] text-[12px] font-medium">
+                  Sign up
+                </Button>
+              </Link>
             </div>
-            <Button variant="link" size="sm" className="p-0 h-auto">
-              <Link href={Paths.ResetPassword} className="text-blue-500">Forgot password?</Link>
-            </Button>
+              <Link href={Paths.ResetPassword} className="text-blue-500">
+                <Button variant="linkHover2" className="p-0 h-0 after:-bottom-2 after:h-[0.8px] text-[12px] font-medium">
+                  Forgot password?
+                </Button>
+              </Link>
           </div>
 
           {state?.fieldError ? (
@@ -142,16 +146,20 @@ export function Login() {
         </form>
         </CardContent>
       </Card>
-      <div className="text-center text-[10.6px] text-muted-foreground pt-4">
+      <div className="text-center text-[10.6px] text-muted-foreground pt-2">
         By signing in, you agree to our{" "}
         <Link href={Paths.TermsOfService} className="hover:underline text-blue-500" prefetch={false}>
-          terms of service
+          <Button variant="linkHover2" className="p-0 h-7 text-[10.6px] font-normal">
+            terms of service
+          </Button>
         </Link>
         {" "}
         and
         {" "}
         <Link href={Paths.PrivacyPolicy} className="hover:underline text-blue-500" prefetch={false}>
-          privacy policy
+          <Button variant="linkHover2" className="p-0 h-7 text-[10.6px] font-normal">
+            privacy policy
+          </Button>
         </Link>
         .
       </div>

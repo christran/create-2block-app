@@ -6,6 +6,7 @@ import { Paths } from "@/lib/constants";
 import Link from "next/link";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { BorderBeam } from "@/components/border-beam";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -24,11 +25,13 @@ const HomePage = async () => {
             The quick brown fox jumped over the lazy dog.
           </p>
           <div className="flex justify-center gap-4">
-            
+
+
             <Link href={user ? Paths.Dashboard : Paths.Login}>
-              <Button size="lg" variant="outline" className="shadow-lg">
+              <Button size="lg" variant="outline" className="border-none shadow-lg relative">
                 <DesktopIcon className="mr-2 h-5 w-5" />
                 Connect
+                <BorderBeam size={70} borderWidth={1} duration={3} delay={9} opacity={0.35} className="z-50"/>
               </Button>
             </Link>
           </div>

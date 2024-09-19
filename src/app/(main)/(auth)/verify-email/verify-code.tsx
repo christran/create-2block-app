@@ -90,7 +90,7 @@ export const VerifyCode = () => {
         </SubmitButton>
       </form>
       <form action={logout}>
-        <Button variant="link" className="p-0 font-normal text-xs text-blue-500">
+        <Button variant="linkHover2" className="p-0 font-normal text-xs text-blue-500">
           Wrong account? Click here to log out
         </Button>
       </form>

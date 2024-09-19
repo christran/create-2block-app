@@ -53,9 +53,11 @@ export function SendResetEmail() {
       <div className="flex flex-wrap justify-between text-xs">
           <div>
             Don't want to reset?{" "}
-            <Button variant="link" size="sm" className="p-0 h-auto">
-              <Link href={Paths.Login} className="text-blue-500">Log in</Link>
-            </Button>
+              <Link href={Paths.Login} className="text-blue-500">
+                <Button variant="linkHover2" className="p-0 h-0 after:-bottom-2 after:h-[0.8px] text-[12px] font-medium">
+                  Log in
+                </Button>
+              </Link>
           </div>
       </div>
 

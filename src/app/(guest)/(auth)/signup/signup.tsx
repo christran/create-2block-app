@@ -98,9 +98,11 @@ export function Signup() {
             <div className="flex flex-wrap items-center justify-between text-xs text-muted-foreground">
               <div>
                 Already have an account?{" "}
-                <Button variant="link" size="sm" className="p-0 h-auto">
-                  <Link href={Paths.Login} className="text-blue-500">Log in</Link>
-                </Button>
+                  <Link href={Paths.Login} className="text-blue-500">
+                    <Button variant="linkHover2" className="p-0 h-0 after:-bottom-2 after:h-[0.8px] text-[12px] font-medium">
+                      Log in
+                    </Button>
+                  </Link>
               </div>
             </div>
             <SubmitButton className="w-full shadow-md" aria-label="submit-btn" disabled={!isDirty}>
@@ -134,18 +136,24 @@ export function Signup() {
         </div>
       </CardContent>
       </Card>
-      <div className="text-center text-[10.6px] text-muted-foreground pt-4">
+      <div className="text-center text-[10.6px] text-muted-foreground pt-2">
       By signing up, you agree to our{" "}
       <Link href={Paths.TermsOfService} className="hover:underline text-blue-500" prefetch={false}>
-        terms
+        <Button variant="linkHover2" className="p-0 h-7 text-[10.6px] font-normal">
+          terms
+        </Button>
       </Link>
       ,{" "}
       <Link href={Paths.AcceptableUsePolicy} className="hover:underline text-blue-500" prefetch={false}>
-        acceptable use
+        <Button variant="linkHover2" className="p-0 h-7 text-[10.6px] font-normal">
+          acceptable use
+        </Button>
       </Link>
       , and{" "}
       <Link href={Paths.PrivacyPolicy} className="hover:underline text-blue-500" prefetch={false}>
-        privacy policy
+        <Button variant="linkHover2" className="p-0 h-7 text-[10.6px] font-normal">
+          privacy policy
+        </Button>
       </Link>
       .
       </div>
