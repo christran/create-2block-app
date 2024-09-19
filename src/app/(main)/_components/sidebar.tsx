@@ -34,14 +34,14 @@ export function Sidebar({ fullname, email, userRole, avatar, }: SidebarProps) {
       )}
       >
         <div className="flex flex-col">
-          <div className={cn("flex h-[60px] items-center justify-center")}>
+            <div className={cn("flex h-[60px] items-center", sidebar?.isClosed ? "justify-center" : "justify-start")}>
             <TooltipProvider delayDuration={200}>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Link 
                     className={cn(
-                      "flex items-center text-lg font-extrabold text-primary/75 hover:text-yellow-400/90",
-                      sidebar?.isClosed? "justify-center w-8 h-8" : "w-full"
+                      "flex text-lg font-extrabold text-primary/75 hover:text-yellow-400/90",
+                      sidebar?.isClosed ? "w-8 h-8" : ""
                     )}
                     href={Paths.Home}
                   >
