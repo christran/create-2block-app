@@ -148,6 +148,7 @@ export function UploadedFilesCard({ initialUserFiles, newUploadedFiles }: Upload
                     size="sm"
                     className="absolute left-1 top-1 h-7 w-7 p-0 opacity-0 transition-opacity group-hover:opacity-80 md:right-2 md:top-2 md:h-9 md:w-9"
                     onClick={() => handleDelete(file.id)}
+                    disabled={deleteMutation.isLoading}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
