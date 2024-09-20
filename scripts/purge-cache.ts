@@ -15,10 +15,11 @@ import path from "path";
 
 config()
 
+// Cloudflare API rate limits
 const BATCH_SIZE = 30
 const MAX_CALLS_PER_DAY = 30000
 
-const staticDirs = [
+const staticDirs: string[] = [
   // "./.next/static/css",
   // "./.next/static/media",
   // "./public"
@@ -53,10 +54,12 @@ async function purgeCache(): Promise<void> {
     .filter((route) => !route.includes("/["))
     .map((route) => `${process.env.NEXT_PUBLIC_APP_URL}${route}`);
 
-  staticDirs.forEach(dir => {
-    const fullPath = path.join(process.cwd(), dir);
-    urls.push(...collectUrls(fullPath, process.env.NEXT_PUBLIC_APP_URL ?? "https://2block.co", dir === "./public"));
-  });
+  if (staticDirs.length > 0) {
+    staticDirs.forEach(dir => {
+      const fullPath = path.join(process.cwd(), dir);
+      urls.push(...collectUrls(fullPath, process.env.NEXT_PUBLIC_APP_URL ?? "https://2block.co", dir === "./public"));
+    });
+  }
 
   console.log(urls)
   console.log(`Total URLs to purge: ${urls.length}`)
