@@ -1,0 +1,1 @@
+ALTER TABLE "2block_files" ADD COLUMN "s3_provider" varchar(64) NOT NULL;

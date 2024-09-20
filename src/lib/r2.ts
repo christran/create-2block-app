@@ -12,14 +12,14 @@ export interface PresignedUrl {
 
 const S3 = new S3Client({
   region: "auto",
-  endpoint: `https://${env.CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+  endpoint: env.S3_PROVIDER === "cloudflare" ? env.R2_ENDPOINT as string : env.B2_ENDPOINT as string,
   credentials: {
-    accessKeyId: env.R2_ACCESS_KEY_ID,
-    secretAccessKey: env.R2_SECRET_ACCESS_KEY,
+    accessKeyId: env.S3_PROVIDER === "cloudflare" ? env.R2_ACCESS_KEY_ID : env.B2_ACCESS_KEY_ID as string,
+    secretAccessKey: env.S3_PROVIDER === "cloudflare" ? env.R2_SECRET_ACCESS_KEY : env.B2_SECRET_ACCESS_KEY as string,
   },
 });
 
-const BUCKET_NAME = env.R2_BUCKET_NAME;
+const BUCKET_NAME = env.BUCKET_NAME as string;
 
 export async function generatePresignedUrl(
   key: string,
@@ -46,7 +46,7 @@ export async function generatePresignedUrl(
     Bucket: BUCKET_NAME,
     Key: key,
     ContentType: contentType,
-    ContentLength: contentLength,
+    // ContentLength: contentLength,
   });
 
   try {

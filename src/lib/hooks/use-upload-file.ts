@@ -1,6 +1,8 @@
+"use client";
+
 import { useState } from "react";
-import { UploadedFile } from "../types/file-upload";
-import { PresignedUrl } from "../r2";
+import type { UploadedFile } from "../types/file-upload";
+import type { PresignedUrl } from "../r2";
 
 interface UseUploadFileProps {
   defaultUploadedFiles?: UploadedFile[];
@@ -26,9 +28,9 @@ export function useUploadFile({
 
     try {
       // Step 1: Get the signed URLs for upload
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           files: files.map(f => ({ prefix, filename: f.name, contentType: f.type, fileSize: f.size })),
           allowedFileTypes,
@@ -47,8 +49,11 @@ export function useUploadFile({
       const newUploadedFiles = await Promise.all(presignedUrls.map(async ({ id, filename, url }, index) => {
         const file = files[index];
         const xhr = new XMLHttpRequest();
-        xhr.open('PUT', url, true);
-        xhr.setRequestHeader('Content-Type', file?.type || "");
+        xhr.open("PUT", url, true);
+        xhr.setRequestHeader("Content-Type", file?.type ?? "");
+        // xhr.setRequestHeader("Authorization", authorizationToken);
+        // xhr.setRequestHeader("X-Bz-File-Name", file?.name ?? "");
+        // xhr.setRequestHeader("X-Bz-Content-Sha1", hashHex);
 
         xhr.upload.onprogress = (event) => {
           if (event.lengthComputable) {
@@ -65,6 +70,7 @@ export function useUploadFile({
               reject(new Error(`Failed to upload file ${filename}: ${xhr.status}`));
             }
           };
+
           xhr.onerror = () => reject(new Error(`Network error occurred while uploading ${filename}`));
           xhr.send(file);
         });
@@ -96,7 +102,7 @@ export function useUploadFile({
       setUploadedFiles(prev => [...prev, ...newUploadedFiles]);
       return newUploadedFiles;
     } catch (err) {
-      console.error('Upload error:', err);
+      console.error("Upload error:", err);
       throw err;
     } finally {
       setIsUploading(false);

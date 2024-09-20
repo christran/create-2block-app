@@ -5,13 +5,15 @@ import { files } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { validate as uuidValidate } from "uuid";
+import { env } from "@/env";
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   // const { user } = await validateRequest();
 
   // if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
 
-  const publicBucket = true;
+  // TODO: remove this when Backblaze is the only provider and bucket is public
+  const publicBucket = env.S3_PROVIDER === "cloudflare" ? true : false;
 
   try {
     if (!params.id) {

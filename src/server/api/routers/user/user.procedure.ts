@@ -11,6 +11,7 @@ import {
   removeSocialAccountsInput,
   deleteAccountByUserIdInput
 } from "./user.input";
+import { env } from "@/env";
 
 export const userRouter = createTRPCRouter({
   getUser: protectedProcedure
@@ -73,6 +74,7 @@ export const userRouter = createTRPCRouter({
       return ctx.db.query.files.findMany({
         where: (table, { eq, and, like }) => and(
           eq(table.userId, ctx.user.id),
+          eq(table.s3Provider, env.S3_PROVIDER as "cloudflare" | "backblaze"), // TODO: remove when backblaze is the only provider
           like(table.key, sql`'files/%'`)  // This matches strings starting with "files/"
         ),
         orderBy: (table, { desc }) => desc(table.createdAt),

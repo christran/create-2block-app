@@ -37,10 +37,23 @@ export const env = createEnv({
     GITHUB_CLIENT_SECRET: z.string().trim().min(1),
     GITHUB_LOCALHOST_CLIENT_ID: z.string().trim().min(1),
     GITHUB_LOCALHOST_CLIENT_SECRET: z.string().trim().min(1),
+
+    // Cloudflare R2 and Backblaze B2
+    S3_PROVIDER: z.enum(["cloudflare", "backblaze"]).default("cloudflare"),
+    BUCKET_NAME: z.string().trim().min(1),
+
+    // Cloudflare R2
     CLOUDFLARE_ACCOUNT_ID: z.string().trim().min(1),
+    R2_ENDPOINT: z.string().trim().min(1),
     R2_ACCESS_KEY_ID: z.string().trim().min(1),
     R2_SECRET_ACCESS_KEY: z.string().trim().min(1),
-    R2_BUCKET_NAME: z.string().trim().min(1),
+
+    // Backblaze B2
+    B2_ENDPOINT: z.string().trim().min(1),
+    B2_ACCESS_KEY_ID: z.string().trim().min(1),
+    B2_SECRET_ACCESS_KEY: z.string().trim().min(1),
+
+    // Stripe
     STRIPE_API_KEY: z.string().trim().min(1),
     STRIPE_WEBHOOK_SECRET: z.string().trim().min(1),
     STRIPE_PRO_MONTHLY_PLAN_ID: z.string().trim().min(1),
@@ -87,10 +100,23 @@ export const env = createEnv({
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
     GITHUB_LOCALHOST_CLIENT_ID: process.env.GITHUB_LOCALHOST_CLIENT_ID,
     GITHUB_LOCALHOST_CLIENT_SECRET: process.env.GITHUB_LOCALHOST_CLIENT_SECRET,
+
+    // Cloudflare R2 and Backblaze B2
+    S3_PROVIDER: process.env.S3_PROVIDER,
+    BUCKET_NAME: process.env.BUCKET_NAME,
+
+    // Cloudflare R2
     CLOUDFLARE_ACCOUNT_ID: process.env.CLOUDFLARE_ACCOUNT_ID,
+    R2_ENDPOINT: process.env.R2_ENDPOINT,
     R2_ACCESS_KEY_ID: process.env.R2_ACCESS_KEY_ID,
     R2_SECRET_ACCESS_KEY: process.env.R2_SECRET_ACCESS_KEY,
-    R2_BUCKET_NAME: process.env.R2_BUCKET_NAME,
+
+    // Backblaze B2
+    B2_ENDPOINT: process.env.B2_ENDPOINT,
+    B2_ACCESS_KEY_ID: process.env.B2_ACCESS_KEY_ID,
+    B2_SECRET_ACCESS_KEY: process.env.B2_SECRET_ACCESS_KEY,
+
+    // Stripe
     STRIPE_API_KEY: process.env.STRIPE_API_KEY,
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
     STRIPE_PRO_MONTHLY_PLAN_ID: process.env.STRIPE_PRO_MONTHLY_PLAN_ID,

@@ -29,7 +29,7 @@ export const users = pgTable(
     googleId: varchar("google_id", { length: 255 }).unique(),
     discordId: varchar("discord_id", { length: 255 }).unique(),
     githubId: varchar("github_id", { length: 255 }).unique(),
-    avatar: varchar("avatar", { length: 255 }),
+    avatar: varchar("avatar"),
     stripeSubscriptionId: varchar("stripe_subscription_id", { length: 191 }),
     stripePriceId: varchar("stripe_price_id", { length: 191 }),
     stripeCustomerId: varchar("stripe_customer_id", { length: 191 }),
@@ -64,11 +64,12 @@ export const sessions = pgTable(
 
 export const files = pgTable("files", {
   id: uuid("id").primaryKey(),
-  key: varchar("key", { length: 255 }).notNull(),
+  key: varchar("key").notNull(),
   userId: varchar("user_id", { length: 21 }).notNull(),
   originalFilename: varchar("original_filename", { length: 255 }).notNull(),
   contentType: varchar("content_type", { length: 100 }).notNull(),
   fileSize: bigint("file_size", { mode: "number" }).notNull(),
+  s3Provider: varchar("s3_provider", { length: 64, enum: ["cloudflare", "backblaze"] }).default("cloudflare").notNull(), // TODO: remove when backblaze is the only provider
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date" }).$onUpdate(() => new Date()),
 });

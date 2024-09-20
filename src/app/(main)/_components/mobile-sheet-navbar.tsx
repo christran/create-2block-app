@@ -74,13 +74,13 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
             <nav className="flex-1 overflow-scroll scrollbar-hide">
               <ul className="flex flex-col gap-2">
                 {navbarItems.map((category) => (
-                  <li>
-                    <div key={category.category} className="flex flex-col gap-1 mb-1">
+                  <li key={category.category}>
+                    <div className="flex flex-col gap-1 mb-1">
                     <h4 className="text-muted-foreground text-[10.5px] py-1">{category.category.toUpperCase()}</h4>
                     {/* <Separator className="mb-1" /> */}
                       {category.items.map((item) => (
                       // Link wrapper, redirects to billing if user doesn't have required role
-                      <SheetClose asChild>
+                      <SheetClose key={item.href} asChild>
                         <Link key={item.href} href={item.roles && !item.roles.some((r) => userRole.includes(r)) ? Paths.Billing : item.href}>
                           <TooltipProvider delayDuration={100} disableHoverableContent={true} skipDelayDuration={50}>
                             <Tooltip>
@@ -199,9 +199,9 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
             <nav className="mt-2 flex-1">
               <ul className="flex flex-col gap-2">
               {guestNavBarItems.map((item) => (
-                <li>
+                <li key={item.href}>
                   <SheetClose asChild>
-                    <Link key={item.href} href={item.href}>
+                    <Link href={item.href}>
                       <span
                         className={cn(
                           inactiveLinkClass,

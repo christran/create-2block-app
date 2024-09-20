@@ -1,0 +1,26 @@
+[
+  {
+    "corsRuleName": "uploadFileFromLocalhostAndWebsite",
+    "allowedOrigins": [
+      "http://localhost:3000",
+      "https://*.2block.co"
+    ],
+    "allowedHeaders": [
+      "Authorization",
+      "Content-Type",
+      "Content-Length",
+      "X-Bz-Content-Sha1",
+      "X-Bz-File-Name"
+    ],
+    "allowedOperations": [
+      "b2_upload_file",
+      "s3_delete",
+      "s3_get",
+      "s3_head",
+      "s3_post",
+      "s3_put"
+    ],
+    "exposeHeaders": ["X-Bz-Content-Sha1"],
+    "maxAgeSeconds": 3600
+  }
+]

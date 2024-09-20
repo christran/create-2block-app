@@ -64,6 +64,34 @@
       "when": 1726626983249,
       "tag": "0008_curly_famine",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1726804726739,
+      "tag": "0009_bent_carlie_cooper",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1726804857879,
+      "tag": "0010_complex_sunspot",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1726806044033,
+      "tag": "0011_sharp_mandroid",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1726806104941,
+      "tag": "0012_dusty_vanisher",
+      "breakpoints": true
     }
   ]
 }

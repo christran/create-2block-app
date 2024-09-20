@@ -5,6 +5,8 @@ import { db } from "@/server/db";
 import { files } from "@/server/db/schema";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { formatBytes } from "@/lib/utils";
+import { api } from "@/trpc/server";
+import { env } from "@/env";
 
 // todo: move to .env
 const MAX_TOTAL_FILES = 25;
@@ -65,6 +67,7 @@ export async function POST(request: Request) {
 
         const uuid = uuidv4();
         const key = `${prefix}${uuid}`;
+
         const presignedData = await generatePresignedUrl(
           key,
           contentType,
@@ -81,6 +84,7 @@ export async function POST(request: Request) {
           originalFilename: filename,
           contentType,
           fileSize,
+          s3Provider: env.S3_PROVIDER as "cloudflare" | "backblaze", // TODO: remove when backblaze is the only provider
         });
 
         return {
