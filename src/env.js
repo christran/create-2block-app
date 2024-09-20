@@ -44,6 +44,9 @@ export const env = createEnv({
 
     // Cloudflare R2
     CLOUDFLARE_ACCOUNT_ID: z.string().trim().min(1),
+    CLOUDFLARE_ZONE_ID: z.string().trim().min(1),
+    CLOUDFLARE_AUTH_KEY: z.string().trim().min(1),
+    CLOUDFLARE_AUTH_EMAIL: z.string().trim().min(1),
     R2_ENDPOINT: z.string().trim().min(1),
     R2_ACCESS_KEY_ID: z.string().trim().min(1),
     R2_SECRET_ACCESS_KEY: z.string().trim().min(1),
@@ -107,6 +110,9 @@ export const env = createEnv({
 
     // Cloudflare R2
     CLOUDFLARE_ACCOUNT_ID: process.env.CLOUDFLARE_ACCOUNT_ID,
+    CLOUDFLARE_ZONE_ID: process.env.CLOUDFLARE_ZONE_ID,
+    CLOUDFLARE_AUTH_KEY: process.env.CLOUDFLARE_AUTH_KEY,
+    CLOUDFLARE_AUTH_EMAIL: process.env.CLOUDFLARE_AUTH_EMAIL,
     R2_ENDPOINT: process.env.R2_ENDPOINT,
     R2_ACCESS_KEY_ID: process.env.R2_ACCESS_KEY_ID,
     R2_SECRET_ACCESS_KEY: process.env.R2_SECRET_ACCESS_KEY,

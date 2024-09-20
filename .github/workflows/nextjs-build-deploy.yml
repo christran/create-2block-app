@@ -91,6 +91,7 @@ jobs:
           rsync -re ssh ./.next/ vps:$APP_DIR/.next
           ssh vps "cd $APP_DIR && git pull && pnpm install"
           ssh vps "pm2 restart $PM2_APP_NAME"
+          ssh vps "cd $APP_DIR && pnpm run generate-routes && pnpm run purge-cache"
 
       # - name: Purge Cloudflare cache
       #   uses: nathanvaughn/actions-cloudflare-purge@master

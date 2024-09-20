@@ -3,6 +3,7 @@
     "corsRuleName": "uploadFileFromLocalhostAndWebsite",
     "allowedOrigins": [
       "http://localhost:3000",
+      "https://2block.co",
       "https://*.2block.co"
     ],
     "allowedHeaders": [
