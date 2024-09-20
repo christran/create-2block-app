@@ -62,6 +62,8 @@ export default async function RootLayout({
     return user as User;
   });
 
+  const userData2 = await userPromise;
+  console.log("userData2", userData2);
 
   const userData = {
     userId: cookies().get("lastKnownUserId")?.value ?? "N/A",

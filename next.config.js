@@ -35,15 +35,6 @@ const config = {
         // https://focusreactive.com/configure-cdn-caching-for-self-hosted-next-js-websites/
         return [
             {
-                source: '/((?!api$|api/).*)',
-                headers: [
-                    {
-                        key: 'CDN-Cache-Control',
-                        value: 'max-age=600, stale-while-revalidate=14400, stale-if-error=14400',
-                    }
-                ]
-            },
-            {
                 source: '/:all*(css|js|gif|svg|jpg|jpeg|png|woff|woff2)',
                 locale: false,
                 headers: [

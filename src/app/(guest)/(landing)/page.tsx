@@ -5,7 +5,6 @@ import { DesktopIcon } from "@radix-ui/react-icons";
 import { Paths } from "@/lib/constants";
 import Link from "next/link";
 import { validateRequest } from "@/lib/auth/validate-request";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { BorderBeam } from "@/components/border-beam";
 
 export const metadata: Metadata = {
