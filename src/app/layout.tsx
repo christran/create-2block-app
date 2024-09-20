@@ -12,6 +12,8 @@ import { cookies } from "next/headers";
 import { env } from "@/env";
 import { UserProvider } from "@/lib/auth/user-provider";
 import { api } from "@/trpc/server";
+import type { DatabaseUserAttributes } from "@/lib/auth";
+import { User } from "@/server/db/schema";
 
 // const GeistSans = localFont({
 //   src: "../../fonts/GeistVF.woff",
@@ -53,13 +55,17 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user } = await validateRequest();
+  const userPromise = validateRequest().then(({ user }) => {
+    if (!user) {
+      return null;
+    }
+    return user as User;
+  });
 
-  const userPromise = api.user.getUser.query();
 
   const userData = {
-    userId: user?.id ?? cookies().get("lastKnownUserId")?.value ?? "N/A",
-    email: user?.email ?? cookies().get("lastKnownEmail")?.value ?? "N/A"
+    userId: cookies().get("lastKnownUserId")?.value ?? "N/A",
+    email: cookies().get("lastKnownEmail")?.value ?? "N/A"
   };
 
   return (
@@ -79,7 +85,8 @@ export default async function RootLayout({
 
         <AnalyticsScript 
           websiteId={env.UMAMI_WEBSITE_ID} 
-          userData={userData}  
+          userPromise={userPromise}
+          lastKnownUserData={userData}
         />
       </body>
     </html>

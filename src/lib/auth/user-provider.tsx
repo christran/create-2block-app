@@ -3,6 +3,7 @@
 import { createContext, type ReactNode } from "react";
 import { use } from "react";
 import { type User } from "@/server/db/schema";
+import type { DatabaseUserAttributes } from ".";
 // import { type DatabaseUserAttributes } from ".";
 
 // type User = {
