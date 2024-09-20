@@ -19,9 +19,9 @@ const BATCH_SIZE = 30
 const MAX_CALLS_PER_DAY = 30000
 
 const staticDirs = [
-  "./.next/static/css",
-  "./.next/static/media",
-  "./public"
+  // "./.next/static/css",
+  // "./.next/static/media",
+  // "./public"
 ];
 
 function collectUrls(dir: string, baseUrl: string, isPublic: boolean): string[] {
@@ -49,11 +49,6 @@ function collectUrls(dir: string, baseUrl: string, isPublic: boolean): string[] 
 }
 
 async function purgeCache(): Promise<void> {
-  if (process.env.NEXT_PUBLIC_APP_URL === "http://localhost:3000") {
-    console.log("Skipping cache purge on local environment");
-    return;
-  }
-
   const urls = routes
     .filter((route) => !route.includes("/["))
     .map((route) => `${process.env.NEXT_PUBLIC_APP_URL}${route}`);
@@ -65,6 +60,11 @@ async function purgeCache(): Promise<void> {
 
   console.log(urls)
   console.log(`Total URLs to purge: ${urls.length}`)
+
+  if (process.env.NEXT_PUBLIC_APP_URL === "http://localhost:3000") {
+    console.log("Skipping cache purge on local environment");
+    return;
+  }
 
   const batches = []
   for (let i = 0; i < urls.length; i += BATCH_SIZE) {
