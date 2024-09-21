@@ -24,10 +24,12 @@ interface InitialUserFilesProps {
 const ALLOWED_FILE_TYPES = {
   "image/jpeg": [".jpg", ".jpeg"],
   "image/png": [".png"],
-  "image/gif": [".gif"]
+  "image/gif": [".gif"],
+  "video/quicktime": [".mov"],
+  "video/mp4": [".mp4"],
 };
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+const MAX_FILE_SIZE = 1000 * 1024 * 1024; // 5 MB
 
 export function UploadFiles({ initialUserFiles }: InitialUserFilesProps) {
   const [files, setFiles] = useState<File[]>([]);

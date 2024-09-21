@@ -1,0 +1,1 @@
+ALTER TABLE "2block_files" ADD COLUMN "upload_completed" boolean DEFAULT false;

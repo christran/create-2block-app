@@ -72,6 +72,7 @@ export const files = pgTable("files", {
   s3Provider: varchar("s3_provider", { length: 64, enum: ["cloudflare", "backblaze"] }).default("cloudflare").notNull(), // TODO: remove when backblaze is the only provider
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date" }).$onUpdate(() => new Date()),
+  uploadCompleted: boolean("upload_completed").default(false),
 });
 
 export type File = typeof files.$inferSelect;

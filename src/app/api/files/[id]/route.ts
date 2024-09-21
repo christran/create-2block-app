@@ -43,7 +43,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
     const presignedUrl = await generatePresignedGetUrl(fileRecord.key);
 
-    return NextResponse.json({ url: presignedUrl, filename: fileRecord.originalFilename });
+    return NextResponse.json({ url: presignedUrl, filename: fileRecord.originalFilename }, { status: 200 });
   } catch (error) {
     console.error("Error in GET file route:", error);
     return NextResponse.json({ error: "An error occurred" }, { status: 500 });
@@ -73,7 +73,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
 
     await db.delete(files).where(eq(files.id, params.id));
 
-    return NextResponse.json({ message: "File deleted successfully" });
+    return NextResponse.json({ message: "File deleted successfully" }, { status: 200 });
   } catch (error) {
     console.error("Error in DELETE file route:", error);
     return NextResponse.json({ error: "An error occurred" }, { status: 500 });
