@@ -87,6 +87,18 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
    * @example disabled
    */
   disabled?: boolean;
+
+  uploadingFiles?: {
+    id: string;
+    filename: string;
+    multipart: boolean;
+    url: string;
+    uploadId: string;
+    presignedUrls: string[];
+    chunkSize: number;
+  }[];
+
+  onCancelUpload?: (id: string, uploadId: string, name: string) => Promise<void>;
 }
 
 export function FileUploader(props: FileUploaderProps) {
@@ -94,6 +106,8 @@ export function FileUploader(props: FileUploaderProps) {
     value: valueProp,
     onValueChange,
     onUpload,
+    uploadingFiles,
+    onCancelUpload,
     progresses,
     accept = {
       "image/*": [],
@@ -162,11 +176,26 @@ export function FileUploader(props: FileUploaderProps) {
     [files, maxFileCount, multiple, onUpload, setFiles, maxSize],
   );
 
-  function onRemove(index: number) {
+  function onRemove(index: number, file: File) {
     if (!files) return;
     const newFiles = files.filter((_, i) => i !== index);
     setFiles(newFiles);
     onValueChange?.(newFiles);
+
+    // console.log(onCancelUpload);
+
+    if (uploadingFiles && onCancelUpload) {
+      const fileToCancel = uploadingFiles.find((f) => f.filename === file.name);
+
+      console.log(fileToCancel);
+      if (fileToCancel) { 
+        toast.promise(onCancelUpload(fileToCancel.id, fileToCancel.uploadId, fileToCancel.filename), {
+          // loading: "Attempting to cancel upload",
+          success: "Upload has been cancelled",
+          error: "Failed to cancel upload",
+        });
+      }
+    }
   }
 
   // Revoke preview url when component unmounts
@@ -242,7 +271,7 @@ export function FileUploader(props: FileUploaderProps) {
               <FileCard
                 key={index}
                 file={file}
-                onRemove={() => onRemove(index)}
+                onRemove={() => onRemove(index, file)}
                 progress={progresses?.[file.name]}
               />
             ))}

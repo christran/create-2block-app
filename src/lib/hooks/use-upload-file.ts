@@ -7,6 +7,7 @@ import type { UploadedFile } from "../types/file-upload";
 interface UseUploadFileProps {
   defaultUploadedFiles?: UploadedFile[];
   onUploadComplete?: (fileUrl: string) => void;
+  onCancelUpload?: (id: string, uploadId: string) => void;
   prefix: string;
   allowedFileTypes: Record<string, string[]>;
   maxFileSize: number;
@@ -30,8 +31,11 @@ export function useUploadFile({
   maxFileSize
 }: UseUploadFileProps) {
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadingFiles, setUploadingFiles] = useState<UploadResult[]>([]);
   const [progresses, setProgresses] = useState<Record<string, number>>({});
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>(defaultUploadedFiles);
+  const [cancelTokens, setCancelTokens] = useState<Record<string, AbortController>>({});
+  const [canceledFiles, setCanceledFiles] = useState<Set<string>>(new Set());
 
   const onUpload = async (files: File[]) => {
     setIsUploading(true);
@@ -39,27 +43,73 @@ export function useUploadFile({
     try {
       const uploadResults = await getSignedUrls(files, prefix, allowedFileTypes, maxFileSize);
 
-      const newUploadedFiles = await uploadFiles(files, uploadResults, onUploadComplete);
-      setUploadedFiles(prev => [...prev, ...newUploadedFiles]);
-      return newUploadedFiles;
+      const newUploadedFiles = await uploadFiles(files, uploadResults);
+      const filteredUploadedFiles = newUploadedFiles.filter(file => !canceledFiles.has(file.id));
+      setUploadedFiles(prev => [...prev, ...filteredUploadedFiles]);
+      
+      if (onUploadComplete) {
+        onUploadComplete(filteredUploadedFiles);
+      }
+      
+      return filteredUploadedFiles;
     } catch (err) {
       if (axios.isCancel(err)) {
-        console.log("Upload cancelled:", err.message);
+        console.log("Upload canceled by user");
       } else {
         console.error("Upload error:", err);
       }
-      throw err;
+      // throw err;
     } finally {
       setIsUploading(false);
       setProgresses({});
+      setCanceledFiles(new Set());
     }
+  };
+
+  const onCancelUpload = async (id: string, uploadId: string) => {
+    const cancelToken = cancelTokens[id];
+
+    if (cancelToken) {
+      cancelToken.abort();
+      setCancelTokens(prev => {
+        const newTokens = { ...prev };
+        delete newTokens[id];
+        return newTokens;
+      });
+    }
+
+    try {
+      await fetch("/api/upload/cancel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          key: `${prefix}${id}`,
+          uploadId,
+        }),
+      });
+    } catch (error) {
+      console.error("Failed to cancel upload on server:", error);
+    }
+
+    setUploadingFiles(prev => prev.filter(f => f.id !== id));
+    setUploadedFiles(prev => prev.filter(f => f.id !== id));
+
+    setProgresses(prev => {
+      const newProgresses = { ...prev };
+      delete newProgresses[id];
+      return newProgresses;
+    });
+
+    setCanceledFiles(prev => new Set(prev).add(id));
   };
 
   return {
     onUpload,
     uploadedFiles,
+    uploadingFiles,
     progresses,
     isUploading,
+    onCancelUpload,
   }
 
   async function getSignedUrls(files: File[], prefix: string, allowedFileTypes: Record<string, string[]>, maxFileSize: number): Promise<UploadResult[]> {
@@ -82,37 +132,60 @@ export function useUploadFile({
     return uploadResults;
   }
 
-  async function uploadFiles(files: File[], uploadResults: UploadResult[], onUploadComplete?: (fileUrl: string) => void): Promise<UploadedFile[]> {
-    return Promise.all(uploadResults.map(async (result, index) => {
+  async function uploadFiles(files: File[], uploadResults: UploadResult[]): Promise<UploadedFile[]> {
+    const uploadedFiles = await Promise.all(uploadResults.map(async (result, index) => {
       const file = files[index];
       if (!file) throw new Error(`File at index ${index} is undefined`);
 
       const { id, filename, multipart, url, uploadId, presignedUrls, chunkSize } = result;
 
-      if (multipart) {
-        await handleMultipartUpload(file, filename, chunkSize, presignedUrls, uploadId, prefix, id);
-      } else {
-        await handleSinglePartUpload(file, url, filename);
+      setUploadingFiles(prev => [...prev, { id, filename, multipart, url, uploadId, presignedUrls, chunkSize }]);
+
+      // Create a new AbortController for this upload
+      const abortController = new AbortController();
+      setCancelTokens(prev => ({ ...prev, [id]: abortController }));
+
+      if (canceledFiles.has(id)) {
+        return null;
       }
 
-      const getUrl = await getFileUrl(id);
+      try {
+        if (multipart) {
+          await handleMultipartUpload(file, filename, chunkSize, presignedUrls, uploadId, prefix, id, abortController.signal);
+        } else {
+          await handleSinglePartUpload(file, url, filename, abortController.signal);
+        }
 
-      const uploadedFile = {
-        id,
-        url: getUrl,
-        originalFilename: filename,
-        contentType: file.type,
-        fileSize: file.size,
-        createdAt: new Date(),
-      };
+        const getUrl = await getFileUrl(id);
 
-      if (onUploadComplete) onUploadComplete(getUrl);
+        const uploadedFile: UploadedFile = {
+          id,
+          url: getUrl,
+          originalFilename: filename,
+          contentType: file.type,
+          fileSize: file.size,
+          createdAt: new Date(),
+        };
 
-      return uploadedFile;
+        return uploadedFile;
+      } catch (error) {
+        console.error(`Error uploading file ${filename}:`, error);
+        return null;
+      } finally {
+        // Remove the file from uploadingFiles and cancelTokens when it's finished
+        setUploadingFiles(prev => prev.filter(f => f.id !== id));
+        setCancelTokens(prev => {
+          const newTokens = { ...prev };
+          delete newTokens[id];
+          return newTokens;
+        });
+      }
     }));
+
+    return uploadedFiles.filter((file): file is UploadedFile => file !== null);
   }
 
-  async function handleMultipartUpload(file: File, filename: string, chunkSize: number, presignedUrls: string[], uploadId: string, prefix: string, id: string) {
+  async function handleMultipartUpload(file: File, filename: string, chunkSize: number, presignedUrls: string[], uploadId: string, prefix: string, id: string, signal: AbortSignal) {
     const chunks = Math.ceil(file.size / chunkSize);
     const parts: { PartNumber: number; ETag: string }[] = [];
 
@@ -121,7 +194,7 @@ export function useUploadFile({
       const partUrl = presignedUrls[partNumber];
       if (!partUrl) throw new Error(`Presigned URL for part ${partNumber} is undefined`);
 
-      const { headers } = await uploadChunk(file, i, chunkSize, partUrl, filename);
+      const { headers } = await uploadChunk(file, i, chunkSize, partUrl, filename, signal);
       const etag = headers.etag as string;
       if (etag) {
         parts.push({ PartNumber: partNumber, ETag: etag });
@@ -133,7 +206,7 @@ export function useUploadFile({
     await completeMultipartUpload(prefix, id, uploadId, parts);
   }
 
-  async function uploadChunk(file: File, chunkIndex: number, chunkSize: number, partUrl: string, filename: string) {
+  async function uploadChunk(file: File, chunkIndex: number, chunkSize: number, partUrl: string, filename: string, signal: AbortSignal) {
     const start = chunkIndex * chunkSize;
     const end = Math.min(file.size, start + chunkSize);
     const chunk = file.slice(start, end);
@@ -146,6 +219,7 @@ export function useUploadFile({
           setProgresses(prev => ({ ...prev, [filename]: totalProgress }));
         }
       },
+      signal, // Add this line to pass the AbortSignal
     });
   }
 
@@ -161,7 +235,7 @@ export function useUploadFile({
     }
   }
 
-  async function handleSinglePartUpload(file: File, url: string, filename: string) {
+  async function handleSinglePartUpload(file: File, url: string, filename: string, signal: AbortSignal) {
     await axios.put(url, file, {
       headers: { "Content-Type": file.type },
       onUploadProgress: (progressEvent) => {
@@ -170,6 +244,7 @@ export function useUploadFile({
           setProgresses(prev => ({ ...prev, [filename]: progress }));
         }
       },
+      signal, // Add this line to pass the AbortSignal
     });
   }
 

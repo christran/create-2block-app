@@ -34,13 +34,14 @@ const MAX_FILE_SIZE = 1000 * 1024 * 1024; // 5 MB
 
 export function UploadFiles({ initialUserFiles }: InitialUserFilesProps) {
   const [files, setFiles] = useState<File[]>([]);
+  const [uploadedFileIds, setUploadedFileIds] = useState<Set<string>>(new Set());
 
-  const { onUpload, uploadedFiles, progresses, isUploading } = useUploadFile({
+  const { onUpload, uploadedFiles, uploadingFiles, onCancelUpload, progresses, isUploading } = useUploadFile({
     defaultUploadedFiles: [],
-    onUploadComplete: () => {
-      toast.success("Files uploaded successfully");
+    onUploadComplete: (newUploadedFiles) => {
       form.reset();
       setFiles([]);
+      setUploadedFileIds(new Set(newUploadedFiles.map(file => file.id)));
     },
     prefix: "files/",
     allowedFileTypes: ALLOWED_FILE_TYPES,
@@ -55,19 +56,36 @@ export function UploadFiles({ initialUserFiles }: InitialUserFilesProps) {
   });
 
   useEffect(() => {
-    if (files.length > 0) {
+    if (files.length > 0 && !isUploading) {
       handleUpload(files);
     }
-  }, [files]);
+  }, [files, isUploading]);
 
   const handleUpload = (filesToUpload: File[]) => {
     toast.promise(onUpload(filesToUpload), {
       loading: "Uploading files",
+      success: (newUploadedFiles) => {
+        if (Array.isArray(newUploadedFiles)) {
+          const newIds = new Set(newUploadedFiles.map(file => file.id));
+          setUploadedFileIds(prev => new Set([...prev, ...newIds]));
+        }
+        return "Files uploaded successfully";
+      },
       error: (err) => {
         form.reset();
         setFiles([]);
         return err instanceof Error ? err.message : "Error uploading files";
       },
+    });
+  };
+
+  const handleCancelUpload = async (id: string, uploadId: string, name: string) => {
+    await onCancelUpload(id, uploadId);
+    setFiles(prev => prev.filter(file => file.name !== name));
+    setUploadedFileIds(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(id);
+      return newSet;
     });
   };
 
@@ -91,13 +109,15 @@ export function UploadFiles({ initialUserFiles }: InitialUserFilesProps) {
                         value={field.value}
                         onValueChange={(newFiles) => {
                           field.onChange(newFiles);
-                          setFiles(newFiles);
+                          setFiles(prevFiles => [...prevFiles, ...newFiles]);
                         }}
                         maxFileCount={10}
                         maxSize={MAX_FILE_SIZE}
                         accept={ALLOWED_FILE_TYPES}
                         progresses={progresses}
                         disabled={isUploading}
+                        uploadingFiles={uploadingFiles}
+                        onCancelUpload={handleCancelUpload}
                       />
                     </FormControl>
                     <FormMessage />
@@ -109,7 +129,10 @@ export function UploadFiles({ initialUserFiles }: InitialUserFilesProps) {
         </CardContent>
       </Card>
 
-      <UploadedFilesCard initialUserFiles={initialUserFiles} newUploadedFiles={uploadedFiles} />
+      <UploadedFilesCard 
+        initialUserFiles={initialUserFiles} 
+        newUploadedFiles={uploadedFiles.filter(file => uploadedFileIds.has(file.id))} 
+      />
     </>
   );
 }
