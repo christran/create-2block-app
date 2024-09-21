@@ -27,6 +27,7 @@ const ALLOWED_FILE_TYPES = {
   "image/gif": [".gif"],
   "video/quicktime": [".mov"],
   "video/mp4": [".mp4"],
+  "application/octet-stream": [".exe"],
 };
 
 const MAX_FILE_SIZE = 1000 * 1024 * 1024; // 5 MB

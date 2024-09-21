@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import axios from "axios";
 import type { UploadedFile } from "../types/file-upload";
 
 interface UseUploadFileProps {
@@ -9,6 +10,16 @@ interface UseUploadFileProps {
   prefix: string;
   allowedFileTypes: Record<string, string[]>;
   maxFileSize: number;
+}
+
+interface UploadResult {
+  id: string;
+  filename: string;
+  multipart: boolean;
+  url: string;
+  uploadId: string;
+  presignedUrls: string[];
+  chunkSize: number;
 }
 
 export function useUploadFile({ 
@@ -38,14 +49,14 @@ export function useUploadFile({
       });
       
       if (!response.ok) {
-        const { error } = await response.json();
+        const { error } = await response.json() as { error: string };
         throw new Error(`${error}`);
       }
 
-      const { uploadResults } = await response.json();
+      const { uploadResults } = await response.json() as { uploadResults: UploadResult[] };
 
       // Step 2: Upload to R2 using the signed URLs
-      const newUploadedFiles = await Promise.all(uploadResults.map(async (result: any, index: number) => {
+      const newUploadedFiles = await Promise.all(uploadResults.map(async (result: UploadResult, index: number) => {
         const file = files[index];
         if (!file) {
           throw new Error(`File at index ${index} is undefined`);
@@ -63,36 +74,23 @@ export function useUploadFile({
             const chunk = file.slice(start, end);
 
             const partNumber = i + 1;
-            const partUrl = presignedUrls[partNumber] as string;
+            const partUrl = presignedUrls[partNumber]!;
 
             if (!partUrl) {
               throw new Error(`Presigned URL for part ${partNumber} is undefined`);
             }
 
-            const xhr = new XMLHttpRequest();
-            xhr.open("PUT", partUrl, true);
-            xhr.setRequestHeader("Content-Type", file.type);
-
-            xhr.upload.onprogress = (event) => {
-              if (event.lengthComputable) {
-                const totalProgress = Math.round(((i * chunkSize + event.loaded) / file.size) * 100);
-                setProgresses(prev => ({ ...prev, [filename]: totalProgress }));
-              }
-            };
-
-            const { etag } = await new Promise<{ etag: string | null }>((resolve, reject) => {
-              xhr.onload = () => {
-                if (xhr.status === 200) {
-                  const etag = xhr.getResponseHeader("ETag");
-                  resolve({ etag });
-                } else {
-                  reject(new Error(`Failed to upload part ${partNumber} for ${filename}: ${xhr.status}`));
+            const { data, headers } = await axios.put(partUrl, chunk, {
+              headers: { "Content-Type": file.type },
+              onUploadProgress: (progressEvent) => {
+                if (progressEvent.total) {
+                  const totalProgress = Math.round(((i * chunkSize + progressEvent.loaded) / file.size) * 100);
+                  setProgresses(prev => ({ ...prev, [filename]: totalProgress }));
                 }
-              };
-
-              xhr.onerror = () => reject(new Error(`Network error occurred while uploading part ${partNumber} for ${filename}`));
-              xhr.send(chunk);
+              },
             });
+
+            const etag = headers.etag as string;
 
             if (etag) {
               parts.push({ PartNumber: partNumber, ETag: etag });
@@ -113,28 +111,14 @@ export function useUploadFile({
           }
         } else {
           // Handle single-part upload
-          const xhr = new XMLHttpRequest();
-          xhr.open("PUT", url, true);
-          xhr.setRequestHeader("Content-Type", file.type);
-
-          xhr.upload.onprogress = (event) => {
-            if (event.lengthComputable) {
-              const progress = Math.round((event.loaded / event.total) * 100);
-              setProgresses(prev => ({ ...prev, [filename]: progress }));
-            }
-          };
-
-          await new Promise((resolve, reject) => {
-            xhr.onload = () => {
-              if (xhr.status === 200) {
-                resolve(null);
-              } else {
-                reject(new Error(`Failed to upload file ${filename}: ${xhr.status}`));
+          await axios.put(url, file, {
+            headers: { "Content-Type": file.type },
+            onUploadProgress: (progressEvent) => {
+              if (progressEvent.total) {
+                const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+                setProgresses(prev => ({ ...prev, [filename]: progress }));
               }
-            };
-
-            xhr.onerror = () => reject(new Error(`Network error occurred while uploading ${filename}`));
-            xhr.send(file);
+            },
           });
         }
 
@@ -143,7 +127,7 @@ export function useUploadFile({
         if (!getUrlResponse.ok) {
           throw new Error(`Failed to get file URL: ${getUrlResponse.status}`);
         }
-        const { url: getUrl } = await getUrlResponse.json();
+        const { url: getUrl } = await getUrlResponse.json() as { url: string };
 
         const uploadedFile = {
           id,

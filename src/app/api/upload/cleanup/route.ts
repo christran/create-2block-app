@@ -8,7 +8,7 @@ import { eq } from "drizzle-orm";
 export async function GET(request: Request) {
   const { user } = await validateRequest();
 
-  if (!user || user.role !== "admin") {
+  if (user?.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
