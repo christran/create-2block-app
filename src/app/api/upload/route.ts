@@ -11,7 +11,7 @@ import { env } from "@/env";
 const MAX_TOTAL_FILES = 25;
 const MAX_TOTAL_SIZE = 1000 * 1024 * 1024;
 
-const MULTIPART_THRESHOLD = 100 * 1024 * 1024; // 100MB threshold for multipart upload
+const MULTIPART_THRESHOLD = 50 * 1024 * 1024; // 100MB threshold for multipart upload
 const CHUNK_SIZE = 5 * 1024 * 1024; // 25MB chunk size for multipart upload
 const MAX_PARTS = 6; // Maximum number of parts for multipart upload
 
@@ -89,8 +89,8 @@ export async function POST(request: Request) {
             chunkSize: Math.ceil(fileSize / totalParts) 
           };
 
-          console.log("Multipart upload initiated");
-          console.log("presignedUrls", presignedUrls);
+          console.log("Multipart upload started");
+          console.log("presignedUrls: ", Object.keys(presignedUrls).length);
         } else {
           // Use single-part upload for smaller files
           const { url } = await generatePresignedUrl(

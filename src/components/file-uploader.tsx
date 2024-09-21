@@ -275,7 +275,7 @@ function FileCard({ file, progress, onRemove }: FileCardProps) {
       <div className="flex items-center gap-2">
         <Button type="button" variant="outline" size="icon" className="size-7" onClick={onRemove}>
           <Cross2Icon className="size-4" aria-hidden="true" />
-          <span className="sr-only">Remove file</span>
+          <span className="sr-only">Cancel upload</span>
         </Button>
       </div>
     </div>

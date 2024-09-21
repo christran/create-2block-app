@@ -19,7 +19,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { key, uploadId, parts }: RequestBody = await request.json();
+    const { key, uploadId, parts }: RequestBody = await request.json() as RequestBody;
 
     if (!key || !uploadId || !parts || !Array.isArray(parts)) {
       return NextResponse.json({ error: "Invalid request data" }, { status: 400 });
