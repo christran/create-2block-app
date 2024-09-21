@@ -4,16 +4,17 @@ import { v4 as uuidv4 } from "uuid";
 import { db } from "@/server/db";
 import { files } from "@/server/db/schema";
 import { validateRequest } from "@/lib/auth/validate-request";
-import { formatBytes } from "@/lib/utils";
 import { env } from "@/env";
+import prettyBytes from "pretty-bytes";
 
 // todo: move to .env
 const MAX_TOTAL_FILES = 25;
 const MAX_TOTAL_SIZE = 1000 * 1024 * 1024;
 
-const MULTIPART_THRESHOLD = 100 * 1024 * 1024; // 100MB threshold for multipart upload
-const CHUNK_SIZE = 5 * 1024 * 1024; // 25MB chunk size for multipart upload
-const MAX_PARTS = 6; // Maximum number of parts for multipart upload
+const MULTIPART_THRESHOLD = 50 * 1024 * 1024; // 50MB threshold for multipart upload
+const MIN_CHUNK_SIZE = 25 * 1024 * 1024; // 25MB minimum chunk size
+const MAX_CHUNK_SIZE = 5000 * 1024 * 1024; // 5GB maximum chunk size
+const MAX_PARTS = 10000; // Maximum number of parts allowed by S3-compatible services
 
 interface FileRequest {
   prefix: string;
@@ -59,12 +60,12 @@ export async function POST(request: Request) {
         }
 
         if (fileSize > MAX_TOTAL_SIZE) {
-          throw new Error(`File size exceeds the limit of ${formatBytes(MAX_TOTAL_SIZE)}`);
+          throw new Error(`File size exceeds the limit of ${prettyBytes(MAX_TOTAL_SIZE, { maximumFractionDigits: 1 })}`);
         }
 
         if (fileSize > maxFileSize) {
           throw new Error(
-            `File size exceeds the maximum allowed size of ${formatBytes(maxFileSize)}`,
+            `File size exceeds the maximum allowed size of ${prettyBytes(maxFileSize, { maximumFractionDigits: 1 })}`,
           );
         }
 
@@ -75,7 +76,17 @@ export async function POST(request: Request) {
         if (fileSize > MULTIPART_THRESHOLD) {
           // Use multipart upload for large files
           const { uploadId } = await createMultipartUpload(key, contentType);
-          const totalParts = Math.min(Math.ceil(fileSize / CHUNK_SIZE), MAX_PARTS);
+          
+          // Calculate dynamic chunk size based on file size
+          let chunkSize = Math.max(MIN_CHUNK_SIZE, Math.min(MAX_CHUNK_SIZE, Math.ceil(fileSize / 6)));
+          let totalParts = Math.ceil(fileSize / chunkSize);
+
+          // Adjust chunk size if total parts exceed MAX_PARTS
+          if (totalParts > MAX_PARTS) {
+            chunkSize = Math.ceil(fileSize / MAX_PARTS);
+            totalParts = MAX_PARTS;
+          }
+          
           const parts = Array.from({ length: totalParts }, (_, i) => ({
             key,
             partNumber: i + 1,
@@ -86,11 +97,12 @@ export async function POST(request: Request) {
             multipart: true, 
             uploadId, 
             presignedUrls, 
-            chunkSize: Math.ceil(fileSize / totalParts) 
+            chunkSize
           };
 
           console.log("Multipart upload started");
-          console.log("presignedUrls: ", Object.keys(presignedUrls).length);
+          console.log("Total parts:", totalParts);
+          console.log("Chunk size:", prettyBytes(chunkSize, { maximumFractionDigits: 1 }));
         } else {
           // Use single-part upload for smaller files
           const { url } = await generatePresignedUrl(

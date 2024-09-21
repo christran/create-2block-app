@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyCard } from "@/components/empty-card";
@@ -6,7 +7,7 @@ import { FileIcon, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatBytes } from "@/lib/utils";
+import prettyBytes from "pretty-bytes";
 
 interface FileObject {
   id: string;
@@ -20,10 +21,12 @@ interface FileObject {
 interface UploadedFilesCardProps {
   initialUserFiles: FileObject[];
   newUploadedFiles: FileObject[];
+  onFileDelete: (fileId: string) => void;  // Add this line
 }
 
-export function UploadedFilesCard({ initialUserFiles, newUploadedFiles }: UploadedFilesCardProps) {
+export function UploadedFilesCard({ initialUserFiles, newUploadedFiles, onFileDelete }: UploadedFilesCardProps) {
   const queryClient = useQueryClient();
+  const [localFiles, setLocalFiles] = useState<FileObject[]>([]);
 
   const fetchFileDetails = async (fileId: string): Promise<Partial<FileObject>> => {
     const response = await fetch(`/api/files/${fileId}`);
@@ -40,8 +43,9 @@ export function UploadedFilesCard({ initialUserFiles, newUploadedFiles }: Upload
 
     queryFn: async () => {
       const combinedFiles = [...initialUserFiles, ...newUploadedFiles];
-      const filesWithUrls = combinedFiles.filter((file) => file.url);
-      const filesToFetch = combinedFiles.filter((file) => !file.url);
+      const uniqueFiles = Array.from(new Map(combinedFiles.map(file => [file.id, file])).values());
+      const filesWithUrls = uniqueFiles.filter((file) => file.url);
+      const filesToFetch = uniqueFiles.filter((file) => !file.url);
 
       const fetchedDetails = await Promise.all(
         filesToFetch.map(async (file) => {
@@ -64,29 +68,33 @@ export function UploadedFilesCard({ initialUserFiles, newUploadedFiles }: Upload
         ...fetchedDetails.filter((file): file is FileObject => file !== null),
       ];
 
+      // Ensure uniqueness by id
+      const uniqueAllFilesWithDetails = Array.from(
+        new Map(allFilesWithDetails.map(file => [file.id, file])).values()
+      );
+
       // Sort files by createdAt in descending order
-      return allFilesWithDetails.sort(
+      return uniqueAllFilesWithDetails.sort(
         (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       );
     },
     staleTime: 30 * 60 * 1000, // 30 minutes
   });
 
+  useEffect(() => {
+    if (allFiles) {
+      setLocalFiles(allFiles);
+    }
+  }, [allFiles]);
+
   const deleteMutation = useMutation({
-    mutationFn: async (fileId: string) => {
-      const response = await fetch(`/api/files/${fileId}`, { method: "DELETE" });
-      if (!response.ok) throw new Error("Failed to delete file");
-      return fileId;
-    },
-    onSuccess: (fileId) => {
+    mutationFn: onFileDelete,
+    onSuccess: (fileId: string) => {
       toast.success("File deleted successfully");
-      queryClient.setQueryData(
-        ["files", initialUserFiles, newUploadedFiles],
-        (oldData: FileObject[] | undefined) =>
-          oldData ? oldData.filter((file) => file.id !== fileId) : [],
-      );
+      setLocalFiles(prevFiles => prevFiles.filter(file => file.id !== fileId));
+      queryClient.invalidateQueries(["files", initialUserFiles, newUploadedFiles]);
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       console.error("Error deleting file:", error);
       toast.error("Failed to delete file");
     },
@@ -111,7 +119,7 @@ export function UploadedFilesCard({ initialUserFiles, newUploadedFiles }: Upload
               </div>
             ))}
           </div>
-        ) : allFiles?.length === 0 ? (
+        ) : localFiles.length === 0 ? (
           <EmptyCard
             title="No files uploaded"
             description="Upload some files to see them here"
@@ -119,7 +127,7 @@ export function UploadedFilesCard({ initialUserFiles, newUploadedFiles }: Upload
           />
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5">
-            {allFiles?.map((file) =>
+            {localFiles.map((file) =>
               file?.url ? (
                 <div
                   key={file.id}
@@ -153,7 +161,7 @@ export function UploadedFilesCard({ initialUserFiles, newUploadedFiles }: Upload
                   <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 p-2 text-white opacity-0 transition-opacity group-hover:opacity-100">
                     <div className="flex items-center justify-between text-xs">
                       <span className="max-w-[30%] truncate">
-                        {formatBytes(file.fileSize, false)}
+                        {prettyBytes(file.fileSize, { maximumFractionDigits: 2 })}
                         <br />
                         {file.contentType}
                       </span>

@@ -6,7 +6,7 @@ import type { UploadedFile } from "../types/file-upload";
 
 interface UseUploadFileProps {
   defaultUploadedFiles?: UploadedFile[];
-  onUploadComplete?: (fileUrl: string) => void;
+  onUploadComplete?: (files: UploadedFile[]) => void;
   onCancelUpload?: (id: string, uploadId: string) => void;
   prefix: string;
   allowedFileTypes: Record<string, string[]>;
@@ -58,7 +58,7 @@ export function useUploadFile({
       } else {
         console.error("Upload error:", err);
       }
-      // throw err;
+      throw err; // Re-throw the error to be caught by the toast.promise
     } finally {
       setIsUploading(false);
       setProgresses({});
@@ -103,6 +103,31 @@ export function useUploadFile({
     setCanceledFiles(prev => new Set(prev).add(id));
   };
 
+  // Add this new function to handle file deletion
+  const onDeleteFile = async (fileId: string) => {
+    try {
+      const response = await fetch(`/api/files/${fileId}`, { method: "DELETE" });
+      if (!response.ok) throw new Error("Failed to delete file");
+
+      // Update local state
+      setUploadedFiles(prev => prev.filter(file => file.id !== fileId));
+      setProgresses(prev => {
+        const newProgresses = { ...prev };
+        delete newProgresses[fileId];
+        return newProgresses;
+      });
+
+      // If there's an onUploadComplete callback, call it with the updated files
+      if (onUploadComplete) {
+        onUploadComplete(uploadedFiles.filter(file => file.id !== fileId));
+      }
+
+    } catch (error) {
+      console.error("Error deleting file:", error);
+      throw error;
+    }
+  };
+
   return {
     onUpload,
     uploadedFiles,
@@ -110,6 +135,7 @@ export function useUploadFile({
     progresses,
     isUploading,
     onCancelUpload,
+    onDeleteFile, // Add this to the returned object
   }
 
   async function getSignedUrls(files: File[], prefix: string, allowedFileTypes: Record<string, string[]>, maxFileSize: number): Promise<UploadResult[]> {

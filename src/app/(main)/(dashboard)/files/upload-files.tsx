@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUploader } from "@/components/file-uploader";
 import { UploadedFilesCard } from "./uploaded-files-card";
@@ -30,18 +30,24 @@ const ALLOWED_FILE_TYPES = {
   "application/octet-stream": [".exe"],
 };
 
-const MAX_FILE_SIZE = 1000 * 1024 * 1024; // 5 MB
+const MAX_FILE_SIZE = 1000 * 1024 * 1024; // 1GB
 
 export function UploadFiles({ initialUserFiles }: InitialUserFilesProps) {
   const [files, setFiles] = useState<File[]>([]);
   const [uploadedFileIds, setUploadedFileIds] = useState<Set<string>>(new Set());
+  const [userFiles, setUserFiles] = useState(initialUserFiles);
 
-  const { onUpload, uploadedFiles, uploadingFiles, onCancelUpload, progresses, isUploading } = useUploadFile({
+  const { onUpload, uploadedFiles, uploadingFiles, onCancelUpload, progresses, isUploading, onDeleteFile } = useUploadFile({
     defaultUploadedFiles: [],
     onUploadComplete: (newUploadedFiles) => {
       form.reset();
       setFiles([]);
-      setUploadedFileIds(new Set(newUploadedFiles.map(file => file.id)));
+      setUploadedFileIds(prev => new Set([...prev, ...newUploadedFiles.map(file => file.id)]));
+      setUserFiles(prevFiles => {
+        const newFileIds = new Set(newUploadedFiles.map(file => file.id));
+        const uniquePrevFiles = prevFiles.filter(file => !newFileIds.has(file.id));
+        return [...uniquePrevFiles, ...newUploadedFiles];
+      });
     },
     prefix: "files/",
     allowedFileTypes: ALLOWED_FILE_TYPES,
@@ -62,21 +68,36 @@ export function UploadFiles({ initialUserFiles }: InitialUserFilesProps) {
   }, [files, isUploading]);
 
   const handleUpload = (filesToUpload: File[]) => {
-    toast.promise(onUpload(filesToUpload), {
-      loading: "Uploading files",
-      success: (newUploadedFiles) => {
-        if (Array.isArray(newUploadedFiles)) {
-          const newIds = new Set(newUploadedFiles.map(file => file.id));
-          setUploadedFileIds(prev => new Set([...prev, ...newIds]));
-        }
-        return "Files uploaded successfully";
-      },
-      error: (err) => {
-        form.reset();
-        setFiles([]);
-        return err instanceof Error ? err.message : "Error uploading files";
-      },
+    let toastId: string | number | undefined;
+
+    const uploadPromise = new Promise<void>((resolve, reject) => {
+      toastId = toast.loading("Uploading files");
+
+      onUpload(filesToUpload)
+        .then((newUploadedFiles) => {
+          if (Array.isArray(newUploadedFiles) && newUploadedFiles.length > 0) {
+            // No need to update state here, it's handled in onUploadComplete
+            toast.success(`${newUploadedFiles.length > 1 ? "Files" : "File"} uploaded successfully`, { 
+              id: toastId, 
+              duration: 3000
+            });
+          } else {
+            toast.dismiss(toastId);
+          }
+          resolve();
+        })
+        .catch((err) => {
+          form.reset();
+          setFiles([]);
+          toast.error(err instanceof Error ? err.message : "Error uploading files", { 
+            id: toastId,
+            duration: 3000
+          });
+          reject(err);
+        });
     });
+
+    return uploadPromise;
   };
 
   const handleCancelUpload = async (id: string, uploadId: string, name: string) => {
@@ -88,6 +109,22 @@ export function UploadFiles({ initialUserFiles }: InitialUserFilesProps) {
       return newSet;
     });
   };
+
+  const handleFileDelete = useCallback(async (deletedFileId: string) => {
+    try {
+      await onDeleteFile(deletedFileId);
+      setUserFiles(prev => prev.filter(file => file.id !== deletedFileId));
+      setUploadedFileIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(deletedFileId);
+        return newSet;
+      });
+      setFiles(prev => prev.filter(file => file.name !== deletedFileId));
+    } catch (error) {
+      console.error("Error deleting file:", error);
+      toast.error("Failed to delete file");
+    }
+  }, [onDeleteFile]);
 
   return (
     <>
@@ -109,7 +146,7 @@ export function UploadFiles({ initialUserFiles }: InitialUserFilesProps) {
                         value={field.value}
                         onValueChange={(newFiles) => {
                           field.onChange(newFiles);
-                          setFiles(prevFiles => [...prevFiles, ...newFiles]);
+                          setFiles(newFiles);  // Update the files state
                         }}
                         maxFileCount={10}
                         maxSize={MAX_FILE_SIZE}
@@ -130,8 +167,9 @@ export function UploadFiles({ initialUserFiles }: InitialUserFilesProps) {
       </Card>
 
       <UploadedFilesCard 
-        initialUserFiles={initialUserFiles} 
-        newUploadedFiles={uploadedFiles.filter(file => uploadedFileIds.has(file.id))} 
+        initialUserFiles={userFiles} 
+        newUploadedFiles={uploadedFiles}
+        onFileDelete={handleFileDelete}
       />
     </>
   );

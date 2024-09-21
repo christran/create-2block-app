@@ -6,11 +6,12 @@ import { Cross2Icon, FileTextIcon, UploadIcon } from "@radix-ui/react-icons";
 import Dropzone, { type DropzoneProps, type FileRejection } from "react-dropzone";
 import { toast } from "sonner";
 
-import { cn, formatBytes } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useControllableState } from "@/hooks/use-controllable-state";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import prettyBytes from "pretty-bytes";
 
 interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -150,7 +151,7 @@ export function FileUploader(props: FileUploaderProps) {
       if (rejectedFiles.length > 0) {
         rejectedFiles.forEach(({ file, errors }) => {
           if (errors.some((error) => error.code === "file-too-large")) {
-            toast.error(`${file.name} is too large. Maximum file size is ${formatBytes(maxSize)}`);
+            toast.error(`${file.name} is too large. Maximum file size is ${prettyBytes(maxSize, { maximumFractionDigits: 1 })}`);
           } else {
             toast.error(`${file.name} is not allowed`);
           }
@@ -191,7 +192,7 @@ export function FileUploader(props: FileUploaderProps) {
       if (fileToCancel) { 
         toast.promise(onCancelUpload(fileToCancel.id, fileToCancel.uploadId, fileToCancel.filename), {
           // loading: "Attempting to cancel upload",
-          success: "Upload has been cancelled",
+          success: "Upload cancelled",
           error: "Failed to cancel upload",
         });
       }
@@ -255,8 +256,8 @@ export function FileUploader(props: FileUploaderProps) {
                     You can upload
                     {maxFileCount > 1
                       ? ` ${maxFileCount === Infinity ? "multiple" : maxFileCount}
-                      files (up to ${formatBytes(maxSize)} each)`
-                      : ` a file with ${formatBytes(maxSize)}`}
+                      files (up to ${prettyBytes(maxSize, { maximumFractionDigits: 1 })} each)`
+                      : ` a file with ${prettyBytes(maxSize, { maximumFractionDigits: 1 })}`}
                   </p>
                 </div>
               </div>
@@ -296,7 +297,7 @@ function FileCard({ file, progress, onRemove }: FileCardProps) {
         <div className="flex w-full flex-col gap-2">
           <div className="flex flex-col gap-px">
             <p className="line-clamp-1 text-sm font-medium text-foreground/80">{file.name}</p>
-            <p className="text-xs text-muted-foreground">{formatBytes(file.size)}</p>
+            <p className="text-xs text-muted-foreground">{prettyBytes(file.size, { maximumFractionDigits: 2 })}</p>
           </div>
           {progress ? <Progress value={progress} /> : null}
         </div>

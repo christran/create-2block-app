@@ -10,7 +10,7 @@ import {
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { env } from "@/env";
-import { formatBytes } from "./utils";
+import prettyBytes from "pretty-bytes";
 
 export interface PresignedUrl {
   id: string;
@@ -43,10 +43,10 @@ export async function generatePresignedUrl(
 
   if (contentLength > maxFileSize) {
     console.error(
-      `File size ${formatBytes(contentLength)} exceeds maximum allowed: ${formatBytes(maxFileSize)}`,
+      `File size ${prettyBytes(contentLength, { maximumFractionDigits: 2 })} exceeds maximum allowed: ${prettyBytes(maxFileSize, { maximumFractionDigits: 2 })}`,
     );
     throw new Error(
-      `File size ${formatBytes(contentLength)} exceeds maximum allowed: ${formatBytes(maxFileSize)}`,
+      `File size ${prettyBytes(contentLength, { maximumFractionDigits: 2 })} exceeds maximum allowed: ${prettyBytes(maxFileSize, { maximumFractionDigits: 2 })}`,
     );
   }
 

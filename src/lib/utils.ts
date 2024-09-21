@@ -26,20 +26,6 @@ export const getExceptionType = (error: unknown) => {
   return UnknownException;
 };
 
-export function formatBytes(bytes: number, clean = true): string {
-  if (bytes === 0) return '0 Bytes';
-  const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  const value = bytes / Math.pow(k, i);
-  
-  if (clean) {
-    return Math.round(value) + ' ' + sizes[i];
-  }
-  
-  return value.toFixed(2) + ' ' + sizes[i];
-}
-
 export function formatDate(
   date: Date | string | number,
   options: Intl.DateTimeFormatOptions = {
