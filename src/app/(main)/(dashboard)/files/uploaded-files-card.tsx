@@ -29,7 +29,7 @@ interface UploadedFilesCardProps {
   onFileDelete: (fileId: string) => void;
 }
 
-const ITEMS_PER_PAGE = 9; // Adjust this value as needed
+const ITEMS_PER_PAGE = 3; // Adjust this value as needed
 
 export function UploadedFilesCard({ initialUserFiles, newUploadedFiles, onFileDelete }: UploadedFilesCardProps) {
   const queryClient = useQueryClient();
@@ -51,7 +51,7 @@ export function UploadedFilesCard({ initialUserFiles, newUploadedFiles, onFileDe
     const start = pageParam * ITEMS_PER_PAGE;
     const end = start + ITEMS_PER_PAGE;
     
-    const combinedFiles = [...initialUserFiles, ...newUploadedFiles.reverse()];
+    const combinedFiles = [...initialUserFiles, ...newUploadedFiles];
     const uniqueFiles = Array.from(new Map(combinedFiles.map(file => [file.id, file])).values());
     
     // Filter out files that were added via newUploadedFiles
@@ -106,8 +106,9 @@ export function UploadedFilesCard({ initialUserFiles, newUploadedFiles, onFileDe
     if (data) {
       const queriedFiles = data.pages.flatMap(page => page.files);
       setLocalFiles(prevFiles => {
-        const newFiles = [...newUploadedFiles.reverse(), ...queriedFiles];
-        return Array.from(new Map(newFiles.map(file => [file.id, file])).values());
+        const newFiles = [...newUploadedFiles, ...queriedFiles];
+        return Array.from(new Map(newFiles.map(file => [file.id, file])).values())
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       });
     }
   }, [data, newUploadedFiles]);
@@ -116,11 +117,11 @@ export function UploadedFilesCard({ initialUserFiles, newUploadedFiles, onFileDe
     if (newUploadedFiles.length > 0) {
       newUploadedFiles.forEach(file => newUploadedFileIdsRef.current.add(file.id));
       queryClient.setQueryData(["files"], (oldData: any) => {
-        if (!oldData) return { pages: [{ files: newUploadedFiles.reverse(), nextCursor: null }] };
+        if (!oldData) return { pages: [{ files: newUploadedFiles, nextCursor: null }] };
 
         const updatedFirstPage = {
           ...oldData.pages[0],
-          files: [...newUploadedFiles.reverse(), ...oldData.pages[0].files]
+          files: [...newUploadedFiles, ...oldData.pages[0].files]
         };
 
         return {
