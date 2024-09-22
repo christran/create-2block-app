@@ -1,4 +1,8 @@
-import { useState, useEffect } from "react";
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyCard } from "@/components/empty-card";
@@ -25,12 +29,13 @@ interface UploadedFilesCardProps {
   onFileDelete: (fileId: string) => void;
 }
 
-const ITEMS_PER_PAGE = 12; // Adjust this value as needed
+const ITEMS_PER_PAGE = 9; // Adjust this value as needed
 
 export function UploadedFilesCard({ initialUserFiles, newUploadedFiles, onFileDelete }: UploadedFilesCardProps) {
   const queryClient = useQueryClient();
   const [localFiles, setLocalFiles] = useState<FileObject[]>([]);
   const { ref, inView } = useInView();
+  const newUploadedFileIdsRef = useRef(new Set<string>());
 
   const fetchFileDetails = async (fileId: string): Promise<Partial<FileObject>> => {
     const response = await fetch(`/api/files/${fileId}`);
@@ -46,10 +51,14 @@ export function UploadedFilesCard({ initialUserFiles, newUploadedFiles, onFileDe
     const start = pageParam * ITEMS_PER_PAGE;
     const end = start + ITEMS_PER_PAGE;
     
-    const combinedFiles = [...initialUserFiles, ...newUploadedFiles];
+    const combinedFiles = [...initialUserFiles, ...newUploadedFiles.reverse()];
     const uniqueFiles = Array.from(new Map(combinedFiles.map(file => [file.id, file])).values());
-    const paginatedFiles = uniqueFiles.slice(start, end);
-
+    
+    // Filter out files that were added via newUploadedFiles
+    const filesToFetch = uniqueFiles.filter(file => !newUploadedFileIdsRef.current.has(file.id));
+    
+    const paginatedFiles = filesToFetch.slice(start, end);
+    
     const filesWithDetails = await Promise.all(
       paginatedFiles.map(async (file) => {
         if (!file.url) {
@@ -66,7 +75,7 @@ export function UploadedFilesCard({ initialUserFiles, newUploadedFiles, onFileDe
     );
 
     const validFiles = filesWithDetails.filter((file): file is FileObject => file !== null);
-    const nextCursor = end < uniqueFiles.length ? pageParam + 1 : null;
+    const nextCursor = end < filesToFetch.length ? pageParam + 1 : null;
 
     return { 
       files: validFiles.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
@@ -89,47 +98,51 @@ export function UploadedFilesCard({ initialUserFiles, newUploadedFiles, onFileDe
 
   useEffect(() => {
     if (inView && hasNextPage) {
-      fetchNextPage();
+      fetchNextPage().catch(console.error);
     }
   }, [inView, fetchNextPage, hasNextPage]);
 
   useEffect(() => {
     if (data) {
-      const allFiles = data.pages.flatMap(page => page.files);
-      setLocalFiles(allFiles);
+      const queriedFiles = data.pages.flatMap(page => page.files);
+      setLocalFiles(prevFiles => {
+        const newFiles = [...newUploadedFiles.reverse(), ...queriedFiles];
+        return Array.from(new Map(newFiles.map(file => [file.id, file])).values());
+      });
     }
-  }, [data]);
+  }, [data, newUploadedFiles]);
 
   useEffect(() => {
-    // Update the query data when new files are uploaded
     if (newUploadedFiles.length > 0) {
+      newUploadedFiles.forEach(file => newUploadedFileIdsRef.current.add(file.id));
       queryClient.setQueryData(["files"], (oldData: any) => {
-        if (!oldData) return { pages: [{ files: newUploadedFiles, nextCursor: null }], pageParams: [0] };
-        const newFirstPage = {
+        if (!oldData) return { pages: [{ files: newUploadedFiles.reverse(), nextCursor: null }] };
+
+        const updatedFirstPage = {
           ...oldData.pages[0],
-          files: [...newUploadedFiles, ...oldData.pages[0].files],
+          files: [...newUploadedFiles.reverse(), ...oldData.pages[0].files]
         };
+
         return {
           ...oldData,
-          pages: [newFirstPage, ...oldData.pages.slice(1)],
+          pages: [updatedFirstPage, ...oldData.pages.slice(1)]
         };
       });
     }
   }, [newUploadedFiles, queryClient]);
 
-
   const deleteMutation = useMutation({
-    mutationFn: onFileDelete,
-    onSuccess: (_, fileId) => {
+    mutationFn: (fileId: string) => onFileDelete(fileId),
+    onSuccess: (_, fileId: string) => {
       toast.success("File deleted successfully");
       // Update local state
       setLocalFiles(prevFiles => prevFiles.filter(file => file.id !== fileId));
       // Update query cache
-      queryClient.setQueryData(["files"], (oldData: any) => {
+      queryClient.setQueryData(["files"], (oldData: { pages: { files: FileObject[] }[] } | undefined) => {
         if (!oldData) return oldData;
         return {
           ...oldData,
-          pages: oldData.pages.map((page: any) => ({
+          pages: oldData.pages.map((page: { files: FileObject[] }) => ({
             ...page,
             files: page.files.filter((file: FileObject) => file.id !== fileId),
           })),

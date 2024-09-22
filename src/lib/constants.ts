@@ -81,19 +81,19 @@ export const navbarItems: NavbarCategory[] = [
     items: [
       {
         title: "Claude 3.5 Sonnet",
-        href: "#",
+        href: "#claude",
         icon: PiRobot,
         roles: ["member", "premium", "admin"]
       },
       {
         title: "GPT-4o + GPT-o1",
-        href: "#",
+        href: "#gpt",
         icon: PiOpenAiLogo,
         roles: ["member", "premium", "admin"]
       },
       {
         title: "AGI",
-        href: "#",
+        href: "#agi",
         icon: BrainCircuit,
         roles: ["premium", "admin"]
       },
