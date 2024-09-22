@@ -2,14 +2,14 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { Cross2Icon, FileTextIcon, UploadIcon } from "@radix-ui/react-icons";
+import { Cross2Icon, FileTextIcon, PauseIcon, PlayIcon, UploadIcon } from "@radix-ui/react-icons";
 import Dropzone, { type DropzoneProps, type FileRejection } from "react-dropzone";
 import { toast } from "sonner";
+import { motion, useSpring, useTransform } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 import { useControllableState } from "@/hooks/use-controllable-state";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import prettyBytes from "pretty-bytes";
 
@@ -100,6 +100,10 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
   }[];
 
   onCancelUpload?: (id: string, uploadId: string, name: string) => Promise<void>;
+
+  onPauseUpload?: (id: string) => void;
+  onResumeUpload?: (id: string) => void;
+  pausedUploads?: Set<string>;
 }
 
 export function FileUploader(props: FileUploaderProps) {
@@ -118,6 +122,9 @@ export function FileUploader(props: FileUploaderProps) {
     multiple = false,
     disabled = false,
     className,
+    onPauseUpload,
+    onResumeUpload,
+    pausedUploads,
     ...dropzoneProps
   } = props;
 
@@ -267,15 +274,22 @@ export function FileUploader(props: FileUploaderProps) {
       </Dropzone>
       {files?.length ? (
         <ScrollArea className="h-fit w-full px-3">
-          <div className="flex max-h-48 flex-col gap-4">
-            {files?.map((file, index) => (
-              <FileCard
-                key={index}
-                file={file}
-                onRemove={() => onRemove(index, file)}
-                progress={progresses?.[file.name]}
-              />
-            ))}
+          <div className="flex max-h-60 flex-col gap-4">
+            {files?.map((file, index) => {
+              const uploadingFile = uploadingFiles?.find(f => f.filename === file.name);
+              return (
+                <FileCard
+                  key={index}
+                  file={file}
+                  onRemove={() => onRemove(index, file)}
+                  progress={progresses?.[file.name]}
+                  onPause={() => uploadingFile && onPauseUpload?.(uploadingFile.id)}
+                  onResume={() => uploadingFile && onResumeUpload?.(uploadingFile.id)}
+                  isPaused={uploadingFile ? pausedUploads?.has(uploadingFile.id) ?? false : false}
+                  isMultipart={uploadingFile?.multipart ?? false}
+                />
+              );
+            })}
           </div>
         </ScrollArea>
       ) : null}
@@ -287,26 +301,73 @@ interface FileCardProps {
   file: File;
   onRemove: () => void;
   progress?: number;
+  onPause: () => void;
+  onResume: () => void;
+  isPaused: boolean;
+  isMultipart: boolean;
 }
 
-function FileCard({ file, progress, onRemove }: FileCardProps) {
+function FileCard({ file, progress, onRemove, onPause, onResume, isPaused, isMultipart }: FileCardProps) {
+  const progressSpring = useSpring(0, { damping: 30, stiffness: 100 });
+  const roundedProgress = useTransform(progressSpring, (latest) => Math.round(latest));
+
+  React.useEffect(() => {
+    if (progress !== undefined) {
+      progressSpring.set(progress);
+    }
+  }, [progress, progressSpring]);
+
   return (
     <div className="relative flex items-center gap-2.5">
-      <div className="flex flex-1 gap-2.5">
-        {isFileWithPreview(file) ? <FilePreview file={file} /> : null}
-        <div className="flex w-full flex-col gap-2">
-          <div className="flex flex-col gap-px">
-            <p className="line-clamp-1 text-sm font-medium text-foreground/80">{file.name}</p>
-            <p className="text-xs text-muted-foreground">{prettyBytes(file.size, { maximumFractionDigits: 2 })}</p>
+      <div className="flex flex-1 items-center gap-2.5">
+        {isFileWithPreview(file) ? <FilePreview file={file} /> : <FileTextIcon className="size-10 text-muted-foreground" aria-hidden="true" />}
+        <div className="flex flex-1 flex-col gap-1">
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col">
+              <p className="line-clamp-1 text-sm font-medium text-foreground/80">{file.name}</p>
+              <p className="text-xs text-muted-foreground">{prettyBytes(file.size, { maximumFractionDigits: 2 })}</p>
+            </div>
           </div>
-          {progress ? <Progress value={progress} /> : null}
+          <div className="flex items-center gap-2">
+            {progress !== undefined ? (
+              <>
+                <div className="h-2 flex-grow overflow-hidden rounded-full bg-secondary">
+                  <motion.div
+                    className="h-full bg-blue-400"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progress}%` }}
+                    transition={{ type: "spring", damping: 20, stiffness: 80 }}
+                  />
+                </div>
+                <motion.span className="text-xs font-medium text-muted-foreground w-8">
+                  <motion.span>{roundedProgress}</motion.span>%
+                </motion.span>
+              </>
+            ) : (
+              <div className="h-2 flex-grow overflow-hidden rounded-full bg-secondary"/>
+            )}
+            {isMultipart && (
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="size-7 flex-shrink-0"
+                onClick={isPaused ? onResume : onPause}
+              >
+                {isPaused ? (
+                  <PlayIcon className="size-4" aria-hidden="true" />
+                ) : (
+                  <PauseIcon className="size-4" aria-hidden="true" />
+                )}
+                <span className="sr-only">{isPaused ? "Resume upload" : "Pause upload"}</span>
+              </Button>
+            )}
+            <Button type="button" variant="outline" size="icon" className="size-7 flex-shrink-0" onClick={onRemove}>
+              <Cross2Icon className="size-4" aria-hidden="true" />
+              <span className="sr-only">Cancel upload</span>
+            </Button>
+          </div>
         </div>
-      </div>
-      <div className="flex items-center gap-2">
-        <Button type="button" variant="outline" size="icon" className="size-7" onClick={onRemove}>
-          <Cross2Icon className="size-4" aria-hidden="true" />
-          <span className="sr-only">Cancel upload</span>
-        </Button>
       </div>
     </div>
   );
@@ -334,5 +395,5 @@ function FilePreview({ file }: FilePreviewProps) {
     );
   }
 
-  return <FileTextIcon className="size-10 text-muted-foreground" aria-hidden="true" />;
+  return <FileTextIcon className="size-12 text-muted-foreground" aria-hidden="true" />;
 }

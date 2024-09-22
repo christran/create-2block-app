@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import axios from "axios";
 import type { UploadedFile } from "../types/file-upload";
 
@@ -36,9 +36,15 @@ export function useUploadFile({
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>(defaultUploadedFiles);
   const [cancelTokens, setCancelTokens] = useState<Record<string, AbortController>>({});
   const [canceledFiles, setCanceledFiles] = useState<Set<string>>(new Set());
+  const [pausedUploads, setPausedUploads] = useState<Set<string>>(new Set());
+  const pausedUploadsRef = useRef<Set<string>>(new Set());
+  const [isPaused, setIsPaused] = useState(false);
+  const isPausedRef = useRef(false);
 
   const onUpload = async (files: File[]) => {
     setIsUploading(true);
+    setIsPaused(false);
+    isPausedRef.current = false;
 
     try {
       const uploadResults = await getSignedUrls(files, prefix, allowedFileTypes, maxFileSize);
@@ -58,11 +64,13 @@ export function useUploadFile({
       } else {
         console.error("Upload error:", err);
       }
-      throw err; // Re-throw the error to be caught by the toast.promise
+      throw err;
     } finally {
       setIsUploading(false);
       setProgresses({});
       setCanceledFiles(new Set());
+      setIsPaused(false);
+      isPausedRef.current = false;
     }
   };
 
@@ -101,6 +109,66 @@ export function useUploadFile({
     });
 
     setCanceledFiles(prev => new Set(prev).add(id));
+    
+    // Check if there are any ongoing uploads
+    const remainingUploads = uploadingFiles.filter(f => f.id !== id);
+    if (remainingUploads.length === 0) {
+      setIsUploading(false);
+    }
+
+    // Don't change the paused state of other uploads
+    setPausedUploads(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(id);
+      return newSet;
+    });
+  };
+
+  const onPauseUpload = (id: string) => {
+    setPausedUploads(prev => {
+      const newSet = new Set(prev);
+      newSet.add(id);
+      pausedUploadsRef.current = newSet;
+      return newSet;
+    });
+    setIsPaused(true);
+    isPausedRef.current = true;
+  };
+
+  const onResumeUpload = (id: string) => {
+    setPausedUploads(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(id);
+      pausedUploadsRef.current = newSet;
+      return newSet;
+    });
+    setIsPaused(false);
+    isPausedRef.current = false;
+  };
+
+  async function uploadChunk(file: File, chunkIndex: number, chunkSize: number, partUrl: string, filename: string, id: string, signal: AbortSignal) {
+    const start = chunkIndex * chunkSize;
+    const end = Math.min(file.size, start + chunkSize);
+    const chunk = file.slice(start, end);
+
+    while (pausedUploadsRef.current.has(id)) {
+      if (signal.aborted) {
+        throw new Error("Upload aborted");
+      }
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+
+    return axios.put(partUrl, chunk, {
+      headers: { "Content-Type": file.type },
+      onUploadProgress: (progressEvent) => {
+        if (progressEvent.total) {
+          const chunkProgress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+          const overallProgress = Math.round(((chunkIndex * chunkSize + progressEvent.loaded) / file.size) * 100);
+          setProgresses(prev => ({ ...prev, [filename]: overallProgress }));
+        }
+      },
+      signal,
+    });
   };
 
   // Add this new function to handle file deletion
@@ -117,10 +185,10 @@ export function useUploadFile({
         return newProgresses;
       });
 
-      // If there's an onUploadComplete callback, call it with the updated files
-      if (onUploadComplete) {
-        onUploadComplete(uploadedFiles.filter(file => file.id !== fileId));
-      }
+      // // If there's an onUploadComplete callback, call it with the updated files
+      // if (onUploadComplete) {
+      //   onUploadComplete(uploadedFiles.filter(file => file.id !== fileId));
+      // }
 
     } catch (error) {
       console.error("Error deleting file:", error);
@@ -136,6 +204,10 @@ export function useUploadFile({
     isUploading,
     onCancelUpload,
     onDeleteFile, // Add this to the returned object
+    onPauseUpload,
+    onResumeUpload,
+    pausedUploads,
+    isPaused,
   }
 
   async function getSignedUrls(files: File[], prefix: string, allowedFileTypes: Record<string, string[]>, maxFileSize: number): Promise<UploadResult[]> {
@@ -159,7 +231,7 @@ export function useUploadFile({
   }
 
   async function uploadFiles(files: File[], uploadResults: UploadResult[]): Promise<UploadedFile[]> {
-    const uploadedFiles = await Promise.all(uploadResults.map(async (result, index) => {
+    const uploadPromises = uploadResults.map(async (result, index) => {
       const file = files[index];
       if (!file) throw new Error(`File at index ${index} is undefined`);
 
@@ -179,7 +251,7 @@ export function useUploadFile({
         if (multipart) {
           await handleMultipartUpload(file, filename, chunkSize, presignedUrls, uploadId, prefix, id, abortController.signal);
         } else {
-          await handleSinglePartUpload(file, url, filename, abortController.signal);
+          await handleSinglePartUpload(file, url, filename, abortController.signal, prefix, id);
         }
 
         const getUrl = await getFileUrl(id);
@@ -206,8 +278,9 @@ export function useUploadFile({
           return newTokens;
         });
       }
-    }));
+    });
 
+    const uploadedFiles = await Promise.all(uploadPromises);
     return uploadedFiles.filter((file): file is UploadedFile => file !== null);
   }
 
@@ -220,7 +293,7 @@ export function useUploadFile({
       const partUrl = presignedUrls[partNumber];
       if (!partUrl) throw new Error(`Presigned URL for part ${partNumber} is undefined`);
 
-      const { headers } = await uploadChunk(file, i, chunkSize, partUrl, filename, signal);
+      const { headers } = await uploadChunk(file, i, chunkSize, partUrl, filename, id, signal);
       const etag = headers.etag as string;
       if (etag) {
         parts.push({ PartNumber: partNumber, ETag: etag });
@@ -230,23 +303,6 @@ export function useUploadFile({
     }
 
     await completeMultipartUpload(prefix, id, uploadId, parts);
-  }
-
-  async function uploadChunk(file: File, chunkIndex: number, chunkSize: number, partUrl: string, filename: string, signal: AbortSignal) {
-    const start = chunkIndex * chunkSize;
-    const end = Math.min(file.size, start + chunkSize);
-    const chunk = file.slice(start, end);
-
-    return axios.put(partUrl, chunk, {
-      headers: { "Content-Type": file.type },
-      onUploadProgress: (progressEvent) => {
-        if (progressEvent.total) {
-          const totalProgress = Math.round(((chunkIndex * chunkSize + progressEvent.loaded) / file.size) * 100);
-          setProgresses(prev => ({ ...prev, [filename]: totalProgress }));
-        }
-      },
-      signal, // Add this line to pass the AbortSignal
-    });
   }
 
   async function completeMultipartUpload(prefix: string, id: string, uploadId: string, parts: { PartNumber: number; ETag: string }[]) {
@@ -261,7 +317,26 @@ export function useUploadFile({
     }
   }
 
-  async function handleSinglePartUpload(file: File, url: string, filename: string, signal: AbortSignal) {
+  async function completeSinglePartUpload(prefix: string, id: string) {
+    const response =  await fetch("/api/upload/complete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key: `${prefix}${id}` }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to complete single part upload");
+    }
+  }
+
+  async function handleSinglePartUpload(file: File, url: string, filename: string, signal: AbortSignal, prefix: string, id: string) {
+    while (pausedUploadsRef.current.has(id)) {
+      if (signal.aborted) {
+        throw new Error("Upload aborted");
+      }
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+    
     await axios.put(url, file, {
       headers: { "Content-Type": file.type },
       onUploadProgress: (progressEvent) => {
@@ -272,6 +347,8 @@ export function useUploadFile({
       },
       signal, // Add this line to pass the AbortSignal
     });
+
+    await completeSinglePartUpload(prefix, id);
   }
 
   async function getFileUrl(id: string): Promise<string> {

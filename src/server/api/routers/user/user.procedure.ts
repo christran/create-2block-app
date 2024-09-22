@@ -75,6 +75,7 @@ export const userRouter = createTRPCRouter({
         where: (table, { eq, and, like }) => and(
           eq(table.userId, ctx.user.id),
           eq(table.s3Provider, env.S3_PROVIDER as "cloudflare" | "backblaze"), // TODO: remove when backblaze is the only provider
+          eq(table.uploadCompleted, true),
           like(table.key, sql`'files/%'`)  // This matches strings starting with "files/"
         ),
         orderBy: (table, { desc }) => desc(table.createdAt),

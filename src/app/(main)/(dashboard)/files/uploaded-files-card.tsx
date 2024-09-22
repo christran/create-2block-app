@@ -5,7 +5,7 @@ import { EmptyCard } from "@/components/empty-card";
 import { Button } from "@/components/ui/button";
 import { FileIcon, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, UseMutationResult } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import prettyBytes from "pretty-bytes";
 
@@ -39,8 +39,7 @@ export function UploadedFilesCard({ initialUserFiles, newUploadedFiles, onFileDe
   };
 
   const { data: allFiles, isLoading } = useQuery({
-    queryKey: ["files", initialUserFiles, newUploadedFiles],
-
+    queryKey: ["files"],
     queryFn: async () => {
       const combinedFiles = [...initialUserFiles, ...newUploadedFiles];
       const uniqueFiles = Array.from(new Map(combinedFiles.map(file => [file.id, file])).values());
@@ -87,12 +86,29 @@ export function UploadedFilesCard({ initialUserFiles, newUploadedFiles, onFileDe
     }
   }, [allFiles]);
 
-  const deleteMutation = useMutation({
+  useEffect(() => {
+    // Update the query data when new files are uploaded
+    if (newUploadedFiles.length > 0) {
+      queryClient.setQueryData(["files"], (oldData: FileObject[] | undefined) => {
+        if (!oldData) return newUploadedFiles;
+        const combinedFiles = [...oldData, ...newUploadedFiles];
+        return Array.from(new Map(combinedFiles.map(file => [file.id, file])).values())
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      });
+    }
+  }, [newUploadedFiles, queryClient]);
+
+  const deleteMutation: UseMutationResult<void, Error, string> = useMutation({
     mutationFn: onFileDelete,
-    onSuccess: (fileId: string) => {
+    onSuccess: (_, fileId) => {
       toast.success("File deleted successfully");
+      // Update local state
       setLocalFiles(prevFiles => prevFiles.filter(file => file.id !== fileId));
-      queryClient.invalidateQueries(["files", initialUserFiles, newUploadedFiles]);
+      // Update query cache
+      queryClient.setQueryData(
+        ["files"],
+        (oldData: FileObject[] | undefined) => oldData ? oldData.filter(file => file.id !== fileId) : []
+      );
     },
     onError: (error: Error) => {
       console.error("Error deleting file:", error);

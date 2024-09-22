@@ -21,31 +21,27 @@ export async function POST(request: Request) {
   try {
     const { key, uploadId, parts }: RequestBody = await request.json() as RequestBody;
 
-    if (!key || !uploadId || !parts || !Array.isArray(parts)) {
+    if (!key) {
       return NextResponse.json({ error: "Invalid request data" }, { status: 400 });
     }
 
     // Complete the multipart upload
-    const result = await completeMultipartUpload(key, uploadId, parts);
+    if (uploadId && parts && Array.isArray(parts)) {
+      const result = await completeMultipartUpload(key, uploadId, parts);
 
-    if (!result.Key) {
-      throw new Error("Failed to complete multipart upload: Key is undefined");
-    }
-
-    // Update the file status in the database
-    const fileId = key.split("/").pop(); // Assuming the key format is "prefix/uuid"
-    if (!fileId) {
-      throw new Error("Invalid key format");
+      if (!result.Key) {
+        throw new Error("Failed to complete multipart upload: Key is undefined");
+      }
     }
 
     await db.update(files)
       .set({ uploadCompleted: true })
-      .where(eq(files.id, fileId));
+      .where(eq(files.key, key));
 
     return NextResponse.json({ 
-      message: "Multipart upload completed successfully",
-      key: result.Key,
-      location: result.Location
+      message: "Upload completed successfully",
+      // key: result.Key,
+      // location: result.Location
     }, { status: 200 });
 
   } catch (error) {

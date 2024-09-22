@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUploader } from "@/components/file-uploader";
 import { UploadedFilesCard } from "./uploaded-files-card";
@@ -36,8 +36,22 @@ export function UploadFiles({ initialUserFiles }: InitialUserFilesProps) {
   const [files, setFiles] = useState<File[]>([]);
   const [uploadedFileIds, setUploadedFileIds] = useState<Set<string>>(new Set());
   const [userFiles, setUserFiles] = useState(initialUserFiles);
+  const [activeUploads, setActiveUploads] = useState<Set<string>>(new Set());
+  const toastIdRef = useRef<string | number>();
 
-  const { onUpload, uploadedFiles, uploadingFiles, onCancelUpload, progresses, isUploading, onDeleteFile } = useUploadFile({
+  const { 
+    onUpload, 
+    uploadedFiles, 
+    uploadingFiles, 
+    onCancelUpload, 
+    progresses, 
+    isUploading, 
+    onDeleteFile,
+    onPauseUpload,
+    onResumeUpload,
+    pausedUploads,
+    isPaused,
+  } = useUploadFile({
     defaultUploadedFiles: [],
     onUploadComplete: (newUploadedFiles) => {
       form.reset();
@@ -48,6 +62,7 @@ export function UploadFiles({ initialUserFiles }: InitialUserFilesProps) {
         const uniquePrevFiles = prevFiles.filter(file => !newFileIds.has(file.id));
         return [...uniquePrevFiles, ...newUploadedFiles];
       });
+      setActiveUploads(new Set());
     },
     prefix: "files/",
     allowedFileTypes: ALLOWED_FILE_TYPES,
@@ -63,26 +78,24 @@ export function UploadFiles({ initialUserFiles }: InitialUserFilesProps) {
 
   useEffect(() => {
     if (files.length > 0 && !isUploading) {
-      handleUpload(files);
+      void handleUpload(files);
     }
   }, [files, isUploading]);
 
   const handleUpload = (filesToUpload: File[]) => {
-    let toastId: string | number | undefined;
-
     const uploadPromise = new Promise<void>((resolve, reject) => {
-      toastId = toast.loading("Uploading files");
+      toastIdRef.current = toast.loading(`Uploading ${filesToUpload.length > 1 ? "files" : "file"}`);
+      setActiveUploads(new Set(filesToUpload.map(file => file.name)));
 
       onUpload(filesToUpload)
         .then((newUploadedFiles) => {
           if (Array.isArray(newUploadedFiles) && newUploadedFiles.length > 0) {
-            // No need to update state here, it's handled in onUploadComplete
             toast.success(`${newUploadedFiles.length > 1 ? "Files" : "File"} uploaded successfully`, { 
-              id: toastId, 
+              id: toastIdRef.current, 
               duration: 3000
             });
           } else {
-            toast.dismiss(toastId);
+            toast.dismiss(toastIdRef.current);
           }
           resolve();
         })
@@ -90,7 +103,7 @@ export function UploadFiles({ initialUserFiles }: InitialUserFilesProps) {
           form.reset();
           setFiles([]);
           toast.error(err instanceof Error ? err.message : "Error uploading files", { 
-            id: toastId,
+            id: toastIdRef.current,
             duration: 3000
           });
           reject(err);
@@ -108,22 +121,56 @@ export function UploadFiles({ initialUserFiles }: InitialUserFilesProps) {
       newSet.delete(id);
       return newSet;
     });
+    setActiveUploads(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(name);
+      return newSet;
+    });
+    if (activeUploads.size === 1) {
+      toast.dismiss(toastIdRef.current);
+    }
+  };
+
+  const handlePauseUpload = (id: string, filename: string) => {
+    onPauseUpload(id);
+    setActiveUploads(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(filename);
+      return newSet;
+    });
+    if (activeUploads.size === 1) {
+      toast.dismiss(toastIdRef.current);
+    }
+    toast.success("Upload paused", { duration: 3000 });
+  };
+
+  const handleResumeUpload = (id: string, filename: string) => {
+    onResumeUpload(id);
+    setActiveUploads(prev => new Set(prev).add(filename));
+    if (activeUploads.size === 0) {
+      toastIdRef.current = toast.loading(`Uploading ${activeUploads.size > 1 ? "files" : "file"}`);
+    }
   };
 
   const handleFileDelete = useCallback(async (deletedFileId: string) => {
     try {
       await onDeleteFile(deletedFileId);
+
       setUserFiles(prev => prev.filter(file => file.id !== deletedFileId));
+      
       setUploadedFileIds(prev => {
         const newSet = new Set(prev);
         newSet.delete(deletedFileId);
         return newSet;
       });
-      setFiles(prev => prev.filter(file => file.name !== deletedFileId));
+
+      toast.success("File deleted successfully");
     } catch (error) {
       console.error("Error deleting file:", error);
       toast.error("Failed to delete file");
     }
+
+    // console.log("files", files);
   }, [onDeleteFile]);
 
   return (
@@ -152,9 +199,18 @@ export function UploadFiles({ initialUserFiles }: InitialUserFilesProps) {
                         maxSize={MAX_FILE_SIZE}
                         accept={ALLOWED_FILE_TYPES}
                         progresses={progresses}
-                        disabled={isUploading}
+                        disabled={isUploading || isPaused}
                         uploadingFiles={uploadingFiles}
                         onCancelUpload={handleCancelUpload}
+                        onPauseUpload={(id) => {
+                          const file = uploadingFiles?.find(f => f.id === id);
+                          if (file) handlePauseUpload(id, file.filename);
+                        }}
+                        onResumeUpload={(id) => {
+                          const file = uploadingFiles?.find(f => f.id === id);
+                          if (file) handleResumeUpload(id, file.filename);
+                        }}
+                        pausedUploads={pausedUploads}
                       />
                     </FormControl>
                     <FormMessage />

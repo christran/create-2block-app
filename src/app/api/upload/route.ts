@@ -124,7 +124,7 @@ export async function POST(request: Request) {
           contentType,
           fileSize,
           s3Provider: env.S3_PROVIDER as "cloudflare" | "backblaze", // TODO: remove when backblaze is the only provider
-          uploadCompleted: fileSize > MULTIPART_THRESHOLD ? false : true,
+          uploadCompleted: false,
         });
 
         return {
