@@ -29,7 +29,7 @@ interface UploadedFilesCardProps {
   onFileDelete: (fileId: string) => void;
 }
 
-const ITEMS_PER_PAGE = 3; // Adjust this value as needed
+const ITEMS_PER_PAGE = 9; // Adjust this value as needed
 
 export function UploadedFilesCard({ initialUserFiles, newUploadedFiles, onFileDelete }: UploadedFilesCardProps) {
   const queryClient = useQueryClient();

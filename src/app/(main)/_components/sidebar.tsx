@@ -11,6 +11,8 @@ import { cn } from "@/lib/utils";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import { useStore } from "@/store/use-store";
 import type { User } from "@/server/db/schema";
+import { motion } from "framer-motion";
+import { useState } from "react";
 
 type UserRole = User["role"];
 
@@ -21,10 +23,20 @@ interface SidebarProps {
   avatar: string;
 }
 
-export function Sidebar({ fullname, email, userRole, avatar, }: SidebarProps) {
+export function Sidebar({ fullname, email, userRole, avatar }: SidebarProps) {
   const sidebar = useStore(useSidebarToggle, (state) => state);
+  const [isWaving, setIsWaving] = useState(false);
 
-  // if(!sidebar) return null;
+  const waveAnimation = {
+    rotate: [0, -25, 15, -20, 0],
+    transition: { 
+      duration: 1, 
+      ease: "easeInOut",
+      repeat: Infinity,
+      repeatType: "loop",
+      repeatDelay: 1
+    }
+  };
 
   return (
     <div className="z-40 hidden md:inline-block md:visible bg-secondary/20 relative">
@@ -40,21 +52,37 @@ export function Sidebar({ fullname, email, userRole, avatar, }: SidebarProps) {
                 <TooltipTrigger asChild>
                   <Link 
                     className={cn(
-                      "flex text-lg font-extrabold text-primary/75 hover:text-yellow-400/90",
-                      sidebar?.isClosed ? "w-8 h-8" : ""
+                      "flex text-primary/75 hover:text-yellow-400/90",
+                      sidebar?.isClosed ? "w-9 h-9" : ""
                     )}
                     href={Paths.Home}
+                    onMouseEnter={() => setIsWaving(true)}
+                    onMouseLeave={() => setIsWaving(false)}
                   >
-                    <PiHandPeaceLight className={cn(
-                      "flex-shrink-0",
-                      sidebar?.isClosed ? "h-full w-full" : "h-8 w-8"
-                    )} />
-                    <span className={cn(
-                      "transition-opacity duration-700 ease-in-out",
-                      sidebar?.isClosed ? "w-0 opacity-0 overflow-hidden" : "w-auto opacity-100"
-                    )}>
-                      {APP_TITLE_UNSTYLED}
-                    </span>
+                    <motion.div 
+                      className="flex-shrink-0"
+                      animate={isWaving ? waveAnimation : {}}
+                    >
+                      <PiHandPeaceLight className={cn(
+                        sidebar?.isClosed ? "h-full w-full" : "h-9 w-9"
+                      )} />
+                    </motion.div>
+                    <motion.span
+                      className="overflow-hidden"
+                      initial={false}
+                      animate={{
+                        width: sidebar?.isClosed ? 0 : "auto",
+                        opacity: sidebar?.isClosed ? 0 : 1,
+                      }}
+                      transition={{
+                        duration: 0.3,
+                        ease: "easeInOut",
+                      }}
+                    >
+                      <div className="mt-[2.5px] text-xl font-extrabold">
+                        {APP_TITLE_UNSTYLED}
+                      </div>
+                    </motion.span>
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent className="z-50 font-bold text-xs">
