@@ -40,9 +40,15 @@ export async function POST(req: NextRequest) {
           "X-RateLimit-Limit": rateLimitResult?.headers.get("X-RateLimit-Limit") ?? "0",
           "X-RateLimit-Remaining": rateLimitResult?.headers.get("X-RateLimit-Remaining") ?? "0",
           "X-RateLimit-Reset": rateLimitResult?.headers.get("X-RateLimit-Reset") ?? "0",
+          "Cache-Control": "no-cache, no-store, max-age=0",
         }
       });
   }
+  
+  const response = NextResponse.json({ success: true });
+  
+  // Have to set cache control here because "force-dynamic" isn't enough
+  response.headers.set("Cache-Control", "no-cache, no-store, max-age=0");
 
-  return NextResponse.json({ success: true }, { status: 200 });
+  return response;
 }

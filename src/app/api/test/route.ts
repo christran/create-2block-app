@@ -13,8 +13,7 @@ const apiLimiter = new Ratelimit({
 export async function GET(req: NextRequest) {
   // Use a constant string to limit all requests with a single ratelimit
   // Or use a userID, apiKey or ip address for individual limits.
-
-  const identifier = req.headers.get("X-Forwarded-For") ?? req.ip ?? "127.0.0.1";
+  const identifier = req.headers.get("X-Forwarded-For")?.split(",")[0] ?? req.headers.get("X-Real-IP") ?? "127.0.0.1";
   const rateLimitResult = await rateLimitMiddleware(apiLimiter, identifier);
 
   if (rateLimitResult) {
@@ -23,6 +22,8 @@ export async function GET(req: NextRequest) {
 
   // Your API logic here
   const response = NextResponse.json({ message: `Hello, ${identifier}` });
+
+  // Have to set cache control here because "force-dynamic" isn't enough
   response.headers.set("Cache-Control", "no-cache, no-store, max-age=0");
 
   return response;

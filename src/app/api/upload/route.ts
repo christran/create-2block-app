@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
 
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
 
-  const identifier = req.headers.get("X-Forwarded-For") ?? req.ip ?? "127.0.0.1" ?? user.id;
+  const identifier = req.headers.get("X-Forwarded-For")?.split(",")[0] ?? req.headers.get("X-Real-IP") ?? user.id;
   const rateLimitResult = await rateLimitMiddleware(apiLimiter, identifier);
 
   if (rateLimitResult) {
