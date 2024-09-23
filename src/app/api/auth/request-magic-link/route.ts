@@ -10,7 +10,7 @@ const apiLimiter = new Ratelimit({
 
 
 export async function POST(req: NextRequest) {
-  const identifier = req.headers.get("X-Real-IP") ?? req.headers.get("X-Forwarded-For") ?? req.ip ?? "127.0.0.1";
+  const identifier = req.headers.get("X-Forwarded-For") ?? req.ip ?? "127.0.0.1";
   const rateLimitResult = await rateLimitMiddleware(apiLimiter, identifier);
 
   if (rateLimitResult) {

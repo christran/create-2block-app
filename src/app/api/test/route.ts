@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   // Use a constant string to limit all requests with a single ratelimit
   // Or use a userID, apiKey or ip address for individual limits.
 
-  const identifier = req.headers.get("X-Real-IP") ?? req.headers.get("X-Forwarded-For") ?? req.ip ?? "127.0.0.1";
+  const identifier = req.headers.get("X-Forwarded-For") ?? req.ip ?? "127.0.0.1";
   const rateLimitResult = await rateLimitMiddleware(apiLimiter, identifier);
 
   if (rateLimitResult) {

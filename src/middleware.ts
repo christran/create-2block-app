@@ -44,7 +44,7 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
 
   // Only check rate limit if path is configured see /lib/rate-limit-config.ts
   if (rateLimitKey) {
-    const ip = req.headers.get("X-Real-IP") ?? req.headers.get("X-Forwarded-For") ?? req.ip ?? "127.0.0.1";
+    const ip = req.headers.get("X-Forwarded-For") ?? req.ip ?? "127.0.0.1";
     const { success, limit, remaining, reset } = await checkRateLimit(ip, rateLimitKey);
 
     const response = success 
