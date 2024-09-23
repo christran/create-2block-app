@@ -193,27 +193,27 @@ export const deleteAccount = async (): Promise<{ error: string } | void> => {
 // https://docs.useplunk.com/api-reference/contacts/subscribe
 export const createContact = async (email: string, metadata?: Record<string, unknown>): Promise<{ contactId: string }> => {
   const headers = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `Bearer ${env.PLUNK_API_KEY}`
   }
 
   try {
     const options = {
-      method: 'POST',
+      method: "POST",
       headers,
       body: JSON.stringify({
-        event: 'new-account',
+        event: "new-account",
         email,
         subscribed: true,
         data: metadata
       })
     };
 
-    const response = await fetch('https://resend.2block.co/api/v1/track', options);
+    const response = await fetch("https://resend.2block.co/api/v1/track", options);
     const data = await response.json();
 
     if (!data.success) {
-      throw new Error((data.error, data.message) ?? 'Failed to create contact');
+      throw new Error((data.error, data.message) ?? "Failed to create contact");
     }
 
     logger.info(`📨 Contact successfully created for: ${email}`, {
@@ -496,9 +496,9 @@ export const updateAccount = async (_: any, formData: FormData): Promise<ActionR
 
     return { success: true };
   } catch (error) {
-    console.error('Error updating user:', error);
+    console.error("Error updating user:", error);
     return { 
-      error: 'Failed to update user information' 
+      error: "Failed to update user information" 
     };
   }
 }
@@ -559,8 +559,8 @@ export const updatePassword = async (_: any, formData: FormData): Promise<Action
     // redirect(Paths.Security);
     return { success: true };
   } catch (error) {
-    console.error('Error updating user:', error);
-    return { error: 'Failed to update user information' };
+    console.error("Error updating user:", error);
+    return { error: "Failed to update user information" };
   }
 }
 
@@ -657,6 +657,7 @@ export const sendMagicLink = async (
   });
 
   if (user) {
+    // TODO: We are ratelimiting this in the middleware so this is not needed
     const lastSent = await db.query.magicLinkTokens.findFirst({
       where: (table, { eq }) => eq(table.userId, user?.id),
       columns: { expiresAt: true },
@@ -743,14 +744,14 @@ export const validateMagicLinkToken = async (token: string) => {
   // if (!dbToken) return { error: "Invalid magic link." };
 
   if (!dbToken) {
-    cookies().set('auth_error', 'Invalid magic link', { maxAge: 5, path: '/' });
+    cookies().set("auth_error", "Invalid magic link", { maxAge: 5, path: "/" });
     return redirect(Paths.Login);
   };
 
   // if (!isWithinExpirationDate(dbToken.expiresAt)) return { error: "Magic link link expired." };
 
   if (!isWithinExpirationDate(dbToken.expiresAt)) {
-    cookies().set('auth_error', 'Magic link link expired', { maxAge: 5, path: '/' });
+    cookies().set("auth_error", "Magic link link expired", { maxAge: 5, path: "/" });
     return redirect(Paths.Login);
   }
 

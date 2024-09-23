@@ -48,13 +48,6 @@ export function MagicLink() {
   //   return email.trim() !== '';
   // }, [email]);
 
-  // const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-  //   event.preventDefault();
-  //   const formData = new FormData(event.currentTarget);
-  //   formData.append("ip", ipAddress);
-  //   formAction(formData);
-  // };
-
   function handleSocial(provider: "google" | "discord" | "github") {    
     return router.push(`/login/${provider}`);
   }

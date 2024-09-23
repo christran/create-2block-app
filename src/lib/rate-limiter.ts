@@ -1,6 +1,6 @@
 import { Redis } from "ioredis";
 import { RedisStore, SlideLimiter } from "slide-limiter";
-import { type NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 // Initialize Redis client
 const redis = new Redis(process.env.REDIS_URL!);
@@ -61,6 +61,11 @@ export class Ratelimit {
 // Helper function to parse duration string
 function parseDuration(duration: string): number {
   const [value, unit] = duration.split(" ");
+
+  if (!value || !unit) {
+    throw new Error("Invalid duration format. Use <value> <unit> (e.g., 10 s).");
+  }
+
   const numValue = parseInt(value, 10);
 
   switch (unit?.toLowerCase()) {
