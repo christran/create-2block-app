@@ -25,6 +25,10 @@ export class Ratelimit {
     prefix?: string;
     analytics?: boolean;
   }) {
+    // Lazy initialize Redis and RedisStore
+    // const redis = new Redis(process.env.REDIS_URL!);
+    // const store = new RedisStore(redis);
+
     this.limiter = new SlideLimiter(store, {
       windowMs: config.limiter.windowMs,
       maxLimit: config.limiter.maxLimit,
