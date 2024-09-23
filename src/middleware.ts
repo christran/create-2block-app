@@ -6,6 +6,7 @@ import { rateLimitConfig, type RateLimitKey } from "@/lib/rate-limit-config";
 
 // Workaround because nextjs middleware doesn't support redis/crypto yet
 import { Paths } from "./lib/constants";
+
 // Rate limiting for configured paths see /lib/rate-limit-config.ts
 async function checkRateLimit(identifier: string, key: RateLimitKey): Promise<{ success: boolean; limit: string; remaining: string; reset: string; }> {
   const response = await fetch(`${env.NEXT_PUBLIC_APP_URL}/api/auth/rate-limit-check`, {
@@ -46,7 +47,7 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   if (rateLimitKey) {
     const ip = req.headers.get("X-Forwarded-For")?.split(",")[0] ?? req.headers.get("X-Real-IP") ?? "127.0.0.1";
     const { success, limit, remaining, reset } = await checkRateLimit(ip, rateLimitKey);
-
+    
     const response = success 
       ? NextResponse.next() 
       : NextResponse.redirect(new URL(Paths.Blocked, req.url));
