@@ -14,7 +14,7 @@ export function RateLimited() {
 
   return (
     <>
-      <div className="flex flex-col items-center justify-center mx-auto max-w-5xl px-4 md:px-2 py-48 md:py-72 pb-8">
+      <div className="flex flex-col items-center justify-center mx-auto max-w-5xl px-4 md:px-2 py-48 md:py-80 pb-8">
         <motion.div
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}

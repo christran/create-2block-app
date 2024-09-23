@@ -5,11 +5,11 @@ export interface RateLimitConfig {
 }
 
 export const rateLimitConfig: Record<string, RateLimitConfig> = {
-  login: {
-    limit: 5,
-    window: "10s",
-    path: "/login",
-  },
+  // login: {
+  //   limit: 10,
+  //   window: "10s",
+  //   path: "/login",
+  // },
   // cleanup: {
   //   limit: 10,
   //   window: "10s",

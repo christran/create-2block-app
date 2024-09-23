@@ -37,7 +37,7 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
       {userRole !== "guest" ? (
         <Sheet>
           <div className="flex items-center justify-between w-full md:hidden">
-            <Link className="flex items-center text-md font-extrabold text-primary/75" href={Paths.Dashboard}>
+            <Link className="flex items-center text-md font-extrabold text-primary/75 hover:text-yellow-400/90" href={Paths.Dashboard}>
               <PiHandPeaceLight className="h-6 w-6" />{APP_TITLE_UNSTYLED}
             </Link>
 
@@ -67,7 +67,7 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
           </div>
           <SheetContent side="left" onOpenAutoFocus={(event) => event.preventDefault()} className="w-[280px] md:w-[320px] flex flex-col">
             <SheetClose asChild>
-              <Link className="flex items-center justify-center text-xl font-extrabold text-primary/75" href={Paths.Dashboard}>
+              <Link className="flex items-center justify-center text-xl font-extrabold text-primary/75 hover:text-yellow-400/90" href={Paths.Dashboard}>
                 <PiHandPeaceLight className="h-7 w-7" />{APP_TITLE_UNSTYLED}
               </Link>
             </SheetClose>
@@ -162,7 +162,7 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
         ) : (
           <Sheet>
             <div className="flex items-center justify-between w-full md:hidden">
-              <Link className="flex items-center text-md font-extrabold text-primary/75" href={Paths.Dashboard}>
+              <Link className="flex items-center text-md font-extrabold text-primary/75 hover:text-yellow-400/90" href={Paths.Dashboard}>
                 <PiHandPeaceLight className="h-6 w-6" />{APP_TITLE_UNSTYLED}
               </Link>
 
@@ -192,7 +192,7 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
             </div>
           <SheetContent side="left" onOpenAutoFocus={(event) => event.preventDefault()} className="w-[280px] md:w-[320px] flex flex-col">
             <SheetClose asChild>
-              <Link className="flex items-center justify-center text-xl font-extrabold text-primary/75" href={Paths.Dashboard}>
+              <Link className="flex items-center justify-center text-xl font-extrabold text-primary/75 hover:text-yellow-400/90" href={Paths.Dashboard}>
                 <PiHandPeaceLight className="h-7 w-7" />{APP_TITLE_UNSTYLED}
               </Link>
             </SheetClose>

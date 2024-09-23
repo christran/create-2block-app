@@ -86,7 +86,7 @@ export const config = {
     "/((?!api|static|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
 
     // Rate limiting for configured paths see /lib/rate-limit-config.ts
-    "/login",
+    // "/login",
     // "/api/upload/cleanup",
     // "/login/verify",
   ],

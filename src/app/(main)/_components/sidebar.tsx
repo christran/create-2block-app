@@ -79,7 +79,7 @@ export function Sidebar({ fullname, email, userRole, avatar }: SidebarProps) {
                         ease: "easeInOut",
                       }}
                     >
-                      <div className="mt-[2.5px] text-xl font-extrabold">
+                      <div className="mt-[3px] text-xl font-extrabold">
                         {APP_TITLE_UNSTYLED}
                       </div>
                     </motion.span>
