@@ -117,6 +117,7 @@ export async function rateLimitMiddleware(
         "X-RateLimit-Limit": result.limit.toString(),
         "X-RateLimit-Remaining": result.remaining.toString(),
         "X-RateLimit-Reset": result.reset.toString(),
+        "Cache-Control": "public, no-cache, no-store, max-age=0",
       },
     });
   }

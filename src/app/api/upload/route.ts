@@ -37,12 +37,12 @@ interface RequestBody {
   maxFileSize: number;
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   const { user } = await validateRequest();
 
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
 
-  const identifier = request.ip ?? user.id;
+  const identifier = req.headers.get("X-Real-IP") ?? req.headers.get("X-Forwarded-For") ?? req.ip ?? "127.0.0.1" ?? user.id;
   const rateLimitResult = await rateLimitMiddleware(apiLimiter, identifier);
 
   if (rateLimitResult) {
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { files: fileRequests, allowedFileTypes, maxFileSize }: RequestBody = await request.json() as RequestBody;
+    const { files: fileRequests, allowedFileTypes, maxFileSize }: RequestBody = await req.json() as RequestBody;
 
     if (!fileRequests || !Array.isArray(fileRequests) || !allowedFileTypes || !maxFileSize) {
       return NextResponse.json({ error: "Invalid request data" }, { status: 400 });

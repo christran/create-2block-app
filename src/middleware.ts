@@ -35,21 +35,21 @@ async function checkRateLimit(identifier: string, key: RateLimitKey): Promise<{ 
   };
 }
 
-export async function middleware(request: NextRequest): Promise<NextResponse> {
+export async function middleware(req: NextRequest): Promise<NextResponse> {
   // Rate limiting for configured paths
-  const path = request.nextUrl.pathname;
+  const path = req.nextUrl.pathname;
   const rateLimitKey = Object.keys(rateLimitConfig).find(
     (key) => rateLimitConfig[key]?.path === path
   );
 
   // Only check rate limit if path is configured see /lib/rate-limit-config.ts
   if (rateLimitKey) {
-    const ip = request.ip ?? "127.0.0.1";
+    const ip = req.headers.get("X-Real-IP") ?? req.headers.get("X-Forwarded-For") ?? req.ip ?? "127.0.0.1";
     const { success, limit, remaining, reset } = await checkRateLimit(ip, rateLimitKey);
 
     const response = success 
       ? NextResponse.next() 
-      : NextResponse.redirect(new URL(Paths.Blocked, request.url));
+      : NextResponse.redirect(new URL(Paths.Blocked, req.url));
 
     response.headers.set("X-RateLimit-Success", success.toString());
     response.headers.set("X-RateLimit-Limit", limit.toString());
@@ -59,12 +59,12 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     return response;
   }
 
-  if (request.method === "GET") {
+  if (req.method === "GET") {
     return NextResponse.next();
   }
 
-  const originHeader = request.headers.get("Origin");
-  const hostHeader = request.headers.get("Host");
+  const originHeader = req.headers.get("Origin");
+  const hostHeader = req.headers.get("Host");
   if (
     !originHeader ||
     !hostHeader ||
