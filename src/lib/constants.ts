@@ -38,6 +38,7 @@ export enum Paths {
   TermsOfService = "/terms-of-service",
   PrivacyPolicy = "/privacy",
   AcceptableUsePolicy = "/acceptable-use",
+  Blocked = "/2-blocked",
   GitHub = "https://github.com/christran",
 }
 

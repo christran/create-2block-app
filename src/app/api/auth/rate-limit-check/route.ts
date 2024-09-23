@@ -27,8 +27,19 @@ export async function POST(req: NextRequest) {
 
   const rateLimitResult = await rateLimitMiddleware(limiter, identifier);
 
+
   if (rateLimitResult) {
-    return NextResponse.json({ error: "Rate limit exceeded. Please try again later." }, { status: 429 });
+    return NextResponse.json({ 
+      error: "Rate limit exceeded. Please try again later." }, 
+      { 
+        status: 429, 
+        headers: {
+          "X-RateLimit-Success": rateLimitResult?.headers.get("X-RateLimit-Success") ?? "0",
+          "X-RateLimit-Limit": rateLimitResult?.headers.get("X-RateLimit-Limit") ?? "0",
+          "X-RateLimit-Remaining": rateLimitResult?.headers.get("X-RateLimit-Remaining") ?? "0",
+          "X-RateLimit-Reset": rateLimitResult?.headers.get("X-RateLimit-Reset") ?? "0",
+        }
+      });
   }
 
   return NextResponse.json({ success: true }, { status: 200 });

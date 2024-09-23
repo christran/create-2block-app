@@ -19,7 +19,7 @@ const MAX_PARTS = 10000; // Maximum number of parts allowed by S3-compatible ser
 
 // Create a rate limiter
 const apiLimiter = new Ratelimit({
-  limiter: Ratelimit.slidingWindow(5, "10 s"),
+  limiter: Ratelimit.slidingWindow(5, "10s"),
   prefix: "@ratelimit/api_ratelimit_upload",
   analytics: true,
 });

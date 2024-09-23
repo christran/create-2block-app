@@ -5,11 +5,11 @@ import Link from "next/link"
 import { Home } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 
-export default function NotFoundPage() {
+export default function BlockedPage() {
   return (
     <>
-      <div className="flex flex-col items-center justify-center mx-auto max-w-5xl min-h-screen px-4">
-      <motion.div
+      <div className="flex flex-col items-center justify-center mx-auto max-w-5xl px-4 md:px-2 py-48 md:py-72 pb-8">
+        <motion.div
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{
@@ -17,31 +17,31 @@ export default function NotFoundPage() {
             stiffness: 300,
             damping: 20,
           }}
-          className="text-9xl font-bold mb-2"
+          className="text-7xl md:text-9xl font-bold mb-4"
         >
-          4
+          
           <motion.span
-            animate={{ rotate: [0, 5, -5, 0] }}
+            animate={{ rotate: [0, 1, -1, 0] }}
             transition={{
               repeat: Infinity,
-              duration: 2,
+              duration: 5,
               ease: "easeInOut",
             }}
             className="inline-block"
           >
-            0
+            Rate Limited!
           </motion.span>
-          4
+          
         </motion.div>
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-xl md:text-2xl text-center mb-4 max-w-md"
+          className="text-xl md:text-2xl text-center mb-8 max-w-full"
         >
-          Oops! This page does not exist
+          Slow down! You've been rate limited. Please try again later.
         </motion.div>
-        <motion.div
+        {/* <motion.div
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -52,9 +52,9 @@ export default function NotFoundPage() {
             <Home className="mr-2" />
             Return Home
           </Link>
-        </motion.div>
+        </motion.div> */}
         <div className="absolute top-0 left-0 m-4">
-          <ThemeToggle />
+          {/* <ThemeToggle /> */}
         </div>
       </div>
     </>

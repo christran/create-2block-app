@@ -3,7 +3,7 @@ import { Ratelimit, rateLimitMiddleware } from "@/lib/rate-limiter";
 
 // Create a rate limiter
 const apiLimiter = new Ratelimit({
-  limiter: Ratelimit.slidingWindow(5, "10 s"),
+  limiter: Ratelimit.slidingWindow(5, "10s"),
   prefix: "@ratelimit/api_ratelimit_requestMagicLink",
   analytics: true,
 });

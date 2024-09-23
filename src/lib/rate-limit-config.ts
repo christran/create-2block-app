@@ -5,14 +5,19 @@ export interface RateLimitConfig {
 }
 
 export const rateLimitConfig: Record<string, RateLimitConfig> = {
-  // login: {
-  //   limit: 1,
-  //   window: "10 s",
-  //   path: "/login",
+  login: {
+    limit: 5,
+    window: "10s",
+    path: "/login",
+  },
+  // cleanup: {
+  //   limit: 10,
+  //   window: "10s",
+  //   path: "/api/upload/cleanup",
   // },
   // magicLink: {
-  //   limit: 1,
-  //   window: "10 s",
+  //   limit: 10,
+  //   window: "10s",
   //   path: "/login/verify",
   // },
 };

@@ -35,7 +35,7 @@ export class Ratelimit {
 
   static slidingWindow(maxLimit: number, duration: string): { windowMs: number; maxLimit: number } {
     const durationMs = parseDuration(duration);
-    return { windowMs: durationMs, maxLimit: maxLimit + 1 };
+    return { windowMs: durationMs, maxLimit: maxLimit + 1};
   }
 
   async limit(identifier: string): Promise<RateLimitResult> {
@@ -60,13 +60,14 @@ export class Ratelimit {
 
 // Helper function to parse duration string
 function parseDuration(duration: string): number {
-  const [value, unit] = duration.split(" ");
+  const match = duration.match(/^(\d+)([a-zA-Z]+)$/);
 
-  if (!value || !unit) {
-    throw new Error("Invalid duration format. Use <value> <unit> (e.g., 10 s).");
+  if (!match) {
+    throw new Error("Invalid duration format. Use <value><unit> (e.g., 10s).");
   }
 
-  const numValue = parseInt(value, 10);
+  const [, value, unit] = match;
+  const numValue = parseInt(value ?? "0", 10);
 
   switch (unit?.toLowerCase()) {
     case "ms":
@@ -108,6 +109,7 @@ export async function rateLimitMiddleware(
       status: 429,
       headers: {
         "Content-Type": "application/json",
+        "X-RateLimit-Success": result.success.toString(),
         "X-RateLimit-Limit": result.limit.toString(),
         "X-RateLimit-Remaining": result.remaining.toString(),
         "X-RateLimit-Reset": result.reset.toString(),

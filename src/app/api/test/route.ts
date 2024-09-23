@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { Ratelimit, rateLimitMiddleware } from "@/lib/rate-limiter";
 
-// Create a limiter
+// Create a rate limiter
 const apiLimiter = new Ratelimit({
-  limiter: Ratelimit.slidingWindow(2, "5 s"),
+  limiter: Ratelimit.slidingWindow(5, "5s"),
   prefix: "@ratelimit/api_ratelimit_test",
   analytics: true,
 });
@@ -19,5 +19,5 @@ export async function GET(req: NextRequest) {
   }
 
   // Your API logic here
-  return NextResponse.json({ message: "Hello, World!" });
+  return NextResponse.json({ message: `Hello, ${identifier}` });
 }

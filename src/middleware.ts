@@ -1,11 +1,13 @@
 // middleware.ts
 import { verifyRequestOrigin } from "lucia";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { env } from "./env";
 import { rateLimitConfig, type RateLimitKey } from "@/lib/rate-limit-config";
 
-async function checkRateLimit(identifier: string, key: RateLimitKey): Promise<boolean> {
+// Workaround because nextjs middleware doesn't support redis/crypto yet
+import { Paths } from "./lib/constants";
+// Rate limiting for configured paths see /lib/rate-limit-config.ts
+async function checkRateLimit(identifier: string, key: RateLimitKey): Promise<{ success: boolean; limit: string; remaining: string; reset: string; }> {
   const response = await fetch(`${env.NEXT_PUBLIC_APP_URL}/api/auth/rate-limit-check`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -14,12 +16,22 @@ async function checkRateLimit(identifier: string, key: RateLimitKey): Promise<bo
 
   if (!response.ok) {
     if (response.status === 429) {
-      return false; // Rate limit exceeded
+      return { 
+        success: false, 
+        limit: response.headers.get("X-RateLimit-Limit") ?? "0", 
+        remaining: response.headers.get("X-RateLimit-Remaining") ?? "0", 
+        reset: response.headers.get("X-RateLimit-Reset") ?? "0"
+      };
     }
     throw new Error("Failed to check rate limit");
   }
 
-  return true; // Rate limit not exceeded
+  return { 
+    success: true, 
+    limit: response.headers.get("X-RateLimit-Limit") ?? "0", 
+    remaining: response.headers.get("X-RateLimit-Remaining") ?? "0", 
+    reset: response.headers.get("X-RateLimit-Reset") ?? "0" 
+  };
 }
 
 export async function middleware(request: NextRequest): Promise<NextResponse> {
@@ -29,23 +41,27 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     (key) => rateLimitConfig[key]?.path === path
   );
 
-  if (rateLimitKey && request.method === "POST") {
+  // Only check rate limit if path is configured see /lib/rate-limit-config.ts
+  if (rateLimitKey) {
     const ip = request.ip ?? "127.0.0.1";
-    const isAllowed = await checkRateLimit(ip, rateLimitKey);
-    if (!isAllowed) {
-      return new NextResponse(
-        JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
-        { status: 429, headers: { "Content-Type": "application/json" } }
-      );
-    }
+    const { success, limit, remaining, reset } = await checkRateLimit(ip, rateLimitKey);
 
-    console.log(`Rate limit check passed for ${rateLimitKey}:${ip}`);
-    return NextResponse.next();
+    const response = success 
+      ? NextResponse.next() 
+      : NextResponse.redirect(new URL(Paths.Blocked, request.url));
+
+    response.headers.set("X-RateLimit-Success", success.toString());
+    response.headers.set("X-RateLimit-Limit", limit.toString());
+    response.headers.set("X-RateLimit-Remaining", remaining.toString());
+    response.headers.set("X-RateLimit-Reset", reset.toString());
+
+    return response;
   }
 
   if (request.method === "GET") {
     return NextResponse.next();
   }
+
   const originHeader = request.headers.get("Origin");
   const hostHeader = request.headers.get("Host");
   if (
@@ -57,6 +73,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
       status: 403,
     });
   }
+
   return NextResponse.next();
 }
 
@@ -66,7 +83,8 @@ export const config = {
     "/((?!api|static|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
 
     // Rate limiting for configured paths see /lib/rate-limit-config.ts
-    // "/login",
+    "/login",
+    // "/api/upload/cleanup",
     // "/login/verify",
   ],
 };
