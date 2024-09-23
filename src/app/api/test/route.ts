@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic"; // prevents the Redis client from trying to connect during the build.
 
 import { type NextRequest, NextResponse } from "next/server";
 import { Ratelimit, rateLimitMiddleware } from "@/lib/rate-limiter";
@@ -21,5 +21,8 @@ export async function GET(req: NextRequest) {
   }
 
   // Your API logic here
-  return NextResponse.json({ message: `Hello, ${identifier}` });
+  const response = NextResponse.json({ message: `Hello, ${identifier}` });
+  // response.headers.set("Cache-Control", "public, no-cache, no-store, max-age=0");
+
+  return response;
 }

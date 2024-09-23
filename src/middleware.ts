@@ -12,6 +12,7 @@ async function checkRateLimit(identifier: string, key: RateLimitKey): Promise<{ 
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ identifier, key }),
+    cache: "no-store",
   });
 
   if (!response.ok) {

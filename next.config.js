@@ -43,7 +43,16 @@ const config = {
                         value: 'public, max-age=31536000',
                     }
                 ],
-            }
+            },
+            // {
+            //     source: '/api/test',
+            //     headers: [
+            //         {
+            //             key: 'Cache-Control',
+            //             value: 'public, no-cache, no-store, max-age=0',
+            //         }
+            //     ],
+            // }
         ];
     },
 
