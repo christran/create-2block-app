@@ -14,6 +14,7 @@ export const env = createEnv({
         (str) => !str.includes("YOUR_DATABASE_URL_HERE"),
         "You forgot to change the default URL",
       ),
+    REDIS_URL: z.string().trim().min(1),
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
     INTERNAL_API_KEY: z.string().trim().min(1),
     MAGIC_LINK_AUTH: z.boolean().default(false),
@@ -80,6 +81,7 @@ export const env = createEnv({
   runtimeEnv: {
     // Server-side env vars
     DATABASE_URL: process.env.DATABASE_URL,
+    REDIS_URL: process.env.REDIS_URL,
     NODE_ENV: process.env.NODE_ENV,
     INTERNAL_API_KEY: process.env.INTERNAL_API_KEY,
     MAGIC_LINK_AUTH: process.env.MAGIC_LINK_AUTH === "true" || process.env.MAGIC_LINK_AUTH === "1",

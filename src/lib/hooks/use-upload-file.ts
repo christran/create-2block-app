@@ -49,6 +49,10 @@ export function useUploadFile({
     try {
       const uploadResults = await getSignedUrls(files, prefix, allowedFileTypes, maxFileSize);
 
+      if ("error" in uploadResults) {
+        return { error: uploadResults.error };
+      }
+
       const newUploadedFiles = await uploadFiles(files, uploadResults);
       const filteredUploadedFiles = newUploadedFiles.filter(file => !canceledFiles.has(file.id));
       setUploadedFiles(prev => [...prev, ...filteredUploadedFiles]);
@@ -210,7 +214,7 @@ export function useUploadFile({
     isPaused,
   }
 
-  async function getSignedUrls(files: File[], prefix: string, allowedFileTypes: Record<string, string[]>, maxFileSize: number): Promise<UploadResult[]> {
+  async function getSignedUrls(files: File[], prefix: string, allowedFileTypes: Record<string, string[]>, maxFileSize: number): Promise<UploadResult[] | {error: string }> {
     const response = await fetch("/api/upload", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -220,6 +224,10 @@ export function useUploadFile({
         maxFileSize
       }),
     });
+
+    if (response.status === 429) {
+      return { error: "You're uploading too fast. Please try again later." };
+    }
 
     if (!response.ok) {
       const { error } = await response.json() as { error: string };

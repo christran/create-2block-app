@@ -10,25 +10,25 @@ import { APP_TITLE } from "@/lib/constants";
 import { sendMagicLink } from "@/lib/auth/actions";
 import { SubmitButton } from "@/components/submit-button";
 import { Paths } from "@/lib/constants";
-import { useState, useEffect, useMemo } from 'react';
-import { toast } from 'sonner';
+import { useState, useEffect, useMemo } from "react";
+import { toast } from "sonner";
 import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/navigation";
 
 export function MagicLink() {
   const [state, formAction] = useFormState(sendMagicLink, null);
   const [authError, setAuthError] = useState<string | null>(null);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
 
   const router = useRouter();
 
   useEffect(() => {
-    const cookies = document.cookie.split(';');
-    const authErrorCookie = cookies.find(cookie => cookie.trim().startsWith('auth_error='));
+    const cookies = document.cookie.split(";");
+    const authErrorCookie = cookies.find(cookie => cookie.trim().startsWith("auth_error="));
     if (authErrorCookie) {
-      const errorMessage = decodeURIComponent(authErrorCookie.split('=')[1]!);
+      const errorMessage = decodeURIComponent(authErrorCookie.split("=")[1]!);
       setAuthError(errorMessage);
-      document.cookie = 'auth_error=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      document.cookie = "auth_error=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     }
   }, []);
 
@@ -48,7 +48,14 @@ export function MagicLink() {
   //   return email.trim() !== '';
   // }, [email]);
 
-  function handleSocial(provider: 'google' | 'discord' | 'github') {    
+  // const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  //   event.preventDefault();
+  //   const formData = new FormData(event.currentTarget);
+  //   formData.append("ip", ipAddress);
+  //   formAction(formData);
+  // };
+
+  function handleSocial(provider: "google" | "discord" | "github") {    
     return router.push(`/login/${provider}`);
   }
 

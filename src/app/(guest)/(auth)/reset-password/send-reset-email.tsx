@@ -15,10 +15,10 @@ import { Paths } from "@/lib/constants";
 export function SendResetEmail() {
   const [state, formAction] = useFormState(sendPasswordResetLink, null);
   const formRef = useRef<HTMLFormElement>(null);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
 
   const isDirty = useMemo(() => {
-    return email.trim() !== '';
+    return email.trim() !== "";
   }, [email]);
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { generatePresignedUrl, createMultipartUpload, prepareUploadParts } from "@/lib/r2";
 import { v4 as uuidv4 } from "uuid";
 import { db } from "@/server/db";
@@ -6,6 +6,7 @@ import { files } from "@/server/db/schema";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { env } from "@/env";
 import prettyBytes from "pretty-bytes";
+import { Ratelimit, rateLimitMiddleware } from "@/lib/rate-limiter";
 
 // todo: move to .env
 const MAX_TOTAL_FILES = 25;
@@ -15,6 +16,13 @@ const MULTIPART_THRESHOLD = 50 * 1024 * 1024; // 50MB threshold for multipart up
 const MIN_CHUNK_SIZE = 25 * 1024 * 1024; // 25MB minimum chunk size
 const MAX_CHUNK_SIZE = 5000 * 1024 * 1024; // 5GB maximum chunk size
 const MAX_PARTS = 10000; // Maximum number of parts allowed by S3-compatible services
+
+// Create a rate limiter
+const apiLimiter = new Ratelimit({
+  limiter: Ratelimit.slidingWindow(5, "10 s"),
+  prefix: "@ratelimit/api_ratelimit_upload",
+  analytics: true,
+});
 
 interface FileRequest {
   prefix: string;
@@ -29,10 +37,17 @@ interface RequestBody {
   maxFileSize: number;
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const { user } = await validateRequest();
 
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+
+  const identifier = request.ip ?? user.id;
+  const rateLimitResult = await rateLimitMiddleware(apiLimiter, identifier);
+
+  if (rateLimitResult) {
+    return NextResponse.json({ error: "You're uploading too fast. Please try again later." }, { status: 429 });
+  }
 
   try {
     const { files: fileRequests, allowedFileTypes, maxFileSize }: RequestBody = await request.json() as RequestBody;

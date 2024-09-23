@@ -1,31 +1,41 @@
 services:
-  dev:
-    container_name: 2block-dev
-    build: 
-      context: . 
-      dockerfile: Dockerfile.dev 
-    volumes: 
-      - .:/app
-      - /app/.next
-      - /app/node_modules
-    ports:
-      - 3000:3000
-    restart: always
-    env_file:
-      - .env
+  # dev:
+  #   container_name: 2block-dev
+  #   build: 
+  #     context: . 
+  #     dockerfile: Dockerfile.dev 
+  #   volumes: 
+  #     - .:/app
+  #     - /app/.next
+  #     - /app/node_modules
+  #   ports:
+  #     - 3000:3000
+  #   restart: always
+  #   env_file:
+  #     - .env
 
-  # docker compose up prod --build -d
-  prod:
-    container_name: 2block-prod
-    build:
-      context: .
-      dockerfile: Dockerfile.prod
-      args:
-        NEXT_PUBLIC_APP_URL: "https://2block.co"
+  # # docker compose up prod --build -d
+  # prod:
+  #   container_name: 2block-prod
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.prod
+  #     args:
+  #       NEXT_PUBLIC_APP_URL: "https://2block.co"
+  #   ports:
+  #     - 3000:3000
+  #   env_file:
+  #     - .env
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: "always"
     ports:
-      - 3000:3000
-    env_file:
-      - .env
+      - 6379:6379
+    volumes:
+      - redis-data:/data
 
 volumes:
-  node_modules:
+  redis-data:
+  # node_modules:

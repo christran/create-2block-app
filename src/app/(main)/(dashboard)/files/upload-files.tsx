@@ -89,6 +89,16 @@ export function UploadFiles({ initialUserFiles }: InitialUserFilesProps) {
 
       onUpload(filesToUpload)
         .then((newUploadedFiles) => {
+          if ("error" in newUploadedFiles) {
+            form.reset();
+            setFiles([]);
+            toast.error(newUploadedFiles.error, { 
+              id: toastIdRef.current,
+              duration: 3000
+            });
+            reject(newUploadedFiles.error);
+            return;
+          }
           if (Array.isArray(newUploadedFiles) && newUploadedFiles.length > 0) {
             toast.success(`${newUploadedFiles.length > 1 ? "Files" : "File"} uploaded successfully`, { 
               id: toastIdRef.current, 
