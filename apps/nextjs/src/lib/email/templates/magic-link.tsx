@@ -10,7 +10,7 @@ import {
   Text,
   Link
 } from "@react-email/components";
-import { APP_TITLE, EMAIL_FOOTER } from "@/lib/constants";
+import { APP_TITLE, EMAIL_FOOTER } from "@2block/shared/shared-constants";
 
 export interface MagicLinkTemplateProps {
   fullname: string;

@@ -7,7 +7,7 @@ import Dropzone, { type DropzoneProps, type FileRejection } from "react-dropzone
 import { toast } from "sonner";
 import { motion, useSpring, useTransform } from "framer-motion";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@2block/shared/utils";;
 import { useControllableState } from "@/hooks/use-controllable-state";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";

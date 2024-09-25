@@ -4,7 +4,7 @@ import { forwardRef } from "react";
 import { AnimatedSpinner } from "@/components/icons";
 import { Button, type ButtonProps } from "@/components/ui/button";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@2block/shared/utils";;
 
 export interface LoadingButtonProps extends ButtonProps {
   loading?: boolean;

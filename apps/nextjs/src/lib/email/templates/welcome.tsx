@@ -1,6 +1,6 @@
 import React from "react";
 import { Body, Container, Head, Html, Preview, Section, Text, Button, Link, Font } from "@react-email/components";
-import { APP_TITLE, EMAIL_FOOTER, EMAIL_UNSUBSCRIBE, Paths } from "@/lib/constants";
+import { APP_TITLE, EMAIL_FOOTER, EMAIL_UNSUBSCRIBE, Paths } from "@2block/shared/shared-constants";
 
 export default function WelcomeTemplate(props: { fullname: string, url: string, unsubscribe: string }) {
   const { fullname, url, unsubscribe } = props;

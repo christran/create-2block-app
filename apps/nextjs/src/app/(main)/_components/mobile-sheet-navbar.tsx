@@ -2,8 +2,9 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { navbarItems, Paths, APP_TITLE_UNSTYLED, guestNavBarItems } from "@/lib/constants";
+import { cn } from "@2block/shared/utils";;
+import { navbarItems, guestNavBarItems } from "@/lib/constants";
+import { Paths, APP_TITLE_UNSTYLED } from "@2block/shared/shared-constants";
 import type { User } from "@2block/db/schema";
 import { LockClosedIcon } from "@radix-ui/react-icons";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";

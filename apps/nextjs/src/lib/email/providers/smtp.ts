@@ -1,7 +1,7 @@
 import { createTransport, type TransportOptions } from "nodemailer";
 import { env } from "@/env";
 import { logger } from "../../logger";
-import { EMAIL_SENDER } from "@/lib/constants";
+import { EMAIL_SENDER } from "@2block/shared/shared-constants";
 
 export const sendEmailSMTP = async (to: string, subject: string, body: string) => {
   const smtpConfig = {

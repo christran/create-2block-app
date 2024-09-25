@@ -5,7 +5,7 @@ import { env } from "./env";
 import { rateLimitConfig, type RateLimitKey } from "@/lib/rate-limit-config";
 
 // Workaround because nextjs middleware doesn't support redis/crypto yet
-import { Paths } from "./lib/constants";
+import { Paths } from "@2block/shared/shared-constants";
 
 // Rate limiting for configured paths see /lib/rate-limit-config.ts
 async function checkRateLimit(identifier: string, key: RateLimitKey): Promise<{ success: boolean; limit: string; remaining: string; reset: string; }> {

@@ -1,8 +1,9 @@
-import { protectedProcedure, createTRPCRouter } from "@/server/api/trpc";
+import type { TRPCRouterRecord } from "@trpc/server";
+import { protectedProcedure } from "../../trpc";
 import { emailVerificationCodes, passwordResetTokens, sessions, users } from "@2block/db/schema";
 import { eq, sql } from "drizzle-orm";
-import { tasks } from "@trigger.dev/sdk/v3";
-import type { accountDeletedTask } from "@/trigger/email";
+import { tasks } from "@trigger.dev/sdk/v3"; // TODO: move trigger.dev to it's own package
+// import type { accountDeletedTask } from "@2block/api/trigger"; // TODO: move trigger.dev to it's own package
 import {
   getUserByEmailInput,
   getUserFilesByFolderInput,
@@ -11,9 +12,8 @@ import {
   removeSocialAccountsInput,
   deleteAccountByUserIdInput
 } from "./user.input";
-import { env } from "@/env";
 
-export const userRouter = createTRPCRouter({
+export const userRouter = {
   getUser: protectedProcedure
     .query(async ({ ctx }) => {
       const user = await ctx.db.query.users.findFirst({
@@ -74,7 +74,7 @@ export const userRouter = createTRPCRouter({
       return ctx.db.query.files.findMany({
         where: (table, { eq, and, like }) => and(
           eq(table.userId, ctx.user.id),
-          eq(table.s3Provider, env.S3_PROVIDER as "cloudflare" | "backblaze"), // TODO: remove when backblaze is the only provider
+          eq(table.s3Provider, process.env.S3_PROVIDER as "cloudflare" | "backblaze"), // TODO: remove when backblaze is the only provider
           eq(table.uploadCompleted, true),
           like(table.key, sql`'files/%'`)  // This matches strings starting with "files/"
         ),
@@ -189,14 +189,15 @@ export const userRouter = createTRPCRouter({
         throw new Error("User data not found");
       }
 
-      const handle = await tasks.trigger<typeof accountDeletedTask>("account-deleted", {
-        fullname: userData.fullname,
-        email: userData.email,
-        contactId: userData.contactId
-      },
-      {
-        delay: "3m"
-      });
+      // TODO: uncomment when trigger.dev works
+      // const handle = await tasks.trigger<typeof accountDeletedTask>("account-deleted", {
+      //   fullname: userData.fullname,
+      //   email: userData.email,
+      //   contactId: userData.contactId
+      // },
+      // {
+      //   delay: "3m"
+      // });
 
       const [user] = await ctx.db.delete(users).where(eq(users.id, input.id)).returning();
       
@@ -206,4 +207,4 @@ export const userRouter = createTRPCRouter({
 
       return user;
     }),
-});
+} satisfies TRPCRouterRecord;

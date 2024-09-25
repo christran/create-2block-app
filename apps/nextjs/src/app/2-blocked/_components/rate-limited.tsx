@@ -6,7 +6,7 @@ import { Home } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Paths } from "@/lib/constants"
+import { Paths } from "@2block/shared/shared-constants"
 
 export function RateLimited() {
   // const searchParams = useSearchParams();

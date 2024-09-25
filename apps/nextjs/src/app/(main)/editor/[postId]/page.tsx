@@ -1,11 +1,11 @@
 import React from "react";
-import { api } from "@/trpc/server";
+import { caller } from "@/trpc/server";
 import { notFound, redirect } from "next/navigation";
 import { PostEditor } from "./_components/post-editor";
 import { ArrowLeftIcon } from "@/components/icons";
 import Link from "next/link";
-import { validateRequest } from "@/lib/auth/validate-request";
-import { Paths } from "@/lib/constants";
+import { validateRequest } from "@2block/auth";
+import { Paths } from "@2block/shared/shared-constants";
 
 interface Props {
   params: {
@@ -17,7 +17,7 @@ export default async function EditPostPage({ params }: Props) {
   const { user } = await validateRequest();
   if (!user) redirect(Paths.Login);
 
-  const post = await api.post.get.query({ id: params.postId });
+  const post = await caller.post.get({ id: params.postId });
   if (!post) notFound();
 
   return (

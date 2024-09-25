@@ -14,7 +14,7 @@ import {
 import { logout } from "@/lib/auth/actions";;
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/next-avatar";
-import { Paths } from "@/lib/constants";
+import { Paths } from "@2block/shared/shared-constants";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Copy, CreditCardIcon, EllipsisVertical, LogIn, LogOut, Pencil, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,7 @@ import { MoonIcon, SunIcon } from "@/components/icons";
 import { useTheme } from "next-themes";
 import { useCallback, useEffect, useRef, useState, Fragment } from "react";
 import { SheetClose } from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
+import { cn } from "@2block/shared/utils";;
 
 interface UserDropdownNavBarProps {
   fullname: string;

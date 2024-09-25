@@ -151,7 +151,8 @@ export function AccountDetails({
 
   const { onUpload, progresses, isUploading } = useUploadFile({
     defaultUploadedFiles: [],
-    onUploadComplete: (fileUrl: string | null) => {
+    onUploadComplete: (files: UploadedFile[]) => {
+      const fileUrl = files[0]?.url ?? null;
       void handleAvatarUpdate(fileUrl);
     },
     prefix: "avatars/",
@@ -181,7 +182,7 @@ export function AccountDetails({
         setDialogOpen(false);
         setFiles([]);
         // Use the first uploaded file's URL as the new avatar
-        if (files && files.length > 0) {
+        if (files && Array.isArray(files) && files.length > 0) {
           if (avatar) {
             const fileId = getFileIdFromUrl(avatar);
 

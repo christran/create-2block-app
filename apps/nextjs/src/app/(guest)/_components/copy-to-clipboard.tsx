@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { cn } from "@2block/shared/utils";;
 import { CopyIcon  , CheckIcon} from "@radix-ui/react-icons";
 import { useState } from "react";
 import { toast } from "sonner";

@@ -6,8 +6,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { redirect } from "next/navigation";
-import { validateRequest } from "@/lib/auth/validate-request";
-import { Paths } from "@/lib/constants";
+import { validateRequest } from "@2block/auth";
+import { Paths } from "@2block/shared/shared-constants";
 import Link from "next/link";
 import { ArrowLeftIcon } from "@/components/icons";
 import { MagicLinkResend } from "./magic-link-resend";

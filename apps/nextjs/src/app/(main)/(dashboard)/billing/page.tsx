@@ -5,9 +5,9 @@ import { ExclamationTriangleIcon } from "@/components/icons";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { env } from "@/env";
-import { validateRequest } from "@/lib/auth/validate-request";
-import { Paths } from "@/lib/constants";
-import { api } from "@/trpc/server";
+import { validateRequest } from "@2block/auth";
+import { Paths } from "@2block/shared/shared-constants";
+import { caller } from "@/trpc/server";
 import { Suspense } from "react";
 import { Billing } from "./_components/billing";
 import { BillingSkeleton } from "./_components/billing-skeleton";
@@ -25,7 +25,7 @@ export default async function BillingPage() {
     redirect(Paths.Login);
   }
 
-  const stripePromises = Promise.all([api.stripe.getPlans.query(), api.stripe.getPlan.query()]);
+  const stripePromises = Promise.all([caller.stripe.getPlans(), caller.stripe.getPlan()]);
 
   return (
       <>

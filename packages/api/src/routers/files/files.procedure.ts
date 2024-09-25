@@ -1,8 +1,10 @@
-import { protectedProcedure, createTRPCRouter } from "@/server/api/trpc";
+import type { TRPCRouterRecord } from "@trpc/server";
+
+import { protectedProcedure } from "../../trpc";
 import { createFileInput } from "./files.input";
 import { files } from "@2block/db/schema";
 
-export const filesRouter = createTRPCRouter({
+export const filesRouter = {
   createFile: protectedProcedure
     .input(createFileInput)
     .mutation(async ({ ctx, input }) => {
@@ -17,4 +19,4 @@ export const filesRouter = createTRPCRouter({
 
       return file;
     }),
-});
+} satisfies TRPCRouterRecord;

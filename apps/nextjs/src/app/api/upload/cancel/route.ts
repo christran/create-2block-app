@@ -1,4 +1,4 @@
-import { validateRequest } from "@/lib/auth/validate-request";
+import { validateRequest } from "@2block/auth";
 import { abortMultipartUpload } from "@/lib/r2";
 import { db } from "@2block/db/client";
 import { files } from "@2block/db/schema";

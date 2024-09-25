@@ -2,11 +2,11 @@ import { cookies } from "next/headers";
 import { generateId } from "lucia";
 import { OAuth2RequestError } from "arctic";
 import { eq } from "drizzle-orm";
-import { discord, lucia } from "@/lib/auth";
+import { discord, lucia } from "@2block/auth";
 import { db } from "@2block/db/client";
-import { Paths } from "@/lib/constants";
+import { Paths } from "@2block/shared/shared-constants";
 import { users } from "@2block/db/schema";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { validateRequest } from "@2block/auth";
 import { createContact, sendWelcomeEmail } from "@/lib/auth/actions";
 
 // ... existing DiscordUser interface ...

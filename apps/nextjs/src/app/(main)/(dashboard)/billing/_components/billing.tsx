@@ -9,14 +9,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { formatDate } from "@/lib/utils";
-import { type RouterOutputs } from "@/trpc/shared";
+import { formatDate } from "@2block/shared/utils";;
+import { type RouterOutputs } from "@2block/api";
 import { ManageSubscriptionForm } from "./manage-subscription-form";
-import { createBillingPortalSession } from "@/server/api/routers/stripe/stripe.procedure";
-import { proPlan, proPlus } from "@/config/subscriptions";
+import { createBillingPortalSession } from "@2block/api";
+import { proPlan, proPlus } from "@2block/shared/subscriptions";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Paths } from "@/lib/constants";
+import { Paths } from "@2block/shared/shared-constants";
 
 interface BillingProps {
   stripePromises: Promise<

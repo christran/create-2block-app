@@ -1,6 +1,6 @@
 import { forwardRef, type SVGProps } from "react";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@2block/shared/utils";;
 
 const NextjsLight = forwardRef<SVGSVGElement, SVGProps<SVGSVGElement>>(
   ({ className, ...props }, ref) => (

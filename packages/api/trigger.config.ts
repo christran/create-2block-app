@@ -1,4 +1,3 @@
-import { env } from "@/env";
 import type { ResolveEnvironmentVariablesFunction, TriggerConfig } from "@trigger.dev/sdk/v3";
 
 export const config: TriggerConfig = {

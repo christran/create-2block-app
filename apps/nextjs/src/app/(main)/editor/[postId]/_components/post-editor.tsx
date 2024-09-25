@@ -1,6 +1,6 @@
 "use client";
 import { useRef } from "react";
-import { type RouterOutputs } from "@/trpc/shared";
+import { type RouterOutputs } from "@2block/api";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -21,8 +21,8 @@ import { Pencil2Icon } from "@/components/icons";
 import { LoadingButton } from "@/components/loading-button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createPostSchema } from "@/server/api/routers/post/post.input";
-import { Paths } from "@/lib/constants";
+import { createPostSchema } from "@2block/api";
+import { Paths } from "@2block/shared/shared-constants";
 
 const markdownlink = "https://remarkjs.github.io/react-markdown/";
 

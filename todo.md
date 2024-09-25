@@ -15,3 +15,5 @@
 file uploading
 [ ] generate uuid for file and save it to db along side original file name
 [ ] 
+
+[ ] create /packages/auth (already done in create-2block-app repo)

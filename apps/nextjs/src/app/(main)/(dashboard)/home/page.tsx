@@ -1,13 +1,13 @@
 import { redirect } from "next/navigation";
 import { env } from "@/env";
-import { api } from "@/trpc/server";
+import { api, HydrateClient } from "@/trpc/server";
 import { type Metadata } from "next";
 import { Suspense } from "react";
 import { Posts } from "../_components/posts";
 import { PostsSkeleton } from "../_components/posts-skeleton";
-import { validateRequest } from "@/lib/auth/validate-request";
-import { Paths } from "@/lib/constants";
-import { myPostsSchema } from "@/server/api/routers/post/post.input";
+import { validateRequest } from "@2block/auth";
+import { Paths } from "@2block/shared/shared-constants";
+import { myPostsSchema } from "@2block/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
@@ -34,13 +34,13 @@ export default async function DashboardPage({ searchParams }: Props) {
    * @see https://nextjs.org/docs/app/building-your-application/data-fetching/patterns#parallel-data-fetching
    */
   const promises = Promise.all([
-    api.post.myPosts.query({ page, perPage }),
-    api.post.countUserPosts.query(),
-    api.stripe.getPlan.query(),
+    api.post.myPosts.prefetch({ page, perPage }),
+    api.post.countUserPosts.prefetch(),
+    api.stripe.getPlan.prefetch(),
   ]);
 
   return (
-    <>
+    <HydrateClient>
       <div className="mx-auto max-w-5xl px-4 md:px-2 py-8">
         <div className="flex items-center">
           <h1 className="text-[28px] leading-[34px] tracking-[-0.416px] text-slate-12 font-bold">Dashboard</h1>
@@ -68,6 +68,6 @@ export default async function DashboardPage({ searchParams }: Props) {
           </CardContent>
         </Card>
       </div>
-    </>
+    </HydrateClient>
   );
 }

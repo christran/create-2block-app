@@ -1,6 +1,6 @@
 import { env } from "@/env";
 import { logger } from "../../logger";
-import { EMAIL_SENDER_NAME, EMAIL_SENDER_ADDRESS } from "@/lib/constants";
+import { EMAIL_SENDER_NAME, EMAIL_SENDER_ADDRESS } from "@2block/shared/shared-constants";
 
 interface PlunkApiResponse {
   success: boolean;

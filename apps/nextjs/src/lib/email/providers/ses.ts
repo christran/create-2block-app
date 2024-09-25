@@ -1,7 +1,7 @@
 import { SendEmailCommand, SESv2Client } from "@aws-sdk/client-sesv2";
 import { env } from "@/env";
 import { logger } from "../../logger";
-import { EMAIL_SENDER } from "@/lib/constants";
+import { EMAIL_SENDER } from "@2block/shared/shared-constants";
 
 export const sendEmailSES = async (to: string, subject: string, body: string) => {
   const sesClient = new SESv2Client({ 

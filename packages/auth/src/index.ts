@@ -1,10 +1,11 @@
 import { Lucia, TimeSpan } from "lucia";
 import { Google, Discord, GitHub } from "arctic";
 import { DrizzlePostgreSQLAdapter } from "@lucia-auth/adapter-drizzle";
-import { env } from "@/env.js";
+import { env } from "../env";
 import { db } from "@2block/db/client";
-import { sessions, users, type User as DbUser } from "@2block/db/schema";
-import { absoluteUrl } from "@/lib/utils"
+import { sessions, users } from "@2block/db/schema";
+import type {User as DbUser} from "@2block/db/schema";
+import { absoluteUrl } from "@2block/shared/utils";
 
 // Uncomment the following lines if you are using nodejs 18 or lower. Not required in Node.js 20, CloudFlare Workers, Deno, Bun, and Vercel Edge Functions.
 // import { webcrypto } from "node:crypto";
@@ -61,6 +62,7 @@ export const github = new GitHub(
     redirectURI: absoluteUrl("/login/github/callback")
   }
 );
+
 declare module "lucia" {
   interface Register {
     Lucia: typeof lucia;
@@ -71,3 +73,5 @@ declare module "lucia" {
 
 interface DatabaseSessionAttributes {}
 export interface DatabaseUserAttributes extends Omit<DbUser, "hashedPassword"> {}
+
+export { uncachedValidateRequest, validateRequest } from "./validate-request";

@@ -1,6 +1,6 @@
 "use client";
 
-import { type RouterOutputs } from "@/trpc/shared";
+import { type RouterOutputs } from "@2block/api";
 import * as React from "react";
 import { NewPost } from "./new-post";
 import { PostCard } from "./post-card";

@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 import { isWithinExpirationDate, TimeSpan, createDate } from "oslo";
 import { generateRandomString, alphabet } from "oslo/crypto";
 import { eq } from "drizzle-orm";
-import { lucia } from "@/lib/auth";
+import { lucia } from "@2block/auth";
 import { db } from "@2block/db/client";
 import {
   loginSchema,
@@ -22,8 +22,8 @@ import {
   updatePasswordSchema,
 } from "@/lib/validators/auth";
 import { emailVerificationCodes, magicLinkTokens, passwordResetTokens, users } from "@2block/db/schema";
-import { validateRequest } from "@/lib/auth/validate-request";
-import { Paths } from "../constants";
+import { validateRequest } from "@2block/auth";
+import { Paths } from "@2block/shared/shared-constants";
 import { env } from "@/env";
 
 import { generateId, Scrypt } from "lucia";
@@ -32,8 +32,8 @@ import { generateId, Scrypt } from "lucia";
 import { sendEmail, EmailTemplate } from "@/lib/email/email-service";
 
 import { logger } from "../logger";
-import { tasks } from "@trigger.dev/sdk/v3";
-import type { welcomeEmailTask } from "@/trigger/email";
+import { tasks } from "@trigger.dev/sdk/v3"; // TODO: move trigger.dev to it's own package
+import type { welcomeEmailTask } from "@2block/api/trigger"; // TODO: move trigger.dev to it's own package
 import { api } from "@/trpc/server";
 
 export interface ActionResponse<T> {

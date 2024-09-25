@@ -3,11 +3,12 @@ await import("./src/env.js");
 /** @type {import("next").NextConfig} */
 const config = {
     transpilePackages: [
-        // "@2block/api",
-        // "@2block/auth",
+        "@2block/api",
+        "@2block/auth",
         "@2block/db",
+        "@2block/shared",
         // "@2block/ui",
-        // "@2block/validators",
+        "@2block/validators",
     ],
     typescript: {
         ignoreBuildErrors: true,

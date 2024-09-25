@@ -1,4 +1,3 @@
-import { env } from "@/env";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -52,5 +51,5 @@ export function formatPrice(
 }
 
 export function absoluteUrl(path: string) {
-  return new URL(path, env.NEXT_PUBLIC_APP_URL).href
+  return new URL(path, process.env.NEXT_PUBLIC_APP_URL).href
 }

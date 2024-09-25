@@ -14,7 +14,7 @@ import {
 import { logout } from "@/lib/auth/actions";;
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Paths } from "@/lib/constants";
+import { Paths } from "@2block/shared/shared-constants";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export const UserDropdownHeader = ({

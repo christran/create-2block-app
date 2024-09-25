@@ -4,7 +4,7 @@ import { Sidebar } from "./_components/sidebar";
 import { EmailVerificationWarning } from "./(dashboard)/_components/email-verification-warning";
 import { dotsBG } from "@/lib/constants";
 import { useUser } from "@/lib/auth/user-provider";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { validateRequest } from "@2block/auth";
 
 const MainLayout = async ({ children }: { children: ReactNode }) => {
   const { user: userData } = await validateRequest();

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { Signup } from "./signup";
-import { validateRequest } from "@/lib/auth/validate-request";
-import { Paths } from "@/lib/constants";
+import { validateRequest } from "@2block/auth";
+import { Paths } from "@2block/shared/shared-constants";
 import { env } from "@/env";
 
 export const metadata = {

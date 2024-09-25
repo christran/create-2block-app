@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { validateRequest } from "@/lib/auth/validate-request";
-import { Paths } from "@/lib/constants";
+import { validateRequest } from "@2block/auth";
+import { Paths } from "@2block/shared/shared-constants";
 import { Login } from "./login";
 import { MagicLink } from "./magic-link";
 import { env } from "@/env";

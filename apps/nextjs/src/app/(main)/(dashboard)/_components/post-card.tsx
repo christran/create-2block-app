@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { api } from "@/trpc/react";
-import { type RouterOutputs } from "@/trpc/shared";
+import { type RouterOutputs } from "@2block/api";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";

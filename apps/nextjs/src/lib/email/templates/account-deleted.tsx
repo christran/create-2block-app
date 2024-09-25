@@ -1,7 +1,7 @@
 import React from "react";
 import { Body, Container, Head, Html, Preview, Section, Text, Link } from "@react-email/components";
-import { APP_TITLE, EMAIL_FOOTER, Paths } from "@/lib/constants";
-import { absoluteUrl } from "@/lib/utils";
+import { APP_TITLE, EMAIL_FOOTER, Paths } from "@2block/shared/shared-constants";
+import { absoluteUrl } from "@2block/shared/utils";;
 
 export default function AccountDeletedTemplate(props: { fullname: string, url: string, unsubscribe: string }) {
   const { fullname, url, unsubscribe } = props;

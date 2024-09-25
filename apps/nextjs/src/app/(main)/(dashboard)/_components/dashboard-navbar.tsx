@@ -2,8 +2,9 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { guestNavBarItems, navbarItems, Paths } from "@/lib/constants";
+import { cn } from "@2block/shared/utils";;
+import { guestNavBarItems, navbarItems } from "@/lib/constants";
+import { Paths } from "@2block/shared/shared-constants";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";

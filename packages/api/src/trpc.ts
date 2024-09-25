@@ -7,8 +7,8 @@
  * need to use are documented accordingly near the end.
  */
 
-import { uncachedValidateRequest } from "@/lib/auth/validate-request";
-import { stripe } from "@/lib/stripe";
+import { uncachedValidateRequest } from "@2block/auth";
+import { stripe } from "./lib/stripe";
 import { db } from "@2block/db/client";
 import { initTRPC, TRPCError, type inferAsyncReturnType } from "@trpc/server";
 import superjson from "superjson";
@@ -58,6 +58,12 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 });
 
 /**
+ * Create a server-side caller
+ * @see https://trpc.io/docs/server/server-side-calls
+ */
+export const createCallerFactory = t.createCallerFactory;
+
+/**
  * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)
  *
  * These are the pieces you use to build your tRPC API. You should import these a lot in the
@@ -101,8 +107,8 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   });
 });
 
-export type TRPCContext = inferAsyncReturnType<typeof createTRPCContext>;
-export type ProtectedTRPCContext = TRPCContext & {
+export type TRPCContext = inferAsyncReturnType<typeof createTRPCContext>; // TODO: deprecated
+export type ProtectedTRPCContext = TRPCContext & { // TODO: deprecated
   user: NonNullable<TRPCContext["user"]>;
   session: NonNullable<TRPCContext["session"]>;
 };

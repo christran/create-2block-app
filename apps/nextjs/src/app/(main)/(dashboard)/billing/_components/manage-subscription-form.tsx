@@ -3,11 +3,11 @@
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
-import type { ManageSubscriptionInput } from "@/server/api/routers/stripe/stripe.input";
+import type { ManageSubscriptionInput } from "@2block/api";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
-import { Paths } from "@/lib/constants";
-import { proPlan, proPlus } from "@/config/subscriptions";
+import { Paths } from "@2block/shared/shared-constants";
+import { proPlan, proPlus } from "@2block/shared/subscriptions";
 
 export function ManageSubscriptionForm({
   isPro,

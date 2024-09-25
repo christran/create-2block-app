@@ -1,8 +1,8 @@
-import { validateRequest } from "@/lib/auth/validate-request";
+import { validateRequest } from "@2block/auth";
 import { UploadFiles } from "./upload-files";
 import { redirect } from "next/navigation";
-import { Paths } from "@/lib/constants";
-import { api } from "@/trpc/server";
+import { Paths } from "@2block/shared/shared-constants";
+import { caller } from "@/trpc/server";
 
 export default async function UploadPage() {
   const { user } = await validateRequest();
@@ -10,7 +10,7 @@ export default async function UploadPage() {
   if (!user) redirect(Paths.Login);
   if (user?.role !== "admin") redirect(Paths.Dashboard); // TODO: Remove this when we have a proper permissions system
 
-  const userFiles = await api.user.getUserFiles.query();
+  const userFiles = await caller.user.getUserFiles();
 
   return (
     <>

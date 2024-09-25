@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { SubmitButton } from "@/components/submit-button";
 import { sendPasswordResetLink } from "@/lib/auth/actions";
-import { Paths } from "@/lib/constants";
+import { Paths } from "@2block/shared/shared-constants";
 
 // Rate limit this
 export function SendResetEmail() {

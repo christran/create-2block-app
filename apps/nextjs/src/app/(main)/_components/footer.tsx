@@ -6,7 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { APP_TITLE, Paths } from "@/lib/constants";
+import { APP_TITLE, Paths } from "@2block/shared/shared-constants";
 import Link from "next/link";
 
 export const Footer = () => {

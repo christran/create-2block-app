@@ -1,5 +1,5 @@
 import type { Config } from "drizzle-kit";
-// import { DATABASE_PREFIX } from "@/lib/constants";
+// import { DATABASE_PREFIX } from "@2block/shared/shared-constants";
 
 if (!process.env.DATABASE_URL) {
   throw new Error("Missing POSTGRES_URL");

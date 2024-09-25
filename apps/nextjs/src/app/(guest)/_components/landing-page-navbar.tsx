@@ -3,8 +3,9 @@
 // Import necessary dependencies and components
 import Link from "next/link"
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { APP_TITLE_UNSTYLED, navbarItems, Paths } from "@/lib/constants";
+import { cn } from "@2block/shared/utils";;
+import { navbarItems } from "@/lib/constants";
+import { APP_TITLE_UNSTYLED, Paths } from "@2block/shared/shared-constants";
 import { CrumpledPaperIcon, LockClosedIcon } from "@radix-ui/react-icons";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";

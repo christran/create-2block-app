@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Home } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button"
-import { Paths } from "@/lib/constants"
+import { Paths } from "@2block/shared/shared-constants"
 
 export default function NotFoundPage() {
   return (

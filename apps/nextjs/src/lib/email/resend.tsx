@@ -9,7 +9,7 @@ import ResetPasswordTemplate from "@/lib/email/templates/reset-password";
 import WelcomeTemplate from "@/lib/email/templates/welcome";
 import AccountDeletedTemplate from "@/lib/email/templates/account-deleted";
 import { env } from "@/env";
-import { EMAIL_SENDER } from "@/lib/constants";
+import { EMAIL_SENDER } from "@2block/shared/shared-constants";
 import { logger } from "../logger";
 
 import { EmailTemplate } from "./email-service";

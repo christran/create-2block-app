@@ -1,0 +1,9 @@
+{
+  "extends": "@2block/tsconfig/base.json",
+  "include": [
+    "src",
+    "trigger.config.ts",
+    "src/lib/stripe.ts"
+  ],
+  "exclude": ["node_modules"]
+}

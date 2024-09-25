@@ -1,11 +1,11 @@
 import { generateState } from "arctic";
-import { github } from "@/lib/auth";
+import { github } from "@2block/auth";
 import { cookies } from "next/headers";
 import { env } from "@/env";
-import { validateRequest } from "@/lib/auth/validate-request";
-import { Paths } from "@/lib/constants";
+import { validateRequest } from "@2block/auth";
+import { Paths } from "@2block/shared/shared-constants";
 import { redirect } from "next/navigation";
-import { api } from "@/trpc/server";
+import { caller } from "@/trpc/server";
 
 export async function GET(request: Request): Promise<Response> {
   const { searchParams } = new URL(request.url);
@@ -18,13 +18,13 @@ export async function GET(request: Request): Promise<Response> {
     
     if (!user.githubId) redirect(Paths.LinkedAccounts);
 
-    const isPasswordLess = await api.user.isPasswordLess.query();
+    const isPasswordLess = await caller.user.isPasswordLess();
     const connectedAccountsCount = ["googleId", "discordId", "githubId"].filter(id => user[id as keyof typeof user]).length;
 
 		// todo: send message for toast.error
     if (!env.MAGIC_LINK_AUTH && isPasswordLess && connectedAccountsCount <= 1) redirect(Paths.LinkedAccounts);
 
-    await api.user.removeSocialAccounts.mutate({ github: true });
+    await caller.user.removeSocialAccounts({ github: true });
   }
 
 	const state = generateState();

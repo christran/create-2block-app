@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 import { Header } from "../(main)/_components/header";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { validateRequest } from "@2block/auth";
 import { dotsBG } from "@/lib/constants";
 import { Sidebar } from "../(main)/_components/sidebar";
 

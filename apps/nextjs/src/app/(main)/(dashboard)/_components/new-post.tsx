@@ -3,7 +3,7 @@
 import { FilePlusIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { api } from "@/trpc/react";
-import { type RouterOutputs } from "@/trpc/shared";
+import { type RouterOutputs } from "@2block/api";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { toast } from "sonner";

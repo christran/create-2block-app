@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PiHandPeaceLight } from "@/components/icons";
-import { APP_TITLE_UNSTYLED, Paths } from "@/lib/constants";
+import { APP_TITLE_UNSTYLED, Paths } from "@2block/shared/shared-constants";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DesktopIcon, HamburgerMenuIcon, PersonIcon } from "@radix-ui/react-icons";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { validateRequest } from "@2block/auth";
 
 const routes = [
   { 

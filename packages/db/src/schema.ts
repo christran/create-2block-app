@@ -11,7 +11,7 @@ import {
   uuid,
   bigint,
 } from "drizzle-orm/pg-core";
-// import { DATABASE_PREFIX as prefix } from "@/lib/constants";
+// import { DATABASE_PREFIX as prefix } from "@2block/shared/shared-constants";
 
 // export const pgTable = pgTableCreator((name) => `${prefix}_${name}`);
 

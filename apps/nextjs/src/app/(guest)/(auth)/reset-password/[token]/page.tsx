@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ResetPassword } from "./reset-password";
-import { APP_TITLE, Paths } from "@/lib/constants";
+import { APP_TITLE, Paths } from "@2block/shared/shared-constants";
 import Link from "next/link";
 import { env } from "@/env";
 import { redirect } from "next/navigation";

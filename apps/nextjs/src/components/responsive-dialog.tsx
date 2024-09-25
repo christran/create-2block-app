@@ -27,7 +27,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
-import { cn } from "@/lib/utils";
+import { cn } from "@2block/shared/utils";;
 
 type StatefulContent = ({
   open,

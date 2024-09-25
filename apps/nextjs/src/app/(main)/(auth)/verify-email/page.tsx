@@ -6,9 +6,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { redirect } from "next/navigation";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { validateRequest } from "@2block/auth";
 import { VerifyCode } from "./verify-code";
-import { APP_TITLE, Paths } from "@/lib/constants";
+import { APP_TITLE, Paths } from "@2block/shared/shared-constants";
 import Link from "next/link";
 import { ArrowLeftIcon } from "@/components/icons";
 import { env } from "@/env";

@@ -1,13 +1,13 @@
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { freePlan, proPlan, proPlus, subscriptionPlans } from "@/config/subscriptions";
-import type { ProtectedTRPCContext } from "@/server/api/trpc";
-import { stripe } from "@/lib/stripe";
-import { absoluteUrl, formatPrice } from "@/lib/utils";
-import { env } from "@/env";
-import { Paths } from "@/lib/constants";
+import type { TRPCRouterRecord } from "@trpc/server";
+import { protectedProcedure } from "../../trpc";
+import type { ProtectedTRPCContext } from "../../trpc"; // TODO: deprecated
+import { freePlan, proPlan, proPlus, subscriptionPlans } from "@2block/shared/subscriptions";
+import { stripe } from "../../lib/stripe";
+import { absoluteUrl, formatPrice } from "@2block/shared/utils";
+import { Paths } from "@2block/shared/shared-constants";
 import { type ManageSubscriptionInput, manageSubscriptionSchema } from "./stripe.input";
 
-export const stripeRouter = createTRPCRouter({
+export const stripeRouter = {
   getPlans: protectedProcedure.
     query(({ ctx }) => getStripePlans(ctx)),
 
@@ -17,7 +17,8 @@ export const stripeRouter = createTRPCRouter({
   managePlan: protectedProcedure
     .input(manageSubscriptionSchema)
     .mutation(({ ctx, input }) => manageSubscription(ctx, input)),
-});
+} satisfies TRPCRouterRecord;
+
 const getStripePlans = async (ctx: ProtectedTRPCContext) => {
   try {
     const user = await ctx.db.query.users.findFirst({
@@ -172,7 +173,7 @@ const manageSubscription = async (
 export const createBillingPortalSession = async (customerId: string) => {
   const session = await stripe.billingPortal.sessions.create({
     customer: customerId,
-    return_url: `${env.NEXT_PUBLIC_APP_URL + Paths.Billing}`,
+    return_url: `${process.env.NEXT_PUBLIC_APP_URL + Paths.Billing}`,
   })
   
   return session.url

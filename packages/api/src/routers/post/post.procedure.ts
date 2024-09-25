@@ -1,11 +1,12 @@
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import type { TRPCRouterRecord } from "@trpc/server";
+import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import { posts } from "@2block/db/schema";
 import { generateId } from "lucia";
 import { count, eq } from "drizzle-orm";
 import { createPostSchema, deletePostSchema, getPostSchema, listPostsSchema, myPostsSchema, updatePostSchema } from "./post.input";
 
-export const postRouter = createTRPCRouter({
+export const postRouter = {
   list: protectedProcedure
     .input(listPostsSchema)
     .query(async ({ ctx, input }) => {
@@ -102,4 +103,4 @@ export const postRouter = createTRPCRouter({
       
       return result?.count ?? 0;
   }),
-});
+} satisfies TRPCRouterRecord;

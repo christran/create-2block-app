@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { DesktopIcon } from "@radix-ui/react-icons";
 
-import { Paths } from "@/lib/constants";
+import { Paths } from "@2block/shared/shared-constants";
 import Link from "next/link";
 import { BorderBeam } from "@/components/border-beam";
 import { motion } from "framer-motion";

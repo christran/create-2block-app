@@ -2,7 +2,7 @@
 
 import Script from "next/script"
 import { useEffect, useRef, useState } from "react"
-import type { DatabaseUserAttributes } from "@/lib/auth"
+import type { DatabaseUserAttributes } from "@2block/auth"
 
 interface AnalyticsScriptProps {
   websiteId: string;

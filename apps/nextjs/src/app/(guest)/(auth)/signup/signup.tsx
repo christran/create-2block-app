@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { DiscordLogoIcon, faGoogle, FontAwesomeIcon, GitHubLogoIcon } from "@/components/icons";
-import { APP_TITLE } from "@/lib/constants";
+import { APP_TITLE } from "@2block/shared/shared-constants";
 import { Label } from "@/components/ui/label";
 import { signup } from "@/lib/auth/actions";
 import { SubmitButton } from "@/components/submit-button";
-import { Paths } from "@/lib/constants";
+import { Paths } from "@2block/shared/shared-constants";
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 

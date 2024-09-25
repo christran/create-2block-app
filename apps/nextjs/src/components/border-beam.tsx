@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@2block/shared/utils";;
 
 interface BorderBeamProps {
   className?: string;

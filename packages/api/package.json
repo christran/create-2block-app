@@ -1,0 +1,49 @@
+{
+  "name": "@2block/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./trigger": {
+      "types": "./dist/trigger/index.d.ts",
+      "default": "./src/trigger/index.ts"
+    },
+    "./stripe": {
+      "types": "./src/lib/stripe.ts",
+      "default": "./src/lib/stripe.ts"
+    }
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsc",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@2block/auth": "workspace:*",
+    "@2block/db": "workspace:*",
+    "@2block/shared": "workspace:*",
+    "@2block/validators": "workspace:*",
+    "@trigger.dev/sdk": "^3.0.7",
+    "@trpc/server": "catalog:",
+    "superjson": "2.2.1",
+    "trigger.dev": "^3.0.7",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@2block/eslint-config": "workspace:*",
+    "@2block/prettier-config": "workspace:*",
+    "@2block/tsconfig": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  },
+  "prettier": "@2block/prettier-config"
+}

@@ -1,6 +1,6 @@
 import { sendEmail, EmailTemplate } from "@/lib/email/email-service";
-import { absoluteUrl } from "@/lib/utils";
-import { Paths } from "@/lib/constants";
+import { absoluteUrl } from "@2block/shared/utils";;
+import { Paths } from "@2block/shared/shared-constants";
 import { NextRequest, NextResponse } from "next/server";
 import { env } from "@/env";
 

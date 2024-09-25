@@ -1,6 +1,6 @@
 import React from "react";
 import { Body, Container, Head, Html, Preview, Section, Text, Button, Link, Font } from "@react-email/components";
-import { APP_TITLE, EMAIL_FOOTER, Paths } from "@/lib/constants";
+import { APP_TITLE, EMAIL_FOOTER, Paths } from "@2block/shared/shared-constants";
 import { env } from "@/env";
 
 export interface EmailVerificationTemplateProps {
