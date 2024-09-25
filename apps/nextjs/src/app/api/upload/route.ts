@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { generatePresignedUrl, createMultipartUpload, prepareUploadParts } from "@/lib/r2";
 import { v4 as uuidv4 } from "uuid";
-import { db } from "@/server/db";
-import { files } from "@/server/db/schema";
+import { db } from "@2block/db/client";
+import { files } from "@2block/db/schema";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { env } from "@/env";
 import prettyBytes from "pretty-bytes";

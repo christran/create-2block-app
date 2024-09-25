@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MessageSquareText, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import type { User } from "@/server/db/schema";
+import type { User } from "@2block/db/schema";
 import { Paths } from "@/lib/constants";
 
 type UserRole = User["role"];

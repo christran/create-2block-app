@@ -9,7 +9,7 @@
 
 import { uncachedValidateRequest } from "@/lib/auth/validate-request";
 import { stripe } from "@/lib/stripe";
-import { db } from "@/server/db";
+import { db } from "@2block/db/client";
 import { initTRPC, TRPCError, type inferAsyncReturnType } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";

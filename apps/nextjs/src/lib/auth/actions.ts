@@ -9,7 +9,7 @@ import { isWithinExpirationDate, TimeSpan, createDate } from "oslo";
 import { generateRandomString, alphabet } from "oslo/crypto";
 import { eq } from "drizzle-orm";
 import { lucia } from "@/lib/auth";
-import { db } from "@/server/db";
+import { db } from "@2block/db/client";
 import {
   loginSchema,
   signupSchema,
@@ -21,7 +21,7 @@ import {
   type updatePasswordInput,
   updatePasswordSchema,
 } from "@/lib/validators/auth";
-import { emailVerificationCodes, magicLinkTokens, passwordResetTokens, users } from "@/server/db/schema";
+import { emailVerificationCodes, magicLinkTokens, passwordResetTokens, users } from "@2block/db/schema";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "../constants";
 import { env } from "@/env";

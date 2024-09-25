@@ -1,5 +1,5 @@
 import { protectedProcedure, createTRPCRouter } from "@/server/api/trpc";
-import { emailVerificationCodes, passwordResetTokens, sessions, users } from "@/server/db/schema";
+import { emailVerificationCodes, passwordResetTokens, sessions, users } from "@2block/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { tasks } from "@trigger.dev/sdk/v3";
 import type { accountDeletedTask } from "@/trigger/email";

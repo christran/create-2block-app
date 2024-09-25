@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { navbarItems, Paths, APP_TITLE_UNSTYLED, guestNavBarItems } from "@/lib/constants";
-import type { User } from "@/server/db/schema";
+import type { User } from "@2block/db/schema";
 import { LockClosedIcon } from "@radix-ui/react-icons";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";

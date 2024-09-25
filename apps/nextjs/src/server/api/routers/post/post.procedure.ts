@@ -1,6 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { z } from "zod";
-import { posts } from "@/server/db/schema";
+import { posts } from "@2block/db/schema";
 import { generateId } from "lucia";
 import { count, eq } from "drizzle-orm";
 import { createPostSchema, deletePostSchema, getPostSchema, listPostsSchema, myPostsSchema, updatePostSchema } from "./post.input";

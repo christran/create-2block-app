@@ -10,7 +10,7 @@ import { SidebarToggle } from "./sidebar-button";
 import { cn } from "@/lib/utils";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import { useStore } from "@/store/use-store";
-import type { User } from "@/server/db/schema";
+import type { User } from "@2block/db/schema";
 import { motion } from "framer-motion";
 import { useState } from "react";
 

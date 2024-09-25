@@ -4,7 +4,7 @@ import { type Metadata } from "next";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@/lib/constants";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { db } from "@/server/db";
+import { db } from "@2block/db/client";
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),

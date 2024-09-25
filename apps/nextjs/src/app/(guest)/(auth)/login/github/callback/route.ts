@@ -3,9 +3,9 @@ import { generateId } from "lucia";
 import { OAuth2RequestError } from "arctic";
 import { eq } from "drizzle-orm";
 import { github, lucia } from "@/lib/auth";
-import { db } from "@/server/db";
+import { db } from "@2block/db/client";
 import { Paths } from "@/lib/constants";
-import { users } from "@/server/db/schema";
+import { users } from "@2block/db/schema";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { createContact, sendWelcomeEmail } from "@/lib/auth/actions";
 

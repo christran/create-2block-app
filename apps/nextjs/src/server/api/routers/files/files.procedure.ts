@@ -1,6 +1,6 @@
 import { protectedProcedure, createTRPCRouter } from "@/server/api/trpc";
 import { createFileInput } from "./files.input";
-import { files } from "@/server/db/schema";
+import { files } from "@2block/db/schema";
 
 export const filesRouter = createTRPCRouter({
   createFile: protectedProcedure

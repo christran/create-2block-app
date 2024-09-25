@@ -1,6 +1,6 @@
 import { BrainCircuit, CreditCardIcon, Folder, Home, LogIn, Settings2 } from "lucide-react";
 import { PiOpenAiLogo, PiRobot } from "react-icons/pi";
-import type { User } from "@/server/db/schema";
+import type { User } from "@2block/db/schema";
 import { type ElementType } from "react";
 export const APP_TITLE = "✌️BLOCK";
 export const APP_DESCRIPTION = "2BLOCK"

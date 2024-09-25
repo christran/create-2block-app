@@ -1,7 +1,7 @@
 import { validateRequest } from "@/lib/auth/validate-request";
 import { abortMultipartUpload } from "@/lib/r2";
-import { db } from "@/server/db";
-import { files } from "@/server/db/schema";
+import { db } from "@2block/db/client";
+import { files } from "@2block/db/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 

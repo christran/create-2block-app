@@ -41,7 +41,7 @@ import { useUploadFile } from "@/lib/hooks/use-upload-file";
 import { api } from "@/trpc/react";
 import { useMutation } from "@tanstack/react-query";
 import { fileUploadSchema, type FileUploadSchema } from "@/lib/types/file-upload";
-import { type UserWithoutPassword } from "@/server/db/schema";
+import { type UserWithoutPassword } from "@2block/db/schema";
 
 const ALLOWED_FILE_TYPES = {
   "image/jpeg": [".jpg", ".jpeg"],

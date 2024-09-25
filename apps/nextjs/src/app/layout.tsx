@@ -13,7 +13,7 @@ import { env } from "@/env";
 import { UserProvider } from "@/lib/auth/user-provider";
 import { api } from "@/trpc/server";
 import type { DatabaseUserAttributes } from "@/lib/auth";
-import { User } from "@/server/db/schema";
+import { User } from "@2block/db/schema";
 
 // const GeistSans = localFont({
 //   src: "../../fonts/GeistVF.woff",

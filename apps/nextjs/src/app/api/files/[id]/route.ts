@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { generatePresignedGetUrl, deleteFile } from "@/lib/r2";
-import { db } from "@/server/db";
-import { files } from "@/server/db/schema";
+import { db } from "@2block/db/client";
+import { files } from "@2block/db/schema";
 import { eq } from "drizzle-orm";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { validate as uuidValidate } from "uuid";
