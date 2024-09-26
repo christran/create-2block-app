@@ -89,6 +89,7 @@ export function UploadedFilesCard({ initialUserFiles, newUploadedFiles, onFileDe
     hasNextPage,
     isFetchingNextPage,
     status,
+    isLoading,
   } = useInfiniteQuery({
     queryKey: ["files"],
     queryFn: fetchFiles,
@@ -167,7 +168,7 @@ export function UploadedFilesCard({ initialUserFiles, newUploadedFiles, onFileDe
         <CardDescription>View and manage your files</CardDescription>
       </CardHeader>
       <CardContent>
-        {status === "loading" ? (
+        {isLoading || !data ? (
           <div className="grid grid-cols-3 gap-4">
             {Array.from({ length: 3 }, (_, index) => (
               <div key={index} className="relative aspect-square">

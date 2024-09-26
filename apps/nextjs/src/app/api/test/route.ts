@@ -13,7 +13,12 @@ const apiLimiter = new Ratelimit({
 export async function GET(req: NextRequest) {
   // Use a constant string to limit all requests with a single ratelimit
   // Or use a userID, apiKey or ip address for individual limits.
-  const identifier = req.headers.get("X-Forwarded-For")?.split(",")[0] ?? req.headers.get("X-Real-IP") ?? "127.0.0.1";
+
+  console.log("CF-Connecting-IP", req.headers.get("CF-Connecting-IP"));
+  console.log("X-Forwarded-For", req.headers.get("X-Forwarded-For"));
+  console.log("X-Real-IP", req.headers.get("X-Real-IP"));
+
+  const identifier = req.headers.get("CF-Connecting-IP") ?? req.headers.get("X-Forwarded-For")?.split(",")[0] ?? req.headers.get("X-Real-IP") ?? "127.0.0.1";
   const rateLimitResult = await rateLimitMiddleware(apiLimiter, identifier);
 
   if (rateLimitResult) {

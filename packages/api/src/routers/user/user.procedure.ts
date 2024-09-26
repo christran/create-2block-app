@@ -2,8 +2,8 @@ import type { TRPCRouterRecord } from "@trpc/server";
 import { protectedProcedure } from "../../trpc";
 import { emailVerificationCodes, passwordResetTokens, sessions, users } from "@2block/db/schema";
 import { eq, sql } from "drizzle-orm";
-import { tasks } from "@trigger.dev/sdk/v3"; // TODO: move trigger.dev to it's own package
-// import type { accountDeletedTask } from "@2block/api/trigger"; // TODO: move trigger.dev to it's own package
+import { tasks } from "@trigger.dev/sdk/v3";
+import type { accountDeletedTask } from "@2block/api/trigger";
 import {
   getUserByEmailInput,
   getUserFilesByFolderInput,
@@ -189,15 +189,14 @@ export const userRouter = {
         throw new Error("User data not found");
       }
 
-      // TODO: uncomment when trigger.dev works
-      // const handle = await tasks.trigger<typeof accountDeletedTask>("account-deleted", {
-      //   fullname: userData.fullname,
-      //   email: userData.email,
-      //   contactId: userData.contactId
-      // },
-      // {
-      //   delay: "3m"
-      // });
+      const handle = await tasks.trigger<typeof accountDeletedTask>("account-deleted", {
+        fullname: userData.fullname,
+        email: userData.email,
+        contactId: userData.contactId
+      },
+      {
+        delay: "3m"
+      });
 
       const [user] = await ctx.db.delete(users).where(eq(users.id, input.id)).returning();
       

@@ -2,6 +2,11 @@ import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
 export const env = createEnv({
+  shared: {
+    NODE_ENV: z
+      .enum(["development", "production", "test"])
+      .default("development"),
+  },
   /**
    * Specify your server-side environment variables schema here. This way you can ensure the app
    * isn't built with invalid env vars.
@@ -15,7 +20,7 @@ export const env = createEnv({
         "You forgot to change the default URL",
       ),
     REDIS_URL: z.string().trim().min(1),
-    NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+    // NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
     INTERNAL_API_KEY: z.string().trim().min(1),
     MAGIC_LINK_AUTH: z.boolean().default(false),
     UMAMI_WEBSITE_ID: z.string().trim().min(1),

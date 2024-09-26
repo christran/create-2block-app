@@ -13,6 +13,7 @@ import { env } from "@/env";
 import { createQueryClient } from "./query-client";
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined;
+
 const getQueryClient = () => {
   if (typeof window === "undefined") {
     // Server: always make a new query client
@@ -47,7 +48,7 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
         }),
       ],
     }),
-  );
+  )
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -61,5 +62,5 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return window.location.origin;
   // eslint-disable-next-line no-restricted-properties
-  return `http://localhost:${process.env.PORT ?? 3000}`;
+  return `http://localhost:${env.PORT ?? 3000}`;
 };

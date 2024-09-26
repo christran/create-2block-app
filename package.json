@@ -20,7 +20,9 @@
     "lint:ws": "pnpm dlx sherif@latest",
     "postinstall": "pnpm lint:ws",
     "typecheck": "turbo run typecheck",
-    "ui-add": "turbo run ui-add"
+    "ui-add": "turbo run ui-add",
+    "trigger": "turbo -F @2block/api trigger",
+    "deploy:trigger": "turbo -F @2block/api deploy:trigger"
   },
   "devDependencies": {
     "@2block/prettier-config": "workspace:*",

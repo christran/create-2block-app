@@ -5,8 +5,12 @@ on:
     branches:
       - main
     paths:
-      - "src/trigger/**"
-
+      - "packages/api/src/trigger/**"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "packages/api/src/trigger/**"
 jobs:
   deploy:
     runs-on: ubuntu-latest

@@ -24,7 +24,9 @@
     "dev": "tsc",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "trigger": "npx trigger.dev@3.0.7 dev",
+    "deploy:trigger": "npx trigger.dev@3.0.7 deploy --skip-typecheck"
   },
   "dependencies": {
     "@2block/auth": "workspace:*",
@@ -41,6 +43,7 @@
     "@2block/eslint-config": "workspace:*",
     "@2block/prettier-config": "workspace:*",
     "@2block/tsconfig": "workspace:*",
+    "@trigger.dev/build": "^3.0.7",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"

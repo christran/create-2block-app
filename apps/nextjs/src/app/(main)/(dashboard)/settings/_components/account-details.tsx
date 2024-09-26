@@ -205,6 +205,15 @@ export function AccountDetails({
     });
   };
 
+  const handleDialogOpenChange = (open: boolean) => {
+    setDialogOpen(open);
+    if (!open) {
+      form.reset();
+      setIsLoading(false);
+      setFiles([]);
+    }
+  };
+
   return (
     <>
       <Card>
@@ -217,7 +226,7 @@ export function AccountDetails({
             <div className="w-full space-y-2 pt-4 md:w-[380px]">
               <div className="space-y-2">
                 <Label>Profile Picture</Label>
-                <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <Dialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
                   <DialogTrigger asChild>
                     <Avatar className="h-24 w-24 cursor-pointer rounded-full drop-shadow-md hover:opacity-75 relative">
                       <AvatarImage 
@@ -365,7 +374,7 @@ export function AccountDetails({
                     remove your data from our servers.
                   </DialogDescription>
                 </DialogHeader>
-                <div className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2">
+                <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:space-x-2 sm:gap-0">
                   <Button variant="outline" onClick={() => setOpen(false)}>
                     Cancel
                   </Button>

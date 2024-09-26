@@ -42,9 +42,18 @@
     "ui-add": {
       "cache": false,
       "interactive": true
+    },
+    "trigger": {
+      "cache": false,
+      "interactive": true
+    },
+    "trigger:deploy": {
+      "cache": false,
+      "interactive": true
     }
   },
   "globalEnv": [
+    "NEXT_PUBLIC_APP_URL",
     "DATABASE_URL",
     "REDIS_URL",
     "INTERNAL_API_KEY",

@@ -410,6 +410,9 @@ importers:
       '@2block/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
+      '@trigger.dev/build':
+        specifier: ^3.0.7
+        version: 3.0.7(bufferutil@4.0.8)(typescript@5.6.2)(utf-8-validate@6.0.4)
       eslint:
         specifier: 'catalog:'
         version: 9.11.1(jiti@1.21.6)

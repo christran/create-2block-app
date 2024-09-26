@@ -11,9 +11,13 @@
 - connectaddress = wsl hostname -I or hostname -I
 - netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=3000 connectaddress=192.168.186.138 connectport=3000
 
-
-file uploading
-[ ] generate uuid for file and save it to db along side original file name
-[ ] 
-
-[ ] create /packages/auth (already done in create-2block-app repo)
+[ ] make sure import { caller } is the correct way to call api server side
+[ ] ui package (https://github.com/search?q=repo%3At3-oss%2Fcreate-t3-turbo+tailwind-merge&type=code)
+[ ] figure out why npx turbo daemon clean is needed everytime
+[ ] fix trigger and uncomment any code related (email.ts, actions.ts, user.procedure)
+[ ] add expo
+[ ] update github workflows
+[ ] build time error:  ../../packages/auth/src/validate-request.ts
+    Error: 
+    x You're importing a component that needs next/headers. That only works in a Server Component which is not supported in the pages/ directory. Read more: https://nextjs.org/docs/getting-started/
+    | react-essentials#server-components

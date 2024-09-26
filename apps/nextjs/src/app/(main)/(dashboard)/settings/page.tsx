@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { env } from "@/env";
 import { validateRequest } from "@2block/auth";
 import { Paths } from "@2block/shared/shared-constants";
-import { api, caller } from "@/trpc/server";
+import { caller } from "@/trpc/server";
 import { SettingsTab } from "./_components/settings-tab";
 
 export const metadata: Metadata = {

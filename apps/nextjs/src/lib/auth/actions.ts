@@ -32,8 +32,8 @@ import { generateId, Scrypt } from "lucia";
 import { sendEmail, EmailTemplate } from "@/lib/email/email-service";
 
 import { logger } from "../logger";
-import { tasks } from "@trigger.dev/sdk/v3"; // TODO: move trigger.dev to it's own package
-import type { welcomeEmailTask } from "@2block/api/trigger"; // TODO: move trigger.dev to it's own package
+import { tasks } from "@trigger.dev/sdk/v3";
+import type { welcomeEmailTask } from "@2block/api/trigger";
 import { api } from "@/trpc/server";
 
 export interface ActionResponse<T> {
