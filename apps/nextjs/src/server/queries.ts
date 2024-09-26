@@ -1,6 +1,6 @@
 import "server-only";
 
-import { caller } from "@/trpc/server";
+import { api } from "@/trpc/server";
 import { validateRequest } from "@2block/auth";
 import { Paths } from "@2block/shared/shared-constants";
 import { redirect } from "next/navigation";
@@ -12,7 +12,7 @@ export async function getUser() {
     redirect(Paths.Login);
   }
 
-  const userData = await caller.user.getUser()
+  const userData = await api.user.getUser()
 
   return userData
 }

@@ -11,7 +11,6 @@
 - connectaddress = wsl hostname -I or hostname -I
 - netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=3000 connectaddress=192.168.186.138 connectport=3000
 
-[ ] make sure import { caller } is the correct way to call api server side
 [ ] ui package (https://github.com/search?q=repo%3At3-oss%2Fcreate-t3-turbo+tailwind-merge&type=code)
 [ ] figure out why npx turbo daemon clean is needed everytime
 [ ] fix trigger and uncomment any code related (email.ts, actions.ts, user.procedure)

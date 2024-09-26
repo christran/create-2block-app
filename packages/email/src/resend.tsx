@@ -4,20 +4,18 @@ import React from "react";
 
 import { Resend } from 'resend';
 import MagicLinkTemplate from "./templates/magic-link";
-import EmailVerificationTemplate from "@/lib/email/templates/email-verification";
-import ResetPasswordTemplate from "@/lib/email/templates/reset-password";
-import WelcomeTemplate from "@/lib/email/templates/welcome";
-import AccountDeletedTemplate from "@/lib/email/templates/account-deleted";
-import { env } from "@/env";
+import EmailVerificationTemplate from "./templates/email-verification";
+import ResetPasswordTemplate from "./templates/reset-password";
+import WelcomeTemplate from "./templates/welcome";
+import AccountDeletedTemplate from "./templates/account-deleted";
 import { EMAIL_SENDER } from "@2block/shared/shared-constants";
-import { logger } from "../logger";
 
 import { EmailTemplate } from "./email-service";
 import type { PropsMap } from "./email-service";
 
-const resend = new Resend(env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-const getEmailTemplate = async <T extends EmailTemplate>(template: T, props: PropsMap[NoInfer<T>]) => {
+const getEmailTemplate = <T extends EmailTemplate>(template: T, props: PropsMap[NoInfer<T>]) => {
   switch (template) {
     case EmailTemplate.MagicLink:
       return {
@@ -54,12 +52,12 @@ export const sendEmail = async <T extends EmailTemplate>(
   template: T,
   props: PropsMap[NoInfer<T>],
 ) => {
-  if (env.MOCK_SEND_EMAIL) {
-    logger.info("📨 Email sent to: ", to, "with template: ", template, "and props: ", props);
-    return;
-  }
+  // if (process.env.MOCK_SEND_EMAIL) {
+  //   console.log("📨 Email sent to: ", to, "with template: ", template, "and props: ", props);
+  //   return;
+  // }
 
-  const { subject, react } = await getEmailTemplate(template, props);
+  const { subject, react } = getEmailTemplate(template, props);
 
   try {
     const { data, error } = await resend.emails.send({
@@ -71,14 +69,14 @@ export const sendEmail = async <T extends EmailTemplate>(
 
     if (error) {
       console.error('Error sending email: ', error);
-      throw error;
+      throw new Error(error.message);
     }
 
-    logger.info(`📨 Email sent successfully to: ${to}`);
+    console.log(`📨 Email sent successfully to: ${to}`);
 
     return data;
   } catch (error) {
-    logger.error(`Failed to send email to: ${to} `, error);
+    console.log(`Failed to send email to: ${to} `, error);
 
     throw error;
   }

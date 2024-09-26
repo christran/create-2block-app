@@ -47,9 +47,17 @@
       "cache": false,
       "interactive": true
     },
-    "trigger:deploy": {
+    "deploy:trigger": {
       "cache": false,
       "interactive": true
+    },
+    "email": {
+      "cache": false,
+      "persistent": true
+    },
+    "stripe": {
+      "cache": false,
+      "persistent": true
     }
   },
   "globalEnv": [

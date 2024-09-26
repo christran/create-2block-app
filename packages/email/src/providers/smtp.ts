@@ -1,15 +1,14 @@
-import { createTransport, type TransportOptions } from "nodemailer";
-import { env } from "@/env";
-import { logger } from "../../logger";
+import { createTransport  } from "nodemailer";
+import type {TransportOptions} from "nodemailer";
 import { EMAIL_SENDER } from "@2block/shared/shared-constants";
 
 export const sendEmailSMTP = async (to: string, subject: string, body: string) => {
   const smtpConfig = {
-    host: env.SMTP_HOST,
-    port: env.SMTP_PORT,
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
     auth: {
-      user: env.SMTP_USER,
-      pass: env.SMTP_PASSWORD,
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASSWORD,
     },
   };
   
@@ -22,7 +21,7 @@ export const sendEmailSMTP = async (to: string, subject: string, body: string) =
     html: body 
   });
 
-  logger.info(`📨 Email sent successfully to: ${to}`);
+  console.log(`📨 Email sent successfully to: ${to}`);
 
   return result;
 };

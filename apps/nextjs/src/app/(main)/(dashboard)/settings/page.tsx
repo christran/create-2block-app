@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { env } from "@/env";
 import { validateRequest } from "@2block/auth";
 import { Paths } from "@2block/shared/shared-constants";
-import { caller } from "@/trpc/server";
+import { api } from "@/trpc/server";
 import { SettingsTab } from "./_components/settings-tab";
 
 export const metadata: Metadata = {
@@ -19,7 +19,7 @@ export default async function SettingsPage() {
     redirect(Paths.Login);
   }
 
-  const isPasswordLess = await caller.user.isPasswordLess();
+  const isPasswordLess = await api.user.isPasswordLess();
 
   return (
     <>

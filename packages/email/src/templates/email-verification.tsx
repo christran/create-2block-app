@@ -1,7 +1,6 @@
 import React from "react";
-import { Body, Container, Head, Html, Preview, Section, Text, Button, Link, Font } from "@react-email/components";
+import { Body, Container, Head, Html, Preview, Section, Text, Button, Link } from "@react-email/components";
 import { APP_TITLE, EMAIL_FOOTER, Paths } from "@2block/shared/shared-constants";
-import { env } from "@/env";
 
 export interface EmailVerificationTemplateProps {
   fullname: string;
@@ -39,12 +38,12 @@ export default function EmailVerificationTemplate({fullname, code}: EmailVerific
               <Text style={confirmationCodeText}>{code}</Text>
             </Section>
 
-            <Button style={button} href={env.NEXT_PUBLIC_APP_URL + Paths.VerifyEmail}>
+            <Button style={button} href={process.env.NEXT_PUBLIC_APP_URL + Paths.VerifyEmail}>
               🗸 Verify Email
             </Button>
             <br/>
 
-            <Link style={link} href={env.NEXT_PUBLIC_APP_URL + Paths.VerifyEmail}>or click here to verify</Link>
+            <Link style={link} href={process.env.NEXT_PUBLIC_APP_URL + Paths.VerifyEmail}>or click here to verify</Link>
 
             <Text style={expirationText}>
               This link will expire in 30 minutes

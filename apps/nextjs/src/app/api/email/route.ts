@@ -1,4 +1,4 @@
-import { sendEmail, EmailTemplate } from "@/lib/email/email-service";
+import { sendEmail, EmailTemplate } from "@2block/email/email-service";
 import { absoluteUrl } from "@2block/shared/utils";;
 import { Paths } from "@2block/shared/shared-constants";
 import { NextRequest, NextResponse } from "next/server";

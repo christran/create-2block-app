@@ -1,7 +1,7 @@
 import "server-only";
-import { env } from "@/env";
-import { logger } from "../logger";
-import { EmailTemplate, PropsMap } from "./email-templates";
+
+import { EmailTemplate  } from "./email-templates";
+import type {PropsMap} from "./email-templates";
 import { getEmailTemplate } from "./email-templates";
 import { sendEmailPlunk } from "./providers/plunk";
 import { sendEmailSMTP } from "./providers/smtp";
@@ -13,12 +13,12 @@ export const sendEmail = async <T extends EmailTemplate>(
   template: T,
   props: PropsMap[NoInfer<T>],
 ) => {
-  if (env.MOCK_SEND_EMAIL) {
-    logger.info("📨 Email sent to: ", to, "with template: ", template, "and props: ", props);
-    return;
-  }
+  // if (process.env.MOCK_SEND_EMAIL) {
+  //   console.log("📨 Email sent to: ", to, "with template: ", template, "and props: ", props);
+  //   return;
+  // }
 
-  const emailServer = env.NODE_ENV === "production" ? "resend" : env.EMAIL_SERVER;
+  const emailServer = process.env.NODE_ENV === "production" ? "resend" : process.env.EMAIL_SERVER;
   const { subject, body } = await getEmailTemplate(template, props);
 
   try {
@@ -35,7 +35,7 @@ export const sendEmail = async <T extends EmailTemplate>(
         throw new Error(`Invalid email server: ${emailServer}`);
     }
   } catch (error) {
-    logger.error(`Failed to send email to ${to}: `, error instanceof Error ? error.message : String(error));
+    console.log(`Failed to send email to ${to}: `, error instanceof Error ? error.message : String(error));
     throw error;
   }
 };

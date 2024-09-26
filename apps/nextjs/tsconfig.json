@@ -45,7 +45,7 @@
     "**/*.cjs",
     "**/*.js",
     ".next/types/**/*.ts"
-  ],
+, "../../packages/email/src/actions.ts"  ],
   "exclude": [
     "node_modules"
   ]

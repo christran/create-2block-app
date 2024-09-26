@@ -29,7 +29,7 @@ import { env } from "@/env";
 import { generateId, Scrypt } from "lucia";
 // import { Argon2id } from "oslo/password";
 
-import { sendEmail, EmailTemplate } from "@/lib/email/email-service";
+import { sendEmail, EmailTemplate } from "@2block/email/email-service";
 
 import { logger } from "../logger";
 import { tasks } from "@trigger.dev/sdk/v3";
@@ -174,7 +174,7 @@ export const deleteAccount = async (): Promise<{ error: string } | void> => {
     return redirect(Paths.Login);
   }
 
-  await api.user.deleteAccountByUserId.mutate({id: user.id});
+  await api.user.deleteAccountByUserId({id: user.id});
   
   if (!session) {
     return {

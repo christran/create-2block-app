@@ -1,0 +1,8 @@
+{
+  "extends": "@2block/tsconfig/internal-package.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+  },
+  "include": ["*.ts", "src"],
+  "exclude": ["node_modules"]
+}

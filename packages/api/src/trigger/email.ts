@@ -1,7 +1,7 @@
 import { Paths } from "@2block/shared/shared-constants";
-import { deleteContactById } from "@2block/nextjs/lib/email/actions"; // move email service to it's own package? or inside api package?
-import { sendEmail, EmailTemplate } from "@2block/nextjs/lib/email-service";
-import { logger, task, wait } from "@trigger.dev/sdk/v3";
+import { deleteContactById } from "@2block/email/actions";
+import { sendEmail, EmailTemplate } from "@2block/email/email-service";
+import { logger, task } from "@trigger.dev/sdk/v3";
 
 export const welcomeEmailTask = task({
   id: "welcome-email",
@@ -41,7 +41,6 @@ export const accountDeletedTask = task({
       unsubscribe: `${Paths.Unsubscribe}/${payload.contactId}` 
     });
 
-    // delete or unsubsubscribe contact?
     await deleteContactById(payload.contactId);
   },
   handleError: (payload, err, { ctx, retryAt }) => {

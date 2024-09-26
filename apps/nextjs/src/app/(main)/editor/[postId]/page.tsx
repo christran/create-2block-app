@@ -1,5 +1,5 @@
 import React from "react";
-import { caller } from "@/trpc/server";
+import { api } from "@/trpc/server";
 import { notFound, redirect } from "next/navigation";
 import { PostEditor } from "./_components/post-editor";
 import { ArrowLeftIcon } from "@/components/icons";
@@ -17,7 +17,7 @@ export default async function EditPostPage({ params }: Props) {
   const { user } = await validateRequest();
   if (!user) redirect(Paths.Login);
 
-  const post = await caller.post.get({ id: params.postId });
+  const post = await api.post.get({ id: params.postId });
   if (!post) notFound();
 
   return (

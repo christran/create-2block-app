@@ -2,10 +2,10 @@ import React from "react";
 import { render } from '@react-email/render';
 import type { ComponentProps } from "react";
 import MagicLinkTemplate from "./templates/magic-link";
-import EmailVerificationTemplate from "@/lib/email/templates/email-verification";
-import ResetPasswordTemplate from "@/lib/email/templates/reset-password";
-import WelcomeTemplate from "@/lib/email/templates/welcome";
-import AccountDeletedTemplate from "@/lib/email/templates/account-deleted";
+import EmailVerificationTemplate from "./templates/email-verification";
+import ResetPasswordTemplate from "./templates/reset-password";
+import WelcomeTemplate from "./templates/welcome";
+import AccountDeletedTemplate from "./templates/account-deleted";
 
 export enum EmailTemplate {
   MagicLink = "MagicLink",
@@ -15,13 +15,13 @@ export enum EmailTemplate {
   AccountDeleted = "AccountDeleted",
 }
 
-export type PropsMap = {
+export interface PropsMap {
   [EmailTemplate.MagicLink]: ComponentProps<typeof MagicLinkTemplate>;
   [EmailTemplate.EmailVerification]: ComponentProps<typeof EmailVerificationTemplate>;
   [EmailTemplate.PasswordReset]: ComponentProps<typeof ResetPasswordTemplate>;
   [EmailTemplate.Welcome]: ComponentProps<typeof WelcomeTemplate>;
   [EmailTemplate.AccountDeleted]: ComponentProps<typeof AccountDeletedTemplate>;
-};
+}
 
 export const getEmailTemplate = async <T extends EmailTemplate>(template: T, props: PropsMap[NoInfer<T>]) => {
   switch (template) {

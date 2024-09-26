@@ -1,51 +1,48 @@
 {
-  "name": "@2block/api",
-  "version": "0.1.0",
+  "name": "@2block/email",
   "private": true,
+  "version": "0.1.0",
   "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./src/index.ts"
     },
-    "./trigger": {
-      "types": "./dist/trigger/index.d.ts",
-      "default": "./src/trigger/index.ts"
+    "./email-service": {
+      "types": "./dist/email-service.d.ts",
+      "default": "./src/email-service.ts"
     },
-    "./stripe": {
-      "types": "./src/lib/stripe.ts",
-      "default": "./src/lib/stripe.ts"
+    "./actions": {
+      "types": "./dist/actions.d.ts",
+      "default": "./src/actions.ts"
     }
   },
   "license": "MIT",
   "scripts": {
     "build": "tsc",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "tsc && pnpm trigger",
+    "dev": "tsc",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "trigger": "pnpm with-env npx trigger.dev@3.0.7 dev",
-    "deploy:trigger": "npx trigger.dev@3.0.7 deploy",
+    "email": "pnpm with-env email dev --port=3001 --dir=./src/templates",
     "with-env": "dotenv -e ../../.env --"
+
   },
   "dependencies": {
-    "@2block/auth": "workspace:*",
-    "@2block/db": "workspace:*",
-    "@2block/email": "workspace:*",
     "@2block/shared": "workspace:*",
-    "@2block/validators": "workspace:*",
-    "@trigger.dev/sdk": "^3.0.7",
-    "@trpc/server": "catalog:",
-    "superjson": "2.2.1",
-    "trigger.dev": "^3.0.7",
-    "zod": "catalog:"
+    "@aws-sdk/client-sesv2": "^3.658.1",
+    "@react-email/components": "^0.0.25",
+    "@react-email/render": "^1.0.1",
+    "nodemailer": "^6.9.15",
+    "react-email": "^3.0.1",
+    "resend": "^4.0.0"
   },
   "devDependencies": {
     "@2block/eslint-config": "workspace:*",
     "@2block/prettier-config": "workspace:*",
     "@2block/tsconfig": "workspace:*",
-    "@trigger.dev/build": "^3.0.7",
+    "@types/nodemailer": "^6.4.16",
     "dotenv": "^16.4.5",
     "dotenv-cli": "^7.4.2",
     "eslint": "catalog:",

@@ -1,10 +1,8 @@
-import { env } from "@/env";
-import { logger } from "../../logger";
 import { EMAIL_SENDER_NAME, EMAIL_SENDER_ADDRESS } from "@2block/shared/shared-constants";
 
-interface PlunkApiResponse {
+export interface PlunkApiResponse {
   success: boolean;
-  emails?: Array<{ contact: { id: string, email: string } }>;
+  emails?: { contact: { id: string, email: string } }[];
   timestamp?: string;
   error?: string;
   message?: string;
@@ -16,11 +14,11 @@ export const sendEmailPlunk = async (to: string, subject: string, body: string) 
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${env.PLUNK_API_KEY}`
+      Authorization: `Bearer ${process.env.PLUNK_API_KEY}`
     },
     body: JSON.stringify({
-      name: EMAIL_SENDER_NAME,
-      from: EMAIL_SENDER_ADDRESS,
+      name: EMAIL_SENDER_NAME as string,
+      from: EMAIL_SENDER_ADDRESS as string,
       to,
       subject,
       body,
@@ -36,10 +34,10 @@ export const sendEmailPlunk = async (to: string, subject: string, body: string) 
   }
 
   if (!data.success) {
-    throw new Error((data.error, data.message) ?? 'Failed to send email');
+    throw new Error(data.error ?? data.message ?? 'Failed to send email');
   }
 
-  logger.info(`📨 Email sent successfully to: ${to}`, {
+  console.log(`📨 Email sent successfully to: ${to}`, {
     contactId: data.emails?.[0]?.contact.id,
     email: data.emails?.[0]?.contact.email,
     timestamp: data.timestamp,

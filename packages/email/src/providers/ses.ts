@@ -1,15 +1,14 @@
+/* eslint-disable @typescript-eslint/non-nullable-type-assertion-style */
 import { SendEmailCommand, SESv2Client } from "@aws-sdk/client-sesv2";
-import { env } from "@/env";
-import { logger } from "../../logger";
 import { EMAIL_SENDER } from "@2block/shared/shared-constants";
 
 export const sendEmailSES = async (to: string, subject: string, body: string) => {
-  const sesClient = new SESv2Client({ 
-    region: 'us-west-1',
+  const sesClient = new SESv2Client({
+    region: "us-west-1",
     credentials: {
-      accessKeyId: env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: env.AWS_SECRET_ACCESS_KEY
-    },
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string
+    }
   });
 
   const params = {
@@ -37,7 +36,7 @@ export const sendEmailSES = async (to: string, subject: string, body: string) =>
 
   const result = await sesClient.send(command);
   
-  logger.info(`📨 Email sent successfully to: ${to}`);
+  console.log(`📨 Email sent successfully to: ${to}`);
   
   return result;
 };

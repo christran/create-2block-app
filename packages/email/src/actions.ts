@@ -1,12 +1,14 @@
-"use server";
-
-import { env } from "@/env";
-import { logger } from "../logger";
+interface deleteContactResponse {
+  success: boolean;
+  contact: string;
+  error: string | null;
+  message: string | null;
+}
 
 export async function updateContactByEmail(email: string, metadata?: Record<string, unknown>) {
   const headers = {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${env.PLUNK_API_KEY}`
+    Authorization: `Bearer ${process.env.PLUNK_API_KEY}`
   }
 
   try {
@@ -31,7 +33,7 @@ export async function updateContactByEmail(email: string, metadata?: Record<stri
 export async function deleteContactById(contactId: string) {
   const headers = {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${env.PLUNK_API_KEY}`
+    Authorization: `Bearer ${process.env.PLUNK_API_KEY}`
   }
 
   try {
@@ -45,13 +47,13 @@ export async function deleteContactById(contactId: string) {
 
     const response = await fetch('https://resend.2block.co/api/v1/contacts', options);
 
-    const data = await response.json();
+    const data = await response.json() as deleteContactResponse;
 
     if (!data.success) {
-      throw new Error((data.error, data.message) ?? 'Failed to delete contact');
+      throw new Error(data.error ?? data.message ?? 'Failed to delete contact');
     }
 
-    logger.info(`📨 Contact deleted ID: ${contactId}`, {
+    console.log(`📨 Contact deleted ID: ${contactId}`, {
       contactId: data.contact,
     });
   } catch (error) {
