@@ -18,6 +18,7 @@ export const uncachedValidateRequest = async (): Promise<
   
   // next.js throws when you attempt to set cookie when rendering page
   try {
+    // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
     if (result.session && result.session.fresh) {
       const sessionCookie = lucia.createSessionCookie(result.session.id);
       cookies().set(

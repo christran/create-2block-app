@@ -71,7 +71,7 @@ declare module "lucia" {
   }
 }
 
-interface DatabaseSessionAttributes {}
-export interface DatabaseUserAttributes extends Omit<DbUser, "hashedPassword"> {}
+type DatabaseSessionAttributes = object
+export type DatabaseUserAttributes = Omit<DbUser, "hashedPassword">
 
 export { uncachedValidateRequest, validateRequest } from "./validate-request";

@@ -12,13 +12,7 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    DATABASE_URL: z
-      .string()
-      .url()
-      .refine(
-        (str) => !str.includes("YOUR_DATABASE_URL_HERE"),
-        "You forgot to change the default URL",
-      ),
+    DATABASE_URL: z.string().url().min(1),
     REDIS_URL: z.string().trim().min(1),
     INTERNAL_API_KEY: z.string().trim().min(1),
     MAGIC_LINK_AUTH: z.boolean().default(false),

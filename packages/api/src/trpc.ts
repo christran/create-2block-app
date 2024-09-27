@@ -10,7 +10,7 @@
 import { uncachedValidateRequest } from "@2block/auth";
 import { stripe } from "./lib/stripe";
 import { db } from "@2block/db/client";
-import { initTRPC, TRPCError, type inferAsyncReturnType } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
@@ -107,8 +107,9 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   });
 });
 
-export type TRPCContext = inferAsyncReturnType<typeof createTRPCContext>; // TODO: deprecated
-export type ProtectedTRPCContext = TRPCContext & { // TODO: deprecated
+export type TRPCContext = Awaited<ReturnType<typeof createTRPCContext>>;
+
+export type ProtectedTRPCContext = TRPCContext & {
   user: NonNullable<TRPCContext["user"]>;
   session: NonNullable<TRPCContext["session"]>;
 };
