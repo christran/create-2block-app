@@ -1,4 +1,4 @@
-import { validateRequest } from "@2block/auth";
+import { validateRequest } from "@/lib/auth/validate-request";
 import { UploadFiles } from "./upload-files";
 import { redirect } from "next/navigation";
 import { Paths } from "@2block/shared/shared-constants";

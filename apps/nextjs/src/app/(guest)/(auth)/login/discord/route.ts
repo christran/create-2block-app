@@ -2,7 +2,7 @@ import { generateState } from "arctic";
 import { discord } from "@2block/auth";
 import { cookies } from "next/headers";
 import { env } from "@/env";
-import { validateRequest } from "@2block/auth";
+import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@2block/shared/shared-constants";
 import { redirect } from "next/navigation";
 import { api } from "@/trpc/server";

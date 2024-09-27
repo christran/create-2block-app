@@ -1,6 +1,6 @@
 import { env } from "@/env";
 import { validateMagicLinkToken } from "@/lib/auth/actions";
-import { validateRequest } from "@2block/auth";
+import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@2block/shared/shared-constants";
 import { redirect } from "next/navigation";
 import { NextRequest } from "next/server";

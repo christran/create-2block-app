@@ -3,7 +3,7 @@ import { generatePresignedUrl, createMultipartUpload, prepareUploadParts } from 
 import { v4 as uuidv4 } from "uuid";
 import { db } from "@2block/db/client";
 import { files } from "@2block/db/schema";
-import { validateRequest } from "@2block/auth";
+import { validateRequest } from "@/lib/auth/validate-request";
 import { env } from "@/env";
 import prettyBytes from "pretty-bytes";
 import { Ratelimit, rateLimitMiddleware } from "@/lib/rate-limiter";

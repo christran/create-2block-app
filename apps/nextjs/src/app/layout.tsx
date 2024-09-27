@@ -7,7 +7,7 @@ import localFont from "next/font/local";
 import { TRPCReactProvider } from "@/trpc/react";
 import type { Metadata, Viewport } from "next";
 import { AnalyticsScript } from "./analytics";
-import { validateRequest } from "@2block/auth";
+import { validateRequest } from "@/lib/auth/validate-request";
 import { cookies } from "next/headers";
 import { env } from "@/env";
 import { UserProvider } from "@/lib/auth/user-provider";

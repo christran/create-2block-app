@@ -6,7 +6,7 @@ import { github, lucia } from "@2block/auth";
 import { db } from "@2block/db/client";
 import { Paths } from "@2block/shared/shared-constants";
 import { users } from "@2block/db/schema";
-import { validateRequest } from "@2block/auth";
+import { validateRequest } from "@/lib/auth/validate-request";
 import { createContact, sendWelcomeEmail } from "@/lib/auth/actions";
 
 interface GitHubUserEmail {

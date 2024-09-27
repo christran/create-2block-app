@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { PostEditor } from "./_components/post-editor";
 import { ArrowLeftIcon } from "@/components/icons";
 import Link from "next/link";
-import { validateRequest } from "@2block/auth";
+import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@2block/shared/shared-constants";
 
 interface Props {

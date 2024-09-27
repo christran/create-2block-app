@@ -5,9 +5,9 @@ import { type Metadata } from "next";
 import { Suspense } from "react";
 import { Posts } from "../_components/posts";
 import { PostsSkeleton } from "../_components/posts-skeleton";
-import { validateRequest } from "@2block/auth";
+import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@2block/shared/shared-constants";
-import { myPostsSchema } from "@2block/api";
+import { myPostsSchema } from "@/lib/validators/posts"; // TODO: pending move to validators package
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 

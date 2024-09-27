@@ -5,7 +5,8 @@ import { freePlan, proPlan, proPlus, subscriptionPlans } from "@2block/shared/su
 import { stripe } from "../../lib/stripe";
 import { absoluteUrl, formatPrice } from "@2block/shared/utils";
 import { Paths } from "@2block/shared/shared-constants";
-import { type ManageSubscriptionInput, manageSubscriptionSchema } from "./stripe.input";
+import {  manageSubscriptionSchema } from "./stripe.input";
+import type {ManageSubscriptionInput} from "./stripe.input";
 
 export const stripeRouter = {
   getPlans: protectedProcedure.

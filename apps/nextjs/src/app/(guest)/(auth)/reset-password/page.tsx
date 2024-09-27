@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { SendResetEmail } from "./send-reset-email";
-import { validateRequest } from "@2block/auth";
+import { validateRequest } from "@/lib/auth/validate-request";
 import { APP_TITLE, Paths } from "@2block/shared/shared-constants";
 import { env } from "@/env";
 

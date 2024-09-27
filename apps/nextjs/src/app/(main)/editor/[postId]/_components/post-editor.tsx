@@ -1,6 +1,7 @@
 "use client";
+
 import { useRef } from "react";
-import { type RouterOutputs } from "@2block/api";
+import type { RouterOutputs } from "@2block/api";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -21,11 +22,10 @@ import { Pencil2Icon } from "@/components/icons";
 import { LoadingButton } from "@/components/loading-button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createPostSchema } from "@2block/api";
 import { Paths } from "@2block/shared/shared-constants";
+import { createPostSchema } from "@/lib/validators/posts"; // TODO: pending move to validators package
 
 const markdownlink = "https://remarkjs.github.io/react-markdown/";
-
 interface Props {
   post: RouterOutputs["post"]["get"];
 }

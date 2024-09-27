@@ -1,9 +1,9 @@
-// "use server";
+"use server";
 
 import { cache } from "react";
 import { cookies } from "next/headers";
 import type { Session, User } from "lucia";
-import { lucia } from "./index";
+import { lucia } from "@2block/auth";
 
 export const uncachedValidateRequest = async (): Promise<
   { user: User; session: Session } | { user: null; session: null }
@@ -18,7 +18,6 @@ export const uncachedValidateRequest = async (): Promise<
   
   // next.js throws when you attempt to set cookie when rendering page
   try {
-    // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
     if (result.session && result.session.fresh) {
       const sessionCookie = lucia.createSessionCookie(result.session.id);
       cookies().set(
@@ -41,4 +40,4 @@ export const uncachedValidateRequest = async (): Promise<
   return result;
 };
 
-export const validateRequest = cache(uncachedValidateRequest);
+export const validateRequest = cache(uncachedValidateRequest); // same as https://github.com/t3-oss/create-t3-turbo/blob/main/packages/auth/src/index.rsc.ts

@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DesktopIcon, HamburgerMenuIcon, PersonIcon } from "@radix-ui/react-icons";
-import { validateRequest } from "@2block/auth";
+import { validateRequest } from "@/lib/auth/validate-request";
 
 const routes = [
   { 

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { env } from "@/env";
 import { type Metadata } from "next";
-import { validateRequest } from "@2block/auth";
+import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@2block/shared/shared-constants";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { db } from "@2block/db/client";

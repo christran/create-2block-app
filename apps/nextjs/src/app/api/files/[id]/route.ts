@@ -3,7 +3,7 @@ import { generatePresignedGetUrl, deleteFile } from "@/lib/r2";
 import { db } from "@2block/db/client";
 import { files } from "@2block/db/schema";
 import { eq } from "drizzle-orm";
-import { validateRequest } from "@2block/auth";
+import { validateRequest } from "@/lib/auth/validate-request";
 import { validate as uuidValidate } from "uuid";
 import { env } from "@/env";
 

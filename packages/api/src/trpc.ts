@@ -7,7 +7,7 @@
  * need to use are documented accordingly near the end.
  */
 
-import { uncachedValidateRequest } from "@2block/auth";
+import { lucia } from "@2block/auth";
 import { stripe } from "./lib/stripe";
 import { db } from "@2block/db/client";
 import { initTRPC, TRPCError } from "@trpc/server";
@@ -26,8 +26,33 @@ import { ZodError } from "zod";
  *
  * @see https://trpc.io/docs/server/context
  */
+
+const extractSessionId = (cookieString: string | null, sessionCookieName: string): string | null => {
+  if (!cookieString) return null;
+  
+  const cookies = cookieString.split(';').map(cookie => cookie.trim());
+  const sessionCookie = cookies.find(cookie => cookie.startsWith(`${sessionCookieName}=`)) ?? null;
+  
+  return sessionCookie?.split('=')[1] ?? null;
+};
+
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const { session, user } = await uncachedValidateRequest(); // trpc needs this. cookies().get(lucia.sessionCookieName)?.value ????
+  const cookieString = opts.headers.get("cookie");
+  const sessionId = extractSessionId(cookieString, lucia.sessionCookieName);
+
+  // console.log("cookie", opts.headers.get("cookie"));
+
+  if (!sessionId) {
+    return { 
+      user: null, 
+      session: null,
+      db,
+      headers: opts.headers,
+      stripe: stripe,
+    };
+  }
+
+  const { session, user } = await lucia.validateSession(sessionId);; // trpc needs this. cookies().get(lucia.sessionCookieName)?.value ????
   return {
     session,
     user,

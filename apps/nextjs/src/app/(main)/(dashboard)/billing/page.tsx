@@ -5,7 +5,7 @@ import { ExclamationTriangleIcon } from "@/components/icons";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { env } from "@/env";
-import { validateRequest } from "@2block/auth";
+import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@2block/shared/shared-constants";
 import { api } from "@/trpc/server";
 import { Suspense } from "react";

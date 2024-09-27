@@ -32,10 +32,4 @@ type RouterOutputs = inferRouterOutputs<AppRouter>;
 export { createTRPCContext, appRouter, createCaller };
 export type { AppRouter, RouterInputs, RouterOutputs };
 
-// Move to validatiors package
-export * from "./routers/files/files.input";
-export * from "./routers/post/post.input";
-export * from "./routers/stripe/stripe.input";
-export * from "./routers/user/user.input";
-
 export { createBillingPortalSession } from "./routers/stripe/stripe.procedure";

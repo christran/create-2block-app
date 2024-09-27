@@ -73,5 +73,3 @@ declare module "lucia" {
 
 type DatabaseSessionAttributes = object
 export type DatabaseUserAttributes = Omit<DbUser, "hashedPassword">
-
-export { uncachedValidateRequest, validateRequest } from "./validate-request";

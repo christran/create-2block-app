@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { listIncompleteMultipartUploads, abortMultipartUpload } from "@/lib/r2";
-import { validateRequest } from "@2block/auth";
+import { validateRequest } from "@/lib/auth/validate-request";
 import { db } from "@2block/db/client";
 import { files } from "@2block/db/schema";
 import { eq, lt, and } from "drizzle-orm";

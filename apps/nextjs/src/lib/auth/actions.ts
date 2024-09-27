@@ -22,7 +22,7 @@ import {
   updatePasswordSchema,
 } from "@/lib/validators/auth";
 import { emailVerificationCodes, magicLinkTokens, passwordResetTokens, users } from "@2block/db/schema";
-import { validateRequest } from "@2block/auth";
+import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@2block/shared/shared-constants";
 import { env } from "@/env";
 
