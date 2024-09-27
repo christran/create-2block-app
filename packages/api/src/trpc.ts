@@ -27,7 +27,7 @@ import { ZodError } from "zod";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const { session, user } = await uncachedValidateRequest();
+  const { session, user } = await uncachedValidateRequest(); // trpc needs this. cookies().get(lucia.sessionCookieName)?.value ????
   return {
     session,
     user,

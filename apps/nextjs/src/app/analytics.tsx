@@ -12,6 +12,7 @@ interface AnalyticsScriptProps {
 
 export function AnalyticsScript({ websiteId, userPromise, lastKnownUserData }: AnalyticsScriptProps) {
   const [isReady, setIsReady] = useState(false);
+  const [shouldLoadAnalytics, setShouldLoadAnalytics] = useState(false);
   const userDataRef = useRef<Record<string, unknown> | null>(null);
 
   useEffect(() => {
@@ -29,9 +30,14 @@ export function AnalyticsScript({ websiteId, userPromise, lastKnownUserData }: A
     };
 
     fetchUser().catch(console.error);
-  }, [userPromise]);
 
-  if (!isReady) {
+    // Disable analytics during development and localhost
+    const isProduction = process.env.NODE_ENV === "production";
+    const isLocal = typeof window !== "undefined" && window.location.hostname === "localhost";
+    setShouldLoadAnalytics(isProduction && !isLocal);
+  }, [userPromise, lastKnownUserData]);
+
+  if (!isReady || !shouldLoadAnalytics) {
     return null;
   }
 
