@@ -1,0 +1,55 @@
+{
+  "name": "@2block/email",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./email-service": {
+      "types": "./dist/email-service.d.ts",
+      "default": "./src/email-service.ts"
+    },
+    "./actions": {
+      "types": "./dist/actions.d.ts",
+      "default": "./src/actions.ts"
+    },
+    "./env": "./env.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsc",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "email": "pnpm with-env email dev --port=3001 --dir=./src/templates",
+    "with-env": "dotenv -e ../../.env --"
+
+  },
+  "dependencies": {
+    "@2block/shared": "workspace:*",
+    "@aws-sdk/client-sesv2": "^3.658.1",
+    "@react-email/components": "^0.0.25",
+    "@react-email/render": "^1.0.1",
+    "@t3-oss/env-nextjs": "^0.11.1",
+    "nodemailer": "^6.9.15",
+    "react-email": "^3.0.1",
+    "resend": "^4.0.0"
+  },
+  "devDependencies": {
+    "@2block/eslint-config": "workspace:*",
+    "@2block/prettier-config": "workspace:*",
+    "@2block/tsconfig": "workspace:*",
+    "@types/nodemailer": "^6.4.16",
+    "dotenv": "^16.4.5",
+    "dotenv-cli": "^7.4.2",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  },
+  "prettier": "@2block/prettier-config"
+}

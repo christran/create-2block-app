@@ -1,0 +1,12 @@
+{
+  "extends": "@2block/tsconfig/base.json",
+  "compilerOptions": {
+    "jsx": "preserve" // TODO: switch to react-jsx and from react imports from email templates and then retry trigger dev
+  },
+  "include": [
+    "src",
+    "trigger.config.ts",
+    "src/lib/stripe.ts"
+  ],
+  "exclude": ["node_modules"]
+}

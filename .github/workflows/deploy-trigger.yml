@@ -5,15 +5,19 @@ on:
     branches:
       - main
     paths:
-      - "src/trigger/**"
-
+      - "packages/api/src/trigger/**"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "packages/api/src/trigger/**"
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [v20.x]
+        node-version: [v20.16]
 
     steps:
       - name: Checkout main branch
@@ -22,7 +26,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 9.7.1
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4.0.3

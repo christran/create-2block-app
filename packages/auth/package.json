@@ -1,0 +1,41 @@
+{
+  "name": "@2block/auth",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./env": "./env.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@2block/db": "workspace:*",
+    "@2block/shared": "workspace:*",
+    "@lucia-auth/adapter-drizzle": "^1.1.0",
+    "@t3-oss/env-nextjs": "^0.11.1",
+    "arctic": "^1.9.2",
+    "lucia": "^3.2.0",
+    "next": "14.2.13",
+    "react": "catalog:react18",
+    "react-dom": "catalog:react18",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@2block/eslint-config": "workspace:*",
+    "@2block/prettier-config": "workspace:*",
+    "@2block/tsconfig": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  },
+  "prettier": "@2block/prettier-config"
+}
