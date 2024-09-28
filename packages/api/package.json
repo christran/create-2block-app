@@ -26,7 +26,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "trigger": "pnpm with-env npx trigger.dev@3.0.7 dev",
-    "deploy:trigger": "npx trigger.dev@3.0.7 deploy",
+    "deploy:trigger": "pnpm with-env npx trigger.dev@3.0.7 deploy",
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
