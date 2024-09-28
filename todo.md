@@ -14,13 +14,3 @@
 [ ] ui package (https://github.com/search?q=repo%3At3-oss%2Fcreate-t3-turbo+tailwind-merge&type=code)
 [ ] figure out why npx turbo daemon clean is needed everytime
 [ ] add expo
-[ ] update github workflows
-[ ] build time error:  ../../packages/auth/src/validate-request.ts
-    Error: 
-    x You're importing a component that needs next/headers. That only works in a Server Component which is not supported in the pages/ directory. Read more: https://nextjs.org/docs/getting-started/
-    | react-essentials#server-components
-[ ] where does validateRequest belong in nextjs or auth package?
-
-- auth
-[ ] move validateRequest to nextjs
-[ ] packages/api/trpc needs uncachedValidateRequest which is basically cookies().get(lucia.sessionCookieName)?.value and some other stuff
