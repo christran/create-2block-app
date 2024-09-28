@@ -25,8 +25,8 @@
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "trigger": "pnpm with-env npx trigger.dev@3.0.7 dev",
-    "deploy:trigger": "pnpm with-env npx trigger.dev@3.0.7 deploy",
+    "trigger": "pnpm with-env npx trigger.dev@3.0.8 dev",
+    "deploy:trigger": "pnpm with-env npx trigger.dev@3.0.8 deploy",
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
@@ -35,17 +35,17 @@
     "@2block/email": "workspace:*",
     "@2block/shared": "workspace:*",
     "@2block/validators": "workspace:*",
-    "@trigger.dev/sdk": "^3.0.7",
+    "@trigger.dev/sdk": "^3.0.8",
     "@trpc/server": "catalog:",
     "superjson": "2.2.1",
-    "trigger.dev": "^3.0.7",
+    "trigger.dev": "^3.0.8",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@2block/eslint-config": "workspace:*",
     "@2block/prettier-config": "workspace:*",
     "@2block/tsconfig": "workspace:*",
-    "@trigger.dev/build": "^3.0.7",
+    "@trigger.dev/build": "^3.0.8",
     "dotenv": "^16.4.5",
     "dotenv-cli": "^7.4.2",
     "eslint": "catalog:",

@@ -37,8 +37,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+        # TODO: set working dir to packages/api
       - name: 🚀 Deploy Trigger.dev
         env:
           TRIGGER_ACCESS_TOKEN: ${{ secrets.TRIGGER_ACCESS_TOKEN }}
+        working-directory: packages/api
         run: |
           pnpm run deploy:trigger
