@@ -6,7 +6,7 @@
   },
   "packageManager": "pnpm@9.7.1",
   "scripts": {
-    "build": "turbo run build --api=\"https://turbo.2block.co\" --team=\"2block\" --token=\"2block-Oqs0n4cVd6JnyCpuOZXcuWigwterYr6Eh1qOOnXqr5sRFQ5o8UICr1Eu0IRJKPo8\" --remote-only=true",
+    "build": "pnpm with-env turbo run build --remote-only=true",
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "turbo run clean",
     "db:push": "turbo -F @2block/db push",
@@ -22,16 +22,14 @@
     "postinstall": "pnpm lint:ws",
     "typecheck": "turbo run typecheck",
     "ui-add": "turbo run ui-add",
-    "trigger": "turbo -F @2block/api trigger",
-    "deploy:trigger": "turbo -F @2block/api deploy:trigger",
     "email": "pnpm -F @2block/email email",
     "stripe": "stripe listen --forward-to localhost:3000/api/webhooks/stripe --latest",
-    "generate-routes": "pnpm -F @2block/nextjs generate-routes",
-    "purge-cache": "pnpm -F @2block/nextjs purge-cache"
+    "with-env": "dotenv -e .env --"
   },
   "devDependencies": {
     "@2block/prettier-config": "workspace:*",
     "@turbo/gen": "^2.1.1",
+    "dotenv": "^16.4.5",
     "prettier": "catalog:",
     "turbo": "^2.1.1",
     "typescript": "catalog:"

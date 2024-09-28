@@ -93,5 +93,5 @@ jobs:
           echo "${{ secrets.ENV_PROD }}" > .env
           scp .env vps:$APP_DIR/.env
           ssh vps "cd $APP_DIR && git pull && pnpm install && pnpm run build"
-          ssh vps "pm2 restart $PM2_APP_NAME"
-          ssh vps "cd $APP_DIR && pnpm run generate-routes && pnpm run purge-cache"
+          ssh vps "cd $APP_DIR/apps/nextjs && pm2 restart $PM2_APP_NAME"
+          ssh vps "cd $APP_DIR/apps/nextjs && pnpm run generate-routes && pnpm run purge-cache"
