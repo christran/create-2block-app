@@ -15,7 +15,7 @@
     },
     "start": {
       "dependsOn": ["^build"],
-      "cache": true,
+      "cache": false,
       "persistent": true
     },
     "format": {
@@ -49,12 +49,10 @@
       "interactive": true
     },
     "trigger": {
-      "cache": false,
-      "interactive": true
+      "cache": false
     },
     "deploy:trigger": {
-      "cache": false,
-      "interactive": true
+      "cache": false
     },
     "email": {
       "cache": false,
