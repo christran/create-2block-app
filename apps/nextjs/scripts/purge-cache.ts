@@ -12,6 +12,7 @@ import { routes } from "next-routes-list"
 import axios from "axios";
 import fs from "fs";
 import path from "path";
+import { env } from "@/env";
 
 config()
 
@@ -52,19 +53,19 @@ function collectUrls(dir: string, baseUrl: string, isPublic: boolean): string[] 
 async function purgeCache(): Promise<void> {
   const urls = routes
     .filter((route) => !route.includes("/["))
-    .map((route) => `${process.env.NEXT_PUBLIC_APP_URL}${route}`);
+    .map((route) => `${env.NEXT_PUBLIC_APP_URL}${route}`);
 
   if (staticDirs.length > 0) {
     staticDirs.forEach(dir => {
       const fullPath = path.join(process.cwd(), dir);
-      urls.push(...collectUrls(fullPath, process.env.NEXT_PUBLIC_APP_URL ?? "https://2block.co", dir === "./public"));
+      urls.push(...collectUrls(fullPath, env.NEXT_PUBLIC_APP_URL ?? "https://2block.co", dir === "./public"));
     });
   }
 
   console.log(urls)
   console.log(`Total URLs to purge: ${urls.length}`)
 
-  if (process.env.NEXT_PUBLIC_APP_URL === "http://localhost:3000") {
+  if (env.NEXT_PUBLIC_APP_URL === "http://localhost:3000") {
     console.log("Skipping cache purge on local environment");
     return;
   }

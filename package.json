@@ -25,7 +25,9 @@
     "trigger": "turbo -F @2block/api trigger",
     "deploy:trigger": "turbo -F @2block/api deploy:trigger",
     "email": "pnpm -F @2block/email email",
-    "stripe": "stripe listen --forward-to localhost:3000/api/webhooks/stripe --latest"
+    "stripe": "stripe listen --forward-to localhost:3000/api/webhooks/stripe --latest",
+    "generate-routes": "pnpm -F @2block/nextjs generate-routes",
+    "purge-cache": "pnpm -F @2block/nextjs purge-cache"
   },
   "devDependencies": {
     "@2block/prettier-config": "workspace:*",

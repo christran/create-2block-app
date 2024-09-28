@@ -22,13 +22,13 @@
 # sudo ln -s "$NVM_DIR/versions/node/$(nvm version)/bin/pnpm" "/usr/local/bin/pnpm"
 # sudo ln -s "$NVM_DIR/versions/node/$(nvm version)/bin/pm2" "/usr/local/bin/pm2"
 
-name: Build and Deploy Next.js App
+name: Build and Deploy 2BLOCK App
 
 on:
   push:
-    branches: [create-2block-app-turbo]
-  # pull_request:
-  #   branches: [main]
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   build:
@@ -58,15 +58,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
 
-      # - name: Cache Next.js and pnpm
-      #   uses: actions/cache@v4.0.2
-      #   with:
-      #     path: |
-      #       ${{ github.workspace }}/.next/cache
-      #     key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
-
       - name: Create .env file
         run: |
           touch .env
@@ -76,7 +67,7 @@ jobs:
         uses: trappar/turborepo-remote-cache-gh-action@v2
         with:
           storage-provider: s3
-          storage-path: turborepo-cache-server
+          storage-path: turborepo-cache
         env:
           AWS_REGION: "auto"
           AWS_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
@@ -86,29 +77,20 @@ jobs:
       - name: Install dependencies
         run: pnpm install
     
-      - name: Build Next.js app
+      - name: Turborepo Build
         run: pnpm run build
   
-      # - name: Set up SSH
-      #   run: |
-      #     mkdir -p ~/.ssh
-      #     echo "$SSH_PRIVATE_KEY" > ~/.ssh/github-action
-      #     chmod 600 ~/.ssh/github-action
-      #     echo -e "Host vps\n\tUser $USER\n\tHostname $HOST\n\tIdentityFile ~/.ssh/github-action\n\tStrictHostKeyChecking No" > ~/.ssh/config
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/github-action
+          chmod 600 ~/.ssh/github-action
+          echo -e "Host vps\n\tUser $USER\n\tHostname $HOST\n\tIdentityFile ~/.ssh/github-action\n\tStrictHostKeyChecking No" > ~/.ssh/config
 
-      # - name: Deploy to server
-      #   run: |
-      #     echo "${{ secrets.ENV_PROD }}" > .env
-      #     scp .env vps:$APP_DIR/.env
-      #     ssh vps "rm -rf $APP_DIR/.next && mkdir -p $APP_DIR/.next"
-      #     rsync -re ssh ./.next/ vps:$APP_DIR/.next
-      #     ssh vps "cd $APP_DIR && git pull && pnpm install"
-      #     ssh vps "pm2 restart $PM2_APP_NAME"
-      #     ssh vps "cd $APP_DIR && pnpm run generate-routes && pnpm run purge-cache"
-
-      # - name: Purge Cloudflare cache
-      #   uses: nathanvaughn/actions-cloudflare-purge@master
-      #   with:
-      #       cf_zone: ${{ secrets.CLOUDFLARE_ZONE }}
-      #       cf_auth: ${{ secrets.CLOUDFLARE_API_KEY }}
-            #hosts: 2block.co # enterprise only/purge everything but media caches ex: media.2block.co b2.2block.co
+      - name: Deploy to server
+        run: |
+          echo "${{ secrets.ENV_PROD }}" > .env
+          scp .env vps:$APP_DIR/.env
+          ssh vps "cd $APP_DIR && git pull && pnpm install && pnpm run build"
+          ssh vps "pm2 restart $PM2_APP_NAME"
+          ssh vps "cd $APP_DIR && pnpm run generate-routes && pnpm run purge-cache"

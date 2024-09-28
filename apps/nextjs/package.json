@@ -24,7 +24,7 @@
     "with-env": "dotenv -e ../../.env --",
     "test:e2e": "playwright test",
     "generate-routes": "cd src && npx generate-next-routes-list",
-    "purge-cache": "npx tsx scripts/purge-cache.ts"
+    "purge-cache": "pnpm with-env tsx scripts/purge-cache.ts"
   },
   "dependencies": {
     "@2block/api": "workspace:*",
