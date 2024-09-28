@@ -44,6 +44,7 @@ jobs:
       HOST: ${{ vars.SERVER_IP }}
       APP_DIR: "/root/SaaS"
       PM2_APP_NAME: "2block"
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
     steps:
       - name: Checkout main branch
         uses: actions/checkout@main
