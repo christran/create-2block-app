@@ -13,6 +13,11 @@
       "cache": false,
       "persistent": false
     },
+    "start": {
+      "dependsOn": ["^build"],
+      "cache": true,
+      "persistent": true
+    },
     "format": {
       "outputs": [".cache/.prettiercache"],
       "outputLogs": "new-only"

@@ -26,9 +26,9 @@ name: Build and Deploy Next.js App
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    branches: [create-2block-app-turbo]
+  # pull_request:
+  #   branches: [main]
 
 jobs:
   build:
@@ -36,7 +36,7 @@ jobs:
     # runs-on: self-hosted
     strategy:
       matrix:
-        node-version: [v20.x]
+        node-version: [v20.16]
     env:
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       USER: root
@@ -58,42 +58,53 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
 
-      - name: Cache Next.js and pnpm
-        uses: actions/cache@v4.0.2
-        with:
-          path: |
-            ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
+      # - name: Cache Next.js and pnpm
+      #   uses: actions/cache@v4.0.2
+      #   with:
+      #     path: |
+      #       ${{ github.workspace }}/.next/cache
+      #     key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
 
       - name: Create .env file
         run: |
           touch .env
           echo "${{ secrets.ENV_PROD }}" > .env
 
+      - name: Turborepo Remote Cache Server
+        uses: trappar/turborepo-remote-cache-gh-action@v2
+        with:
+          storage-provider: s3
+          storage-path: turborepo-cache-server
+        env:
+          AWS_REGION: "auto"
+          AWS_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_ACCESS_KEY }}
+          AWS_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
+
       - name: Install dependencies
         run: pnpm install
     
       - name: Build Next.js app
-        run: npm run build
+        run: pnpm run build
   
-      - name: Set up SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/github-action
-          chmod 600 ~/.ssh/github-action
-          echo -e "Host vps\n\tUser $USER\n\tHostname $HOST\n\tIdentityFile ~/.ssh/github-action\n\tStrictHostKeyChecking No" > ~/.ssh/config
+      # - name: Set up SSH
+      #   run: |
+      #     mkdir -p ~/.ssh
+      #     echo "$SSH_PRIVATE_KEY" > ~/.ssh/github-action
+      #     chmod 600 ~/.ssh/github-action
+      #     echo -e "Host vps\n\tUser $USER\n\tHostname $HOST\n\tIdentityFile ~/.ssh/github-action\n\tStrictHostKeyChecking No" > ~/.ssh/config
 
-      - name: Deploy to server
-        run: |
-          echo "${{ secrets.ENV_PROD }}" > .env
-          scp .env vps:$APP_DIR/.env
-          ssh vps "rm -rf $APP_DIR/.next && mkdir -p $APP_DIR/.next"
-          rsync -re ssh ./.next/ vps:$APP_DIR/.next
-          ssh vps "cd $APP_DIR && git pull && pnpm install"
-          ssh vps "pm2 restart $PM2_APP_NAME"
-          ssh vps "cd $APP_DIR && pnpm run generate-routes && pnpm run purge-cache"
+      # - name: Deploy to server
+      #   run: |
+      #     echo "${{ secrets.ENV_PROD }}" > .env
+      #     scp .env vps:$APP_DIR/.env
+      #     ssh vps "rm -rf $APP_DIR/.next && mkdir -p $APP_DIR/.next"
+      #     rsync -re ssh ./.next/ vps:$APP_DIR/.next
+      #     ssh vps "cd $APP_DIR && git pull && pnpm install"
+      #     ssh vps "pm2 restart $PM2_APP_NAME"
+      #     ssh vps "cd $APP_DIR && pnpm run generate-routes && pnpm run purge-cache"
 
       # - name: Purge Cloudflare cache
       #   uses: nathanvaughn/actions-cloudflare-purge@master
