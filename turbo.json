@@ -64,7 +64,6 @@
     }
   },
   "globalEnv": [
-    "NEXT_PUBLIC_APP_URL",
     "DATABASE_URL",
     "REDIS_URL",
     "INTERNAL_API_KEY",
