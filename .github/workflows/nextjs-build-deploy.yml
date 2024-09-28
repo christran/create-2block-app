@@ -42,7 +42,7 @@ jobs:
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       USER: root
       HOST: ${{ vars.SERVER_IP }}
-      APP_DIR: "/root/SaaS"
+      APP_DIR: "/root/create-2block-app"
       PM2_APP_NAME: "2block"
     steps:
       - name: Checkout main branch

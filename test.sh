@@ -1,4 +1,4 @@
-APP_DIR="/home/chris/SaaS"
+APP_DIR="/home/chris/create-2block-app"
 
 mkdir -p "$APP_DIR"
 if [ -d "$APP_DIR/.next" ]; then
