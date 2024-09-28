@@ -194,7 +194,7 @@ export const deleteAccount = async (): Promise<{ error: string } | void> => {
 export const createContact = async (email: string, metadata?: Record<string, unknown>): Promise<{ contactId: string }> => {
   const headers = {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${env.PLUNK_API_KEY}`
+      Authorization: `Bearer ${process.env.PLUNK_API_KEY}`
   }
 
   try {
