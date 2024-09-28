@@ -47,6 +47,6 @@ export const accountDeletedTask = task({
     logger.log("Error:", { err });
 
     // handle this error
-    // Error deleting contact: Error: That contact was not found at deleteContactById
+    // Error deleting contact: Error: That contact was not found at deleteContactById.
   },
 });

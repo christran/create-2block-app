@@ -15,6 +15,7 @@
 # allow port 5432 on hetzner firewall
 
 # If using NVM to manage node versions
+# If changing node version, remove old symlinks and create new ones: sudo rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/pnpm /usr/local/bin/pm2
 # sudo ln -s "$NVM_DIR/versions/node/$(nvm version)/bin/node" "/usr/local/bin/node"
 # sudo ln -s "$NVM_DIR/versions/node/$(nvm version)/bin/npm" "/usr/local/bin/npm"
 
