@@ -59,10 +59,11 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
 
+      # change NEXT_PUBLIC_APP_URL to {{ vars.NEXT_PUBLIC_APP_URL }}
       - name: Create .env file
         run: |
-          touch .env
           echo "${{ secrets.ENV_PROD }}" > .env
+          echo "NEXT_PUBLIC_APP_URL=${{ vars.NEXT_PUBLIC_APP_URL }}" >> .env
 
       # - name: Turborepo Remote Cache Server
       #   uses: trappar/turborepo-remote-cache-gh-action@v2
