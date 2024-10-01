@@ -1,1 +1,0 @@
-ALTER TABLE "2block_files" RENAME COLUMN "filesize" TO "file_size";

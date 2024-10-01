@@ -1,1 +1,0 @@
-ALTER TABLE "2block_files" ADD COLUMN "user_id" varchar(21) NOT NULL;

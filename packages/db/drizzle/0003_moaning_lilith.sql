@@ -1,1 +1,0 @@
-ALTER TABLE "2block_files" DROP COLUMN IF EXISTS "presigned_url";

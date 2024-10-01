@@ -1,1 +1,0 @@
-ALTER TABLE "2block_files" ALTER COLUMN "key" SET DATA TYPE varchar;

@@ -1,7 +1,6 @@
 import { relations } from "drizzle-orm";
 import {
   pgTable,
-  pgTableCreator,
   serial,
   boolean,
   index,
@@ -11,9 +10,6 @@ import {
   uuid,
   bigint,
 } from "drizzle-orm/pg-core";
-// import { DATABASE_PREFIX as prefix } from "@2block/shared/shared-constants";
-
-// export const pgTable = pgTableCreator((name) => `${prefix}_${name}`);
 
 export const users = pgTable(
   "users",
@@ -44,6 +40,9 @@ export const users = pgTable(
     googleIdx: index("user_google_idx").on(t.googleId),
     discordIdx: index("user_discord_idx").on(t.discordId),
     githubIdx: index("user_githubId_idx").on(t.githubId),
+    roleIdx: index("user_role_idx").on(t.role),
+    stripeCustomerIdx: index("user_stripe_customer_idx").on(t.stripeCustomerId),
+    createdAtIdx: index("user_created_at_idx").on(t.createdAt),
   }),
 );
 
@@ -74,7 +73,13 @@ export const files = pgTable("files", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date" }).$onUpdate(() => new Date()),
   uploadCompleted: boolean("upload_completed").default(false),
-});
+},
+(t) => ({
+  userIdx: index("file_user_idx").on(t.userId),
+  keyIdx: index("file_key_idx").on(t.key),
+  createdAtIdx: index("file_created_at_idx").on(t.createdAt),
+}),
+);
 
 export type File = typeof files.$inferSelect;
 
@@ -135,6 +140,8 @@ export const posts = pgTable(
   (t) => ({
     userIdx: index("post_user_idx").on(t.userId),
     createdAtIdx: index("post_created_at_idx").on(t.createdAt),
+    statusIdx: index("post_status_idx").on(t.status),
+    tagsIdx: index("post_tags_idx").on(t.tags),
   }),
 );
 

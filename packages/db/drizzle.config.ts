@@ -1,5 +1,4 @@
 import type { Config } from "drizzle-kit";
-// import { DATABASE_PREFIX } from "@2block/shared/shared-constants";
 
 const isDev = process.env.NODE_ENV !== "production" || process.env.NEXT_PUBLIC_APP_URL === "http://localhost:3000";
 const databaseUrl = isDev ? process.env.DATABASE_URL_DEV : process.env.DATABASE_URL_PROD;
@@ -17,5 +16,4 @@ export default {
   dbCredentials: {
     url: nonPoolingUrl,
   },
-  // tablesFilter: [`${DATABASE_PREFIX}_*`],
 } satisfies Config;

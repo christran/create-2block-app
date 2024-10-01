@@ -10,6 +10,8 @@
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "turbo run clean",
     "db:push": "turbo -F @2block/db push",
+    "db:migrate": "cd packages/db && pnpm migrate",
+    "db:generate": "cd packages/db && pnpm generate",
     "db:studio": "turbo -F @2block/db studio",
     "dev": "turbo watch dev --continue && turbo run stripe",
     "dev:next": "turbo watch dev -F @2block/nextjs...",
