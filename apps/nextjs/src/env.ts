@@ -1,7 +1,11 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
+import { env as authEnv } from "@2block/auth/env";
+import { env as emailEnv } from "@2block/email/env";
+
 export const env = createEnv({
+  extends: [authEnv, emailEnv],
   shared: {
     NODE_ENV: z
       .enum(["development", "production", "test"])
@@ -18,6 +22,9 @@ export const env = createEnv({
     MAGIC_LINK_AUTH: z.boolean().default(false),
     UMAMI_WEBSITE_ID: z.string().trim().min(1),
     TRIGGER_SECRET_KEY: z.string().trim().min(1),
+
+    NTFY_URL: z.string().trim().min(1),
+    NTFY_API_KEY: z.string().trim().min(1),
 
     // Cloudflare R2 and Backblaze B2
     S3_PROVIDER: z.enum(["cloudflare", "backblaze"]).default("cloudflare"),
@@ -64,9 +71,12 @@ export const env = createEnv({
     REDIS_URL: process.env.REDIS_URL,
     NODE_ENV: process.env.NODE_ENV,
     INTERNAL_API_KEY: process.env.INTERNAL_API_KEY,
-    MAGIC_LINK_AUTH: process.env.MAGIC_LINK_AUTH === "true" || process.env.MAGIC_LINK_AUTH === "1",
+    MAGIC_LINK_AUTH: process.env.MAGIC_LINK_AUTH === "true",
     UMAMI_WEBSITE_ID: process.env.UMAMI_WEBSITE_ID,
     TRIGGER_SECRET_KEY: process.env.TRIGGER_SECRET_KEY,
+
+    NTFY_URL: process.env.NTFY_URL,
+    NTFY_API_KEY: process.env.NTFY_API_KEY,
 
     // Cloudflare R2 and Backblaze B2
     S3_PROVIDER: process.env.S3_PROVIDER,

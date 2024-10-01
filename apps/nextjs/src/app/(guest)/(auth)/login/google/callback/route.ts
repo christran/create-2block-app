@@ -7,7 +7,7 @@ import { db } from "@2block/db/client";
 import { Paths } from "@2block/shared/shared-constants";
 import { users } from "@2block/db/schema";
 import { validateRequest } from "@/lib/auth/validate-request";
-import { createContact, sendWelcomeEmail } from "@/lib/auth/actions";
+import { createContact, newAccountTasks } from "@/lib/auth/actions";
 
 // ... existing GoogleUser interface ...
 
@@ -64,7 +64,7 @@ async function createNewUser(googleUser: GoogleUser): Promise<Response> {
     fullname: googleUser.name
   });
 
-  await sendWelcomeEmail(googleUser.name, googleUser.email, newContact.contactId);
+  await newAccountTasks(googleUser.name, googleUser.email, newContact.contactId);
 
   await db.insert(users).values({
     id: userId,

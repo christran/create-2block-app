@@ -12,6 +12,7 @@ import {
   removeSocialAccountsInput,
   deleteAccountByUserIdInput
 } from "./user.input";
+import { accountDeletedNotification } from "@2block/shared/ntfy";
 
 export const userRouter = {
   getUser: protectedProcedure
@@ -189,7 +190,9 @@ export const userRouter = {
         throw new Error("User data not found");
       }
 
-      const handle = await tasks.trigger<typeof accountDeletedTask>("account-deleted", {
+      await accountDeletedNotification(userData.fullname, userData.email);
+
+      await tasks.trigger<typeof accountDeletedTask>("account-deleted", {
         fullname: userData.fullname,
         email: userData.email,
         contactId: userData.contactId

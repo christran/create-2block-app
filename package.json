@@ -23,6 +23,7 @@
     "typecheck": "turbo run typecheck",
     "ui-add": "turbo run ui-add",
     "email": "pnpm -F @2block/email email",
+    "trigger": "cd packages/api && pnpm with-env npx trigger.dev@3.0.8 dev",
     "stripe": "stripe listen --forward-to localhost:3000/api/webhooks/stripe --latest",
     "with-env": "dotenv -e .env --"
   },

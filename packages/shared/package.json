@@ -8,6 +8,10 @@
       "types": "./dist/index.d.ts",
       "default": "./src/index.ts"
     },
+    "./ntfy": {
+      "types": "./dist/ntfy.d.ts",
+      "default": "./src/ntfy.ts"
+    },
     "./subscriptions": "./src/subscriptions.ts",
     "./shared-constants": "./src/shared-constants.ts",
     "./utils": "./src/utils.ts"

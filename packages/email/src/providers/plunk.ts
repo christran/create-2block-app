@@ -1,4 +1,5 @@
 import { EMAIL_SENDER_NAME, EMAIL_SENDER_ADDRESS } from "@2block/shared/shared-constants";
+import { env } from "../../env";
 
 export interface PlunkApiResponse {
   success: boolean;
@@ -14,7 +15,7 @@ export const sendEmailPlunk = async (to: string, subject: string, body: string) 
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.PLUNK_API_KEY}`
+      Authorization: `Bearer ${env.PLUNK_API_KEY}`
     },
     body: JSON.stringify({
       name: EMAIL_SENDER_NAME as string,

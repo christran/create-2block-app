@@ -7,18 +7,19 @@ import { sendEmailPlunk } from "./providers/plunk";
 import { sendEmailSMTP } from "./providers/smtp";
 import { sendEmailSES } from "./providers/ses";
 import { sendEmailResend } from "./providers/resend";
+import { env } from "../env";
 
 export const sendEmail = async <T extends EmailTemplate>(
   to: string,
   template: T,
   props: PropsMap[NoInfer<T>],
 ) => {
-  // if (process.env.MOCK_SEND_EMAIL) {
-  //   console.log("📨 Email sent to: ", to, "with template: ", template, "and props: ", props);
-  //   return;
-  // }
+  if (env.MOCK_SEND_EMAIL) {
+    console.log("📨 Email sent to: ", to, "with template: ", template, "and props: ", props);
+    return;
+  }
 
-  const emailServer = process.env.NODE_ENV === "production" ? "resend" : process.env.EMAIL_SERVER;
+  const emailServer = env.NODE_ENV === "production" ? "resend" : env.EMAIL_SERVER;
   const { subject, body } = await getEmailTemplate(template, props);
 
   try {

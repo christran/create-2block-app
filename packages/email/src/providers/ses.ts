@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/non-nullable-type-assertion-style */
 import { SendEmailCommand, SESv2Client } from "@aws-sdk/client-sesv2";
 import { EMAIL_SENDER } from "@2block/shared/shared-constants";
+import { env } from "../../env";
 
 export const sendEmailSES = async (to: string, subject: string, body: string) => {
   const sesClient = new SESv2Client({
-    region: "us-west-1",
+    region: env.AWS_REGION,
     credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string
+      accessKeyId: env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: env.AWS_SECRET_ACCESS_KEY
     }
   });
 

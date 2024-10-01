@@ -5,10 +5,12 @@ interface deleteContactResponse {
   message: string | null;
 }
 
+import { env } from "../env";
+
 export async function updateContactByEmail(email: string, metadata?: Record<string, unknown>) {
   const headers = {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${process.env.PLUNK_API_KEY}`
+    Authorization: `Bearer ${env.PLUNK_API_KEY}`
   }
 
   try {
@@ -33,7 +35,7 @@ export async function updateContactByEmail(email: string, metadata?: Record<stri
 export async function deleteContactById(contactId: string) {
   const headers = {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${process.env.PLUNK_API_KEY}`
+    Authorization: `Bearer ${env.PLUNK_API_KEY}`
   }
 
   try {

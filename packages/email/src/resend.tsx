@@ -12,8 +12,9 @@ import { EMAIL_SENDER } from "@2block/shared/shared-constants";
 
 import { EmailTemplate } from "./email-service";
 import type { PropsMap } from "./email-service";
+import { env } from "../env";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(env.RESEND_API_KEY);
 
 const getEmailTemplate = <T extends EmailTemplate>(template: T, props: PropsMap[NoInfer<T>]) => {
   switch (template) {
@@ -52,10 +53,10 @@ export const sendEmail = async <T extends EmailTemplate>(
   template: T,
   props: PropsMap[NoInfer<T>],
 ) => {
-  // if (process.env.MOCK_SEND_EMAIL) {
-  //   console.log("📨 Email sent to: ", to, "with template: ", template, "and props: ", props);
-  //   return;
-  // }
+  if (env.MOCK_SEND_EMAIL) {
+    console.log("📨 Email sent to: ", to, "with template: ", template, "and props: ", props);
+    return;
+  }
 
   const { subject, react } = getEmailTemplate(template, props);
 

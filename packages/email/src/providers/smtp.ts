@@ -1,14 +1,15 @@
 import { createTransport  } from "nodemailer";
 import type {TransportOptions} from "nodemailer";
 import { EMAIL_SENDER } from "@2block/shared/shared-constants";
+import { env } from "../../env";
 
 export const sendEmailSMTP = async (to: string, subject: string, body: string) => {
   const smtpConfig = {
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
+    host: env.SMTP_HOST,
+    port: env.SMTP_PORT,
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASSWORD,
+      user: env.SMTP_USER,
+      pass: env.SMTP_PASSWORD,
     },
   };
   

@@ -35,6 +35,7 @@ import { logger } from "../logger";
 import { tasks } from "@trigger.dev/sdk/v3";
 import type { welcomeEmailTask } from "@2block/api/trigger";
 import { api } from "@/trpc/server";
+import { newUserNotification } from "@2block/shared/ntfy";
 
 export interface ActionResponse<T> {
   fieldError?: Partial<Record<keyof T, string | undefined>>;
@@ -129,7 +130,7 @@ export const signup = async (_: any, formData: FormData): Promise<ActionResponse
 
   await sendEmail(email, EmailTemplate.EmailVerification, { fullname, code: verificationCode });
 
-  await sendWelcomeEmail(fullname, email, newContact.contactId);
+  await newAccountTasks(fullname, email, newContact.contactId);
 
   await db.insert(users).values({
     id: userId,
@@ -213,7 +214,7 @@ export const createContact = async (email: string, metadata?: Record<string, unk
     const data = await response.json();
 
     if (!data.success) {
-      throw new Error((data.error, data.message) ?? "Failed to create contact");
+      throw new Error(data.error ?? data.message ?? "Failed to create contact");
     }
 
     logger.info(`📨 Contact successfully created for: ${email}`, {
@@ -227,7 +228,9 @@ export const createContact = async (email: string, metadata?: Record<string, unk
   }
 }
 
-export const sendWelcomeEmail = async (fullname:string, email: string, contactId: string) => {
+export const newAccountTasks = async (fullname:string, email: string, contactId: string) => {
+  await newUserNotification(fullname, email);
+
   const handle = await tasks.trigger<typeof welcomeEmailTask>("welcome-email", {
     fullname,
     email,
@@ -701,7 +704,7 @@ export const sendMagicLink = async (
 
     await sendEmail(userEmail, EmailTemplate.MagicLink, { fullname: userEmail, url: magicLink });
 
-    await sendWelcomeEmail(userEmail, userEmail, newContact.contactId);
+    await newAccountTasks(userEmail, userEmail, newContact.contactId);
   
     await db.insert(users).values({
       id: userId,
