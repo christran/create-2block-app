@@ -63,15 +63,17 @@ jobs:
       - name: Create and update .env file
         run: |
           echo "${{ secrets.ENV_PROD }}" > .env
-          
+
+          echo "Original NEXT_PUBLIC_APP_URL value:"
+          grep '^NEXT_PUBLIC_APP_URL=' .env || echo "NEXT_PUBLIC_APP_URL not found in original .env"
+
           sed -i "s#NEXT_PUBLIC_APP_URL=.*#NEXT_PUBLIC_APP_URL=${{ vars.NEXT_PUBLIC_APP_URL }}#" .env
           sed -i "s#NEXT_PUBLIC_APP_URL='.*'#NEXT_PUBLIC_APP_URL='${{ vars.NEXT_PUBLIC_APP_URL }}'#" .env
           
           grep -q '^NEXT_PUBLIC_APP_URL=' .env || echo "NEXT_PUBLIC_APP_URL=${{ vars.NEXT_PUBLIC_APP_URL }}" >> .env
           
-          
-          echo "NEXT_PUBLIC_APP_URL value:"
-          grep '^NEXT_PUBLIC_APP_URL=' .env || echo "NEXT_PUBLIC_APP_URL not found in .env"
+          echo "Updated NEXT_PUBLIC_APP_URL value:"
+          grep '^NEXT_PUBLIC_APP_URL=' .env || echo "NEXT_PUBLIC_APP_URL not found in updated .env"
 
       # - name: Turborepo Remote Cache Server
       #   uses: trappar/turborepo-remote-cache-gh-action@v2
