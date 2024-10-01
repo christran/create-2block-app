@@ -46,7 +46,7 @@ async function handleLogin(githubUser: GitHubUser, existingUser: { id: string; g
   if (existingUser.githubId === null) {
     return redirectWithError(Paths.Login, "Please log in with your existing account and link your GitHub account in the security settings.");
   }
-
+  
   const session = await lucia.createSession(existingUser.id, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
 
