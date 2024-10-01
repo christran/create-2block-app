@@ -17,8 +17,11 @@ export const env = createEnv({
     GITHUB_LOCALHOST_CLIENT_ID: z.string().trim().min(1),
     GITHUB_LOCALHOST_CLIENT_SECRET: z.string().trim().min(1),
   },
-  client: {},
+  client: {
+    NEXT_PUBLIC_APP_URL: z.string().url(),
+  },
   runtimeEnv: {
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,

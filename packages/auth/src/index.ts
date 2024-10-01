@@ -55,9 +55,11 @@ export const discord = new Discord(
   absoluteUrl("/login/discord/callback")
 );
 
+const isDev = env.NODE_ENV !== "production" || env.NEXT_PUBLIC_APP_URL === "http://localhost:3000";
+
 export const github = new GitHub(
-  env.NODE_ENV === "production" ? env.GITHUB_CLIENT_ID : env.GITHUB_LOCALHOST_CLIENT_ID,
-  env.NODE_ENV === "production" ? env.GITHUB_CLIENT_SECRET : env.GITHUB_LOCALHOST_CLIENT_SECRET,
+  isDev ? env.GITHUB_LOCALHOST_CLIENT_ID : env.GITHUB_CLIENT_ID,
+  isDev ? env.GITHUB_LOCALHOST_CLIENT_SECRET : env.GITHUB_CLIENT_SECRET,
   {
     redirectURI: absoluteUrl("/login/github/callback")
   }
