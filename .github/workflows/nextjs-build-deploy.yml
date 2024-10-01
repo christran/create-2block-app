@@ -60,22 +60,19 @@ jobs:
           cache: 'pnpm'
 
       # change NEXT_PUBLIC_APP_URL to {{ vars.NEXT_PUBLIC_APP_URL }}
-      - name: Create .env file
+      - name: Create and update .env file
         run: |
           echo "${{ secrets.ENV_PROD }}" > .env
-          awk -v new_url="${{ vars.NEXT_PUBLIC_APP_URL }}" '
-            BEGIN { found=0 }
-            /^NEXT_PUBLIC_APP_URL=/ { print "NEXT_PUBLIC_APP_URL=" new_url; found=1; next }
-            { print }
-            END { if (!found) print "NEXT_PUBLIC_APP_URL=" new_url }
-          ' .env > .env.tmp && mv .env.tmp .env
+          
+          sed -i "s#NEXT_PUBLIC_APP_URL=.*#NEXT_PUBLIC_APP_URL=${{ vars.NEXT_PUBLIC_APP_URL }}#" .env
+          sed -i "s#NEXT_PUBLIC_APP_URL='.*'#NEXT_PUBLIC_APP_URL='${{ vars.NEXT_PUBLIC_APP_URL }}'#" .env
+          
+          grep -q '^NEXT_PUBLIC_APP_URL=' .env || echo "NEXT_PUBLIC_APP_URL=${{ vars.NEXT_PUBLIC_APP_URL }}" >> .env
+          
           
           echo "NEXT_PUBLIC_APP_URL value:"
           grep '^NEXT_PUBLIC_APP_URL=' .env || echo "NEXT_PUBLIC_APP_URL not found in .env"
-          
-          echo "GitHub Actions variable value:"
-          echo "${{ vars.NEXT_PUBLIC_APP_URL }}"
-      
+
       # - name: Turborepo Remote Cache Server
       #   uses: trappar/turborepo-remote-cache-gh-action@v2
       #   with:
