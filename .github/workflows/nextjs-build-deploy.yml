@@ -64,13 +64,15 @@ jobs:
         run: |
           echo "${{ secrets.ENV_PROD }}" > .env
 
-          echo "Original NEXT_PUBLIC_APP_URL value:"
+          echo "Original Environment Variables:"
           grep '^NEXT_PUBLIC_APP_URL=' .env || echo "NEXT_PUBLIC_APP_URL not found in original .env"
 
           sed -i "s#NEXT_PUBLIC_APP_URL=.*#NEXT_PUBLIC_APP_URL=${{ vars.NEXT_PUBLIC_APP_URL }}#" .env
           sed -i "s#NEXT_PUBLIC_APP_URL='.*'#NEXT_PUBLIC_APP_URL='${{ vars.NEXT_PUBLIC_APP_URL }}'#" .env
-                    
-          echo "Updated NEXT_PUBLIC_APP_URL value:"
+
+          grep -q '^NEXT_PUBLIC_APP_URL=' .env || echo "NEXT_PUBLIC_APP_URL=${{ vars.NEXT_PUBLIC_APP_URL }}" >> .env
+
+          echo "Updated Environment Variables:"
           grep '^NEXT_PUBLIC_APP_URL=' .env || echo "NEXT_PUBLIC_APP_URL not found in updated .env"
 
       # - name: Turborepo Remote Cache Server
@@ -99,7 +101,6 @@ jobs:
 
       - name: Deploy to server
         run: |
-          echo "${{ secrets.ENV_PROD }}" > .env
           scp .env vps:$APP_DIR/.env
           ssh vps "cd $APP_DIR && git pull && pnpm install && pnpm run build"
           ssh vps "cd $APP_DIR/apps/nextjs && pm2 restart $PM2_APP_NAME"
