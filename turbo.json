@@ -13,11 +13,6 @@
       "cache": false,
       "persistent": false
     },
-    "start": {
-      "dependsOn": ["^build"],
-      "cache": false,
-      "persistent": true
-    },
     "format": {
       "outputs": [".cache/.prettiercache"],
       "outputLogs": "new-only"
@@ -111,6 +106,7 @@
     "npm_lifecycle_event",
     "TURBO_API",
     "TURBO_TEAM",
-    "TURBO_TOKEN"
+    "TURBO_TOKEN",
+    "TURBO_REMOTE_ONLY"
   ]
 }

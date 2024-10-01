@@ -66,13 +66,17 @@ jobs:
 
           echo "Original Environment Variables:"
           grep '^NEXT_PUBLIC_APP_URL=' .env || echo "NEXT_PUBLIC_APP_URL not found in original .env"
-
+          grep '^TURBO_TEAM=' .env || echo "TURBO_TEAM not found in original .env"
           sed -i "s#NEXT_PUBLIC_APP_URL=.*#NEXT_PUBLIC_APP_URL='${{ vars.NEXT_PUBLIC_APP_URL }}'#" .env
           grep -q '^NEXT_PUBLIC_APP_URL=' .env || echo "NEXT_PUBLIC_APP_URL='${{ vars.NEXT_PUBLIC_APP_URL }}'" >> .env
 
+          sed -i "s#TURBO_TEAM=.*#TURBO_TEAM='${{ vars.TURBO_TEAM }}'#" .env
+          grep -q '^TURBO_TEAM=' .env || echo "TURBO_TEAM='${{ vars.TURBO_TEAM }}'" >> .env
+
           echo "Updated Environment Variables:"
           grep '^NEXT_PUBLIC_APP_URL=' .env || echo "NEXT_PUBLIC_APP_URL not found in updated .env"
-
+          grep '^TURBO_TEAM=' .env || echo "TURBO_TEAM not found in updated .env"
+          
       - name: Install dependencies
         run: pnpm install
     
