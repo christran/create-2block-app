@@ -60,7 +60,7 @@ jobs:
           cache: 'pnpm'
 
       # change NEXT_PUBLIC_APP_URL to {{ vars.NEXT_PUBLIC_APP_URL }}
-      - name: Create and update .env file
+      - name: Create and Update .env file (NEXT_PUBLIC_APP_URL)
         run: |
           echo "${{ secrets.ENV_PROD }}" > .env
 
