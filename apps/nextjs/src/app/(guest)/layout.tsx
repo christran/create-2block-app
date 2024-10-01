@@ -13,7 +13,7 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
         fullname={user?.fullname ?? "Guest"}
         email={user?.email ?? "hello@2block.co"}
         userRole={user?.role ?? "guest"}
-        avatar={user?.avatar ?? "/avatars/01.png"}
+        avatar={user ? user.avatar ?? "" : "/avatars/01.png"}
       />
 
       <div className="w-full">

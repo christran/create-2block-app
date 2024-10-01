@@ -1,1 +1,18 @@
+/*
+Environment Variables that need to be set on trigger.dev PROD
+
+NEXT_PUBLIC_APP_URL
+EMAIL_SERVER
+PLUNK_API_KEY
+RESEND_API_KEY
+AWS_REGION
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+SMTP_HOST
+SMTP_PORT
+SMTP_USER
+SMTP_PASSWORD
+MOCK_SEND_EMAIL
+*/
+
 export * from "./email";

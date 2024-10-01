@@ -16,12 +16,15 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    DATABASE_URL: z.string().url().min(1),
+    DATABASE_URL_DEV: z.string().url().min(1),
+    DATABASE_URL_PROD: z.string().url().min(1),
     REDIS_URL: z.string().trim().min(1),
     INTERNAL_API_KEY: z.string().trim().min(1),
     MAGIC_LINK_AUTH: z.boolean().default(false),
     UMAMI_WEBSITE_ID: z.string().trim().min(1),
-    TRIGGER_SECRET_KEY: z.string().trim().min(1),
+
+    TRIGGER_SECRET_KEY_DEV: z.string().trim().min(1),
+    TRIGGER_SECRET_KEY_PROD: z.string().trim().min(1),
 
     NTFY_URL: z.string().trim().min(1),
     NTFY_API_KEY: z.string().trim().min(1),
@@ -67,13 +70,16 @@ export const env = createEnv({
    */
   runtimeEnv: {
     // Server-side env vars
-    DATABASE_URL: process.env.DATABASE_URL,
+    DATABASE_URL_DEV: process.env.DATABASE_URL_DEV,
+    DATABASE_URL_PROD: process.env.DATABASE_URL_PROD,
     REDIS_URL: process.env.REDIS_URL,
     NODE_ENV: process.env.NODE_ENV,
     INTERNAL_API_KEY: process.env.INTERNAL_API_KEY,
     MAGIC_LINK_AUTH: process.env.MAGIC_LINK_AUTH === "true",
     UMAMI_WEBSITE_ID: process.env.UMAMI_WEBSITE_ID,
-    TRIGGER_SECRET_KEY: process.env.TRIGGER_SECRET_KEY,
+
+    TRIGGER_SECRET_KEY_DEV: process.env.TRIGGER_SECRET_KEY_DEV,
+    TRIGGER_SECRET_KEY_PROD: process.env.TRIGGER_SECRET_KEY_PROD,
 
     NTFY_URL: process.env.NTFY_URL,
     NTFY_API_KEY: process.env.NTFY_API_KEY,
