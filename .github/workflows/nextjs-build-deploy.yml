@@ -67,10 +67,8 @@ jobs:
           echo "Original Environment Variables:"
           grep '^NEXT_PUBLIC_APP_URL=' .env || echo "NEXT_PUBLIC_APP_URL not found in original .env"
 
-          sed -i "s#NEXT_PUBLIC_APP_URL=.*#NEXT_PUBLIC_APP_URL=${{ vars.NEXT_PUBLIC_APP_URL }}#" .env
-          sed -i "s#NEXT_PUBLIC_APP_URL='.*'#NEXT_PUBLIC_APP_URL='${{ vars.NEXT_PUBLIC_APP_URL }}'#" .env
-
-          grep -q '^NEXT_PUBLIC_APP_URL=' .env || echo "NEXT_PUBLIC_APP_URL=${{ vars.NEXT_PUBLIC_APP_URL }}" >> .env
+          sed -i "s#NEXT_PUBLIC_APP_URL=.*#NEXT_PUBLIC_APP_URL='${{ vars.NEXT_PUBLIC_APP_URL }}'#" .env
+          grep -q '^NEXT_PUBLIC_APP_URL=' .env || echo "NEXT_PUBLIC_APP_URL='${{ vars.NEXT_PUBLIC_APP_URL }}'" >> .env
 
           echo "Updated Environment Variables:"
           grep '^NEXT_PUBLIC_APP_URL=' .env || echo "NEXT_PUBLIC_APP_URL not found in updated .env"
