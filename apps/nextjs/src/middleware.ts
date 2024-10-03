@@ -64,25 +64,8 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   if (req.nextUrl.pathname === "/api/send") {
     const requestHeaders = new Headers(req.headers);
     
-    const cfHeaders = [
-      "cf-ipcity",
-      "cf-ipcountry",
-      "cf-ipcontinent",
-      "cf-iplongitude",
-      "cf-iplatitude",
-      "cf-region",
-      "cf-regioncode",
-      "cf-metrocode",
-      "cf-postalcode",
-      "cf-timezone"
-    ];
-
-    cfHeaders.forEach(header => {
-      const value = req.headers.get(header) ?? req.headers.get(header.toLowerCase());
-      if (value) {
-        requestHeaders.set(header, value);
-      }
-    });
+    requestHeaders.set("Client_IP", req.headers.get("CF-Connecting-IP") ?? req.headers.get("X-Forwarded-For")?.split(",")[0] ?? req.headers.get("X-Real-IP") ?? "127.0.0.1");
+    requestHeaders.set("CF-Connection-IP", req.headers.get("CF-Connecting-IP") ?? req.headers.get("X-Forwarded-For")?.split(",")[0] ?? req.headers.get("X-Real-IP") ?? "127.0.0.1");
 
     const response = NextResponse.next({
       request: {
