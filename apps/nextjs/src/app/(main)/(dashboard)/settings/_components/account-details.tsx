@@ -324,6 +324,9 @@ export function AccountDetails({
                   onChange={(e) => setFullname(e.target.value)}
                 />
               </div>
+              {state?.fieldError?.fullname && (
+                <p className="text-xs text-destructive mt-1">{state.fieldError.fullname}</p>
+              )}
               <div className="space-y-2">
                 <Label>Email</Label>
                 <Input
@@ -335,24 +338,23 @@ export function AccountDetails({
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  disabled={isPasswordLess}
+                  // disabled={isPasswordLess}
+                  disabled
                 />
+                <p className="text-xs text-muted-foreground">
+                  Please contact support if you need to change your email address.
+                </p>
               </div>
+              {/* {state?.fieldError?.email && (
+                <p className="text-xs text-destructive mt-1">{state.fieldError.email}</p>
+              )}   */}
             </div>
 
-            {state?.fieldError ? (
-              <ul className="mt-4 w-full list-disc space-y-1 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive md:w-1/2">
-                {Object.values(state.fieldError).map((err) => (
-                  <li className="ml-4" key={err}>
-                    {err}
-                  </li>
-                ))}
-              </ul>
-            ) : state?.formError ? (
-              <p className="mt-4 w-full rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive md:w-1/2">
-                {state?.formError}
+            {state?.formError && (
+              <p className="rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
+                {state.formError}
               </p>
-            ) : null}
+            )}
           </CardContent>
           <CardFooter className="px-6 gap-2 border-t py-4">
             <SubmitButton formAction={formAction} disabled={!isDirty}>

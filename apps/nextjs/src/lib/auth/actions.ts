@@ -20,6 +20,8 @@ import {
   type updateAccountInput,
   type updatePasswordInput,
   updatePasswordSchema,
+  MagicLinkInput,
+  magigcLinkLoginSchema,
 } from "@/lib/validators/auth";
 import { emailVerificationCodes, magicLinkTokens, passwordResetTokens, users } from "@2block/db/schema";
 import { validateRequest } from "@/lib/auth/validate-request";
@@ -519,7 +521,6 @@ export const updatePassword = async (_: any, formData: FormData): Promise<Action
 
   if (!parsed.success) {
     const err = parsed.error.flatten();
-    console.log(err)
     return {
       fieldError: {
         current_password: err.fieldErrors.current_password?.[0],
@@ -546,7 +547,10 @@ export const updatePassword = async (_: any, formData: FormData): Promise<Action
 
   if (!validPassword) {
     return {
-      error: "Current password is invalid",
+      // fieldError: {
+      //   current_password: "The current password you entered is invalid",
+      // },
+      error: "The current password you entered is invalid",
     };
   }
 
@@ -647,16 +651,24 @@ export const resendMagicLink = async (
 export const sendMagicLink = async (
   _: any,
   formData: FormData,
-): Promise<{ error?: string;}> => {
-  const email = formData.get("email");
-  const parsed = z.string().trim().email().safeParse(email);
+): Promise<ActionResponse<MagicLinkInput> & { success?: boolean; error?: string }> => {
+  const obj = Object.fromEntries(formData.entries());
+
+  const parsed = magigcLinkLoginSchema.safeParse(obj);
 
   if (!parsed.success) {
-    return { error: "Please enter a valid email address." };
+    const err = parsed.error.flatten();
+    return {
+      fieldError: {
+        email: err.fieldErrors.email?.[0],
+      },
+    };
   }
 
+  const { email } = parsed.data;
+
   const user = await db.query.users.findFirst({
-    where: (table, { eq }) => eq(table.email, parsed.data),
+    where: (table, { eq }) => eq(table.email, email),
   });
 
   if (user) {
@@ -679,43 +691,32 @@ export const sendMagicLink = async (
 
     return redirect(`${Paths.MagicLink}?email=${encodeURIComponent(user.email)}`);
   } else {
-    const userEmail = parsed.data
-
-    const existingUser = await db.query.users.findFirst({
-      where: (table, { eq }) => eq(table.email, userEmail),
-      columns: { email: true },
-    });
-  
-    if (existingUser) {
-      return {
-        error: "The email is already registered with another account.",
-      };
-    }
-  
+    // Register new user
+    
     const userId = generateId(21);
 
-    const newContact = await createContact(userEmail, {
+    const newContact = await createContact(email, {
       userId: userId,
-      fullname: userEmail // todo: if user updates their name later on in the settings then update contact info
+      fullname: email // todo: if user updates their name later on in the settings then update contact info
     });
 
     const magicLinkToken = await generateMagicLinkToken(userId);
     const magicLink = `${env.NEXT_PUBLIC_APP_URL}${Paths.MagicLink}/${magicLinkToken}`;
 
-    await sendEmail(userEmail, EmailTemplate.MagicLink, { fullname: userEmail, url: magicLink });
+    await sendEmail(email, EmailTemplate.MagicLink, { fullname: email, url: magicLink });
 
-    await newAccountTasks(userEmail, userEmail, newContact.contactId);
+    await newAccountTasks(email, email, newContact.contactId);
   
     await db.insert(users).values({
       id: userId,
-      fullname: userEmail,
-      email: userEmail,
+      fullname: email,
+      email: email,
       emailVerified: true,
       role: "default",
       contactId: newContact.contactId ?? null
     });
   
-    return redirect(`${Paths.MagicLink}?email=${encodeURIComponent(userEmail)}`);
+    return redirect(`${Paths.MagicLink}?email=${encodeURIComponent(email)}`);
   }
 }
 

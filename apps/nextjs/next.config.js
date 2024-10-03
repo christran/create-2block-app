@@ -77,18 +77,18 @@ const config = {
 	// },
 
     // Add the async rewrites function
-    async rewrites() {
-        return [
-            {
-                source: '/census.js',
-                destination: 'https://analytics.2block.co/census.js',
-            },
-            {
-                source: '/api/send',
-                destination: 'https://analytics.2block.co/api/send',
-            }
-        ];
-    },
+    // async rewrites() {
+    //     return [
+    //         {
+    //             source: '/census.js',
+    //             destination: 'https://analytics.2block.co/census.js',
+    //         },
+    //         {
+    //             source: '/api/send',
+    //             destination: 'https://analytics.2block.co/api/send',
+    //         }
+    //     ];
+    // },
 };
 
 export default config;

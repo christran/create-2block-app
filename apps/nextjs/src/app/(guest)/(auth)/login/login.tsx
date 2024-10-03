@@ -59,15 +59,15 @@ export function Login() {
         <div className="space-y-2 md:px-6">
           <Button variant="outline" onClick={() => handleSocial("google")} className="w-full bg-secondary/30 shadow">
               <FontAwesomeIcon icon={faGoogle} className="mr-2 h-5 w-5" />
-              Log in with Google
+              Continue with Google
           </Button>
           <Button variant="outline" onClick={() => handleSocial("discord")} className="w-full bg-secondary/30 shadow">
               <DiscordLogoIcon className="mr-2 h-5 w-5" />
-              Log in with Discord
+              Continue with Discord
           </Button>
           <Button variant="outline" onClick={() => handleSocial("github")} className="w-full bg-secondary/30 shadow">
               <GitHubLogoIcon className="mr-2 h-5 w-5" />
-              Log in with GitHub
+              Continue with GitHub
           </Button>
         </div>
         <div className="py-6 flex items-center">
@@ -77,10 +77,9 @@ export function Login() {
         </div>
         <form action={formAction} className="grid gap-4">
           <div className="space-y-2">
-            {/* <Label htmlFor="email">Email</Label> */}
             <Input
-              className="bg-secondary/30"
               required
+              className="bg-secondary/30"
               id="email"
               placeholder="Email"
               autoComplete="email"
@@ -89,13 +88,15 @@ export function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
+            {state?.fieldError?.email && (
+              <p className="text-xs text-destructive mt-1">{state.fieldError.email}</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            {/* <Label htmlFor="password">Password</Label> */}
             <PasswordInput
-              className="bg-secondary/30"
               required
+              className="bg-secondary/30"
               id="password"
               name="password"
               value={currentPassword}
@@ -103,6 +104,9 @@ export function Login() {
               autoComplete="current-password"
               placeholder="Password"
             />
+            {state?.fieldError?.password && (
+              <p className="text-xs text-destructive mt-1">{state.fieldError.password}</p>
+            )}
           </div>
 
           <div className="mb-2 flex flex-wrap items-center justify-between text-xs text-muted-foreground">
@@ -121,19 +125,12 @@ export function Login() {
               </Link>
           </div>
 
-          {state?.fieldError ? (
-            <ul className="list-disc space-y-1 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
-              {Object.values(state.fieldError).map((err) => (
-                <li className="ml-4" key={err}>
-                  {err}
-                </li>
-              ))}
-            </ul>
-          ) : state?.formError ? (
-            <p className="rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
-              {state?.formError}
+          {state?.formError && (
+            <p className="rounded-lg bg-destructive/5 p-2 text-[0.8rem] font-medium text-destructive">
+              {state.formError}
             </p>
-          ) : null}
+          )}
+
           <SubmitButton className="w-full shadow-md" aria-label="submit-btn" disabled={!isDirty}>
             <span className="inline-flex items-center justify-center gap-1 truncate">
               Continue

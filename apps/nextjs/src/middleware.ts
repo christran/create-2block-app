@@ -61,6 +61,32 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
     return response;
   }
 
+  if (req.nextUrl.pathname === "/api/send") {
+    const response = NextResponse.rewrite(new URL("https://analytics.2block.co/api/send", req.url));
+    
+    const cfHeaders = [
+      "CF-IPCity",
+      "CF-IPCountry",
+      "CF-IPContinent",
+      "CF-IPLongitude",
+      "CF-IPLatitude",
+      "CF-Region",
+      "CF-RegionCode",
+      "CF-MetroCode",
+      "CF-PostalCode",
+      "CF-Timezone"
+    ];
+
+    cfHeaders.forEach(header => {
+      const value = req.headers.get(header);
+      if (value) {
+        response.headers.set(header, value);
+      }
+    });
+
+    return response;
+  }
+
   if (req.method === "GET") {
     return NextResponse.next();
   }
@@ -84,7 +110,8 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
 export const config = {
   matcher: [
     "/((?!api|static|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
-
+    "/census.js",
+    "/api/send",
     // Rate limiting for configured paths see /lib/rate-limit-config.ts
     // "/login",
     // "/api/upload/cleanup",

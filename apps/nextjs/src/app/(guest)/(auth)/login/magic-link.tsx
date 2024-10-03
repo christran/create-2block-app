@@ -33,16 +33,10 @@ export function MagicLink() {
   }, []);
 
   useEffect(() => {
-    if (authError) {
-      toast.error(authError);
+    if (authError || state?.error) {
+      toast.error(authError || state?.error);
     }
-  }, [authError]);
-
-  useEffect(() => {
-    if (state?.error) {
-      toast.error(state.error);
-    }
-  }, [state?.error]);
+  }, [authError, state?.error]);
 
   // const isDirty = useMemo(() => {
   //   return email.trim() !== '';
@@ -67,15 +61,15 @@ export function MagicLink() {
         <div className="space-y-2 md:px-6">
           <Button variant="outline" onClick={() => handleSocial("google")} className="w-full bg-secondary/30 shadow">
               <FontAwesomeIcon icon={faGoogle} className="mr-2 h-5 w-5" />
-              Log in with Google
+              Continue with Google
           </Button>
           <Button variant="outline" onClick={() => handleSocial("discord")} className="w-full bg-secondary/30 shadow">
               <DiscordLogoIcon className="mr-2 h-5 w-5" />
-              Log in with Discord
+              Continue with Discord
           </Button>
           <Button variant="outline" onClick={() => handleSocial("github")} className="w-full bg-secondary/30 shadow">
               <GitHubLogoIcon className="mr-2 h-5 w-5" />
-              Log in with GitHub
+              Continue with GitHub
           </Button>
         </div>
         <div className="py-6 flex items-center">
@@ -97,6 +91,9 @@ export function MagicLink() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
+            {state?.fieldError?.email && (
+              <p className="text-xs text-destructive mt-1">{state.fieldError.email}</p>
+            )}
             <div className="flex flex-wrap items-center justify-between pt-2 text-xs text-muted-foreground">
               A magic link will be sent to your email
             </div>

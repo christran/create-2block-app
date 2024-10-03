@@ -49,16 +49,19 @@ export function Signup() {
                 autoComplete="name"
                 name="fullname"
                 type="text"
-                required
+                // required
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
               />
+              {state?.fieldError?.fullname && (
+                <p className="text-xs text-destructive mt-1">{state.fieldError.fullname}</p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 className="bg-secondary/30"
-                required
+                // required
                 id="email"
                 placeholder="hello@2block.co"
                 autoComplete="email"
@@ -67,12 +70,15 @@ export function Signup() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
+              {state?.fieldError?.email && (
+                <p className="text-xs text-destructive mt-1">{state.fieldError.email}</p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <PasswordInput
                 className="bg-secondary/30"
-                required
+                // required
                 id="password"
                 name="password"
                 value={currentPassword}
@@ -80,21 +86,16 @@ export function Signup() {
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 placeholder="••••••••"
               />
+              {state?.fieldError?.password && (
+                <p className="text-xs text-destructive mt-1">{state.fieldError.password}</p>
+              )}
             </div>
 
-            {state?.fieldError ? (
-              <ul className="list-disc space-y-1 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
-                {Object.values(state.fieldError).map((err) => (
-                  <li className="ml-4" key={err}>
-                    {err}
-                  </li>
-                ))}
-              </ul>
-            ) : state?.formError ? (
-              <p className="rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
-                {state?.formError}
+            {state?.formError && (
+              <p className="rounded-lg bg-destructive/5 p-2 text-[0.8rem] font-medium text-destructive">
+                {state.formError}
               </p>
-            ) : null}
+            )}
             <div className="flex flex-wrap items-center justify-between text-xs text-muted-foreground">
               <div>
                 Already have an account?{" "}

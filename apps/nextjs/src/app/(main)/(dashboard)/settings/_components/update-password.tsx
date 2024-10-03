@@ -35,6 +35,10 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
     if (state?.success) {
       toast.success("Password updated");
 
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+
       // router.push(Paths.Security);
       // window.location.reload()
     }
@@ -55,22 +59,14 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
 
   const handleSubmit = (formData: FormData) => {
     if (newPassword === currentPassword) {
-      toast.error("Your new password can not be the same as your current password", {
-        icon: <ExclamationTriangleIcon className="h-5 w-5 text-destructive" />,
-      });
+      toast.error("Your new password can not be the same as your current password");
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      toast.error("Passwords do not match", {
-        icon: <ExclamationTriangleIcon className="h-5 w-5 text-destructive" />,
-      });
+      toast.error("Passwords do not match");
       return;
     }
-
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
 
     formAction(formData);
   };
@@ -116,6 +112,9 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
                   autoComplete="current-password"
                 />
               </div>
+              {state?.fieldError?.current_password && (
+                <p className="text-xs text-destructive mt-1">{state.fieldError.current_password}</p>
+              )}
               <div className="space-y-2">
                 <Label>New Password</Label>
                 <PasswordInput
@@ -128,6 +127,9 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
                   autoComplete="new-password"
                 />
               </div>
+              {state?.fieldError?.new_password && (
+                <p className="text-xs text-destructive mt-1">{state.fieldError.new_password}</p>
+              )}
               <div className="space-y-2">
                 <Label>Confirm Password</Label>
                 <PasswordInput
@@ -140,26 +142,20 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
                   autoComplete="new-password"
                 />
               </div>
+              {state?.fieldError?.confirm_password && (
+                <p className="text-xs text-destructive mt-1">{state.fieldError.confirm_password}</p>
+              )}
             </div>
 
-            {state?.fieldError ? (
-              <ul className="w-full md:w-1/2 mt-4 list-disc space-y-1 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
-                {Object.values(state.fieldError).map((err) => (
-                  <li className="ml-4" key={err}>
-                    {err}
-                  </li>
-                ))}
-              </ul>
-            ) : state?.formError ? (
-              <p className="w-full md:w-1/2 mt-4 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
-                {state?.formError}
+            {state?.formError && (
+              <p className="rounded-lg bg-destructive/5 p-2 text-[0.8rem] font-medium text-destructive">
+                {state.formError}
               </p>
-            ) : null}
+            )}
           </CardContent>
           {user.isPasswordLess !== null && (
             <CardFooter className="border-t px-6 py-4">
-                <SubmitButton type="submit" disabled={!isDirty}>Update Password</SubmitButton>
-
+              <SubmitButton type="submit" disabled={!isDirty}>Update Password</SubmitButton>
             </CardFooter>
           )}
         </Card>

@@ -63,21 +63,17 @@ export function MultiFactorAuth() {
                 autoComplete="one-time-code"
                 />
               </div>
+              {/* {state?.fieldError?.one_time_code && (
+                <p className="text-xs text-destructive mt-1">{state.fieldError.one_time_code}</p>
+              )} */}
             </div>
 
-            {state?.fieldError ? (
-                <ul className="w-full md:w-1/2 mt-4 list-disc space-y-1 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
-                  {Object.values(state.fieldError).map((err) => (
-                    <li className="ml-4" key={err}>
-                      {err}
-                    </li>
-                  ))}
-                </ul>
-              ) : state?.formError ? (
-                <p className="w-full md:w-1/2 mt-4 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
-                  {state?.formError}
-                </p>
-              ) : null}
+            {state?.formError && (
+              <p className="rounded-lg bg-destructive/5 p-2 text-[0.8rem] font-medium text-destructive">
+                {state.formError}
+              </p>
+            )}
+            
           </CardContent>
           <CardFooter className="border-t px-6 py-4">
             <Button disabled type="submit">Enable 2FA</Button>
