@@ -83,10 +83,10 @@ const config = {
                 source: '/census.js',
                 destination: 'https://analytics.2block.co/census.js',
             },
-            // {
-            //     source: '/api/send',
-            //     destination: 'https://analytics.2block.co/api/send',
-            // }
+            {
+                source: '/api/send',
+                destination: 'https://analytics.2block.co/api/send',
+            }
         ];
     },
 };

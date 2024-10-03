@@ -3,9 +3,9 @@ import { verifyRequestOrigin } from "lucia";
 import { type NextRequest, NextResponse } from "next/server";
 import { env } from "./env";
 import { rateLimitConfig, type RateLimitKey } from "@/lib/rate-limit-config";
+import { Paths } from "@2block/shared/shared-constants";
 
 // Workaround because nextjs middleware doesn't support redis/crypto yet
-import { Paths } from "@2block/shared/shared-constants";
 
 // Rate limiting for configured paths see /lib/rate-limit-config.ts
 async function checkRateLimit(identifier: string, key: RateLimitKey): Promise<{ success: boolean; limit: string; remaining: string; reset: string; }> {
@@ -62,28 +62,34 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   }
 
   if (req.nextUrl.pathname === "/api/send") {
-    const response = NextResponse.rewrite(new URL("https://analytics.2block.co/api/send", req.url));
+    const requestHeaders = new Headers(req.headers);
     
     const cfHeaders = [
-      "CF-IPCity",
-      "CF-IPCountry",
-      "CF-IPContinent",
-      "CF-IPLongitude",
-      "CF-IPLatitude",
-      "CF-Region",
-      "CF-RegionCode",
-      "CF-MetroCode",
-      "CF-PostalCode",
-      "CF-Timezone"
+      "cf-ipcity",
+      "cf-ipcountry",
+      "cf-ipcontinent",
+      "cf-iplongitude",
+      "cf-iplatitude",
+      "cf-region",
+      "cf-regioncode",
+      "cf-metrocode",
+      "cf-postalcode",
+      "cf-timezone"
     ];
 
     cfHeaders.forEach(header => {
-      const value = req.headers.get(header);
+      const value = req.headers.get(header) ?? req.headers.get(header.toLowerCase());
       if (value) {
-        response.headers.set(header, value);
+        requestHeaders.set(header, value);
       }
     });
 
+    const response = NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
+    
     return response;
   }
 
@@ -110,7 +116,6 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
 export const config = {
   matcher: [
     "/((?!api|static|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
-    "/census.js",
     "/api/send",
     // Rate limiting for configured paths see /lib/rate-limit-config.ts
     // "/login",
