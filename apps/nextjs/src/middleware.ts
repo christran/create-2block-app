@@ -61,20 +61,20 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
     return response;
   }
 
-  if (req.nextUrl.pathname === "/api/send") {
-    const requestHeaders = new Headers(req.headers);
+  // if (req.nextUrl.pathname === "/api/send") {
+  //   const requestHeaders = new Headers(req.headers);
     
-    requestHeaders.set("Client_IP", req.headers.get("CF-Connecting-IP") ?? req.headers.get("X-Forwarded-For")?.split(",")[0] ?? req.headers.get("X-Real-IP") ?? "127.0.0.1");
-    requestHeaders.set("CF-Connection-IP", req.headers.get("CF-Connecting-IP") ?? req.headers.get("X-Forwarded-For")?.split(",")[0] ?? req.headers.get("X-Real-IP") ?? "127.0.0.1");
+  //   requestHeaders.set("Client_IP", req.headers.get("CF-Connecting-IP") ?? req.headers.get("X-Forwarded-For")?.split(",")[0] ?? req.headers.get("X-Real-IP") ?? "127.0.0.1");
+  //   requestHeaders.set("CF-Connection-IP", req.headers.get("CF-Connecting-IP") ?? req.headers.get("X-Forwarded-For")?.split(",")[0] ?? req.headers.get("X-Real-IP") ?? "127.0.0.1");
 
-    const response = NextResponse.next({
-      request: {
-        headers: requestHeaders,
-      },
-    });
+  //   const response = NextResponse.next({
+  //     request: {
+  //       headers: requestHeaders,
+  //     },
+  //   });
     
-    return response;
-  }
+  //   return response;
+  // }
 
   if (req.method === "GET") {
     return NextResponse.next();
@@ -99,7 +99,7 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
 export const config = {
   matcher: [
     "/((?!api|static|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
-    "/api/send",
+    // "/api/send",
     // Rate limiting for configured paths see /lib/rate-limit-config.ts
     // "/login",
     // "/api/upload/cleanup",
