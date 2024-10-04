@@ -18,6 +18,7 @@ export const users = pgTable(
     fullname: varchar("fullname", { length: 255 }).notNull(),
     email: varchar("email", { length: 255 }).unique().notNull(),
     emailVerified: boolean("email_verified").default(false).notNull(),
+    ipAddress: varchar("ip_address", { length: 255 }),
     hashedPassword: varchar("hashed_password", { length: 255 }),
     role: varchar("role", { length: 10, enum: ["guest", "default", "member", "premium", "admin"] })
     .default("default")

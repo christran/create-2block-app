@@ -23,8 +23,7 @@ export const env = createEnv({
     MAGIC_LINK_AUTH: z.boolean().default(false),
     UMAMI_WEBSITE_ID: z.string().trim().min(1),
 
-    TRIGGER_SECRET_KEY_DEV: z.string().trim().min(1),
-    TRIGGER_SECRET_KEY_PROD: z.string().trim().min(1),
+    TRIGGER_SECRET_KEY: z.string().trim().min(1),
 
     NTFY_URL: z.string().trim().min(1),
     NTFY_API_KEY: z.string().trim().min(1),
@@ -78,8 +77,7 @@ export const env = createEnv({
     MAGIC_LINK_AUTH: process.env.MAGIC_LINK_AUTH === "true",
     UMAMI_WEBSITE_ID: process.env.UMAMI_WEBSITE_ID,
 
-    TRIGGER_SECRET_KEY_DEV: process.env.TRIGGER_SECRET_KEY_DEV,
-    TRIGGER_SECRET_KEY_PROD: process.env.TRIGGER_SECRET_KEY_PROD,
+    TRIGGER_SECRET_KEY: process.env.TRIGGER_SECRET_KEY,
 
     NTFY_URL: process.env.NTFY_URL,
     NTFY_API_KEY: process.env.NTFY_API_KEY,

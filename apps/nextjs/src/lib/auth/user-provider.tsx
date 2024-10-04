@@ -3,8 +3,6 @@
 import { createContext, type ReactNode } from "react";
 import { use } from "react";
 import { type User } from "@2block/db/schema";
-import type { DatabaseUserAttributes } from "@2block/auth";
-// import { type DatabaseUserAttributes } from ".";
 
 // type User = {
 //   id: string;
@@ -13,6 +11,7 @@ import type { DatabaseUserAttributes } from "@2block/auth";
 //   emailVerified: boolean;
 //   role: string;
 //   contactId: string | null;
+//   ipAddress: string | null;
 //   googleId: string | null;
 //   discordId: string | null;
 //   githubId: string | null;

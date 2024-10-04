@@ -91,11 +91,13 @@ export function Signup() {
               )}
             </div>
 
+            {/* Other form errors */}
             {state?.formError && (
-              <p className="rounded-lg bg-destructive/5 p-2 text-[0.8rem] font-medium text-destructive">
+              <p className="text-xs text-destructive">
                 {state.formError}
               </p>
             )}
+
             <div className="flex flex-wrap items-center justify-between text-xs text-muted-foreground">
               <div>
                 Already have an account?{" "}

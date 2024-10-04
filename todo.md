@@ -14,4 +14,4 @@
 [ ] ui package (https://github.com/search?q=repo%3At3-oss%2Fcreate-t3-turbo+tailwind-merge&type=code)
 [ ] figure out why npx turbo daemon clean is needed everytime
 [ ] add expo
-[ ] write a script to change NEXT_PUBLIC_APP_URL="https://2block.co" and TURBO_TEAM="2block/prod" when building for prod: npm build prod
+[ ] write a script to change NEXT_PUBLIC_APP_URL="https://2block.co" and TURBO_TEAM="2block/prod" when building for prod: pnpm build:prod

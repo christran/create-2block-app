@@ -108,6 +108,13 @@ export function Login() {
               <p className="text-xs text-destructive mt-1">{state.fieldError.password}</p>
             )}
           </div>
+          
+          {/* Other form errors */}
+          {state?.formError && (
+            <p className="text-xs text-destructive">
+              {state.formError}
+            </p>
+          )}
 
           <div className="mb-2 flex flex-wrap items-center justify-between text-xs text-muted-foreground">
             <div>
@@ -125,18 +132,14 @@ export function Login() {
               </Link>
           </div>
 
-          {state?.formError && (
-            <p className="rounded-lg bg-destructive/5 p-2 text-[0.8rem] font-medium text-destructive">
-              {state.formError}
-            </p>
-          )}
-
           <SubmitButton className="w-full shadow-md" aria-label="submit-btn" disabled={!isDirty}>
             <span className="inline-flex items-center justify-center gap-1 truncate">
               Continue
               <ArrowRightIcon className="h-5 w-5" />
             </span>
           </SubmitButton>
+
+
           <Button variant="outline" className="w-full" asChild>
             {/* <Link href={Paths.Home}>Cancel</Link> */}
           </Button>

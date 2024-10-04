@@ -15,6 +15,13 @@
       "when": 1727754453232,
       "tag": "0001_hesitant_thaddeus_ross",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1728001519582,
+      "tag": "0002_greedy_thanos",
+      "breakpoints": true
     }
   ]
 }

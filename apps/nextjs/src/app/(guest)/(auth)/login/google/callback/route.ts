@@ -8,6 +8,7 @@ import { Paths } from "@2block/shared/shared-constants";
 import { users } from "@2block/db/schema";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { createContact, newAccountTasks } from "@/lib/auth/actions";
+import { getClientIP } from "@/lib/utils";
 
 // ... existing GoogleUser interface ...
 
@@ -40,6 +41,8 @@ async function handleLogin(googleUser: GoogleUser, existingUser: { id: string; g
   const session = await lucia.createSession(existingUser.id, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
 
+  await db.update(users).set({ ipAddress: getClientIP() }).where(eq(users.id, existingUser.id));
+
   cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 
   return new Response(null, { status: 302, headers: { Location: Paths.Dashboard } });
@@ -71,6 +74,7 @@ async function createNewUser(googleUser: GoogleUser): Promise<Response> {
     fullname: googleUser.name,
     email: googleUser.email,
     emailVerified: true,
+    ipAddress: getClientIP(),
     role: "default",
     contactId: newContact.contactId,
     googleId: googleUser.sub,

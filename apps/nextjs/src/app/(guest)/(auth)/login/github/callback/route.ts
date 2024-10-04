@@ -8,6 +8,7 @@ import { Paths } from "@2block/shared/shared-constants";
 import { users } from "@2block/db/schema";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { createContact, newAccountTasks } from "@/lib/auth/actions";
+import { getClientIP } from "@/lib/utils";
 
 interface GitHubUserEmail {
   email: string;
@@ -46,9 +47,11 @@ async function handleLogin(githubUser: GitHubUser, existingUser: { id: string; g
   if (existingUser.githubId === null) {
     return redirectWithError(Paths.Login, "Please log in with your existing account and link your GitHub account in the security settings.");
   }
-  
+
   const session = await lucia.createSession(existingUser.id, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
+
+  await db.update(users).set({ ipAddress: getClientIP() }).where(eq(users.id, existingUser.id));
 
   cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 
@@ -82,6 +85,7 @@ async function createNewUser(githubUser: GitHubUser, githubUserEmail: GitHubUser
     fullname: githubUser.name,
     email: githubUserEmail.email,
     emailVerified: true,
+    ipAddress: getClientIP(),
     role: "default",
     contactId: newContact.contactId ?? null,
     githubId: githubUser.id,

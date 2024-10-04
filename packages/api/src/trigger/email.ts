@@ -18,13 +18,7 @@ MOCK_SEND_EMAIL
 import { Paths } from "@2block/shared/shared-constants";
 import { deleteContactById } from "@2block/email/actions";
 import { sendEmail, EmailTemplate } from "@2block/email/email-service";
-import { configure, logger, task } from "@trigger.dev/sdk/v3";
-
-configure({
-  secretKey: process.env.NODE_ENV === "production" ? process.env.TRIGGER_SECRET_KEY_PROD : process.env.TRIGGER_SECRET_KEY_DEV,
-  // For self-hosting trigger.dev
-  // baseURL: process.env.TRIGGER_BASE_URL ?? "https://trigger.2block.co"
-});
+import { logger, task } from "@trigger.dev/sdk/v3";
 
 export const welcomeEmailTask = task({
   id: "welcome-email",

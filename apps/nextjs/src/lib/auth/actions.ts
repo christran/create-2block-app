@@ -34,10 +34,11 @@ import { generateId, Scrypt } from "lucia";
 import { sendEmail, EmailTemplate } from "@2block/email/email-service";
 
 import { logger } from "../logger";
-import { tasks } from "@trigger.dev/sdk/v3";
+import { configure, tasks } from "@trigger.dev/sdk/v3";
 import type { welcomeEmailTask } from "@2block/api/trigger";
 import { api } from "@/trpc/server";
 import { newUserNotification } from "@2block/shared/ntfy";
+import { getClientIP } from "../utils";
 
 export interface ActionResponse<T> {
   fieldError?: Partial<Record<keyof T, string | undefined>>;
@@ -88,6 +89,9 @@ export const login = async (_: any, formData: FormData): Promise<ActionResponse<
 
   const session = await lucia.createSession(existingUser.id, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
+
+  await db.update(users).set({ ipAddress: getClientIP() }).where(eq(users.id, existingUser.id));
+
   cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
   return redirect(Paths.Dashboard);
 }
@@ -138,6 +142,7 @@ export const signup = async (_: any, formData: FormData): Promise<ActionResponse
     id: userId,
     fullname,
     email,
+    ipAddress: getClientIP(),
     hashedPassword,
     role: "default",
     contactId: newContact.contactId ?? null
@@ -712,6 +717,7 @@ export const sendMagicLink = async (
       fullname: email,
       email: email,
       emailVerified: true,
+      ipAddress: getClientIP(),
       role: "default",
       contactId: newContact.contactId ?? null
     });
@@ -759,11 +765,12 @@ export const validateMagicLinkToken = async (token: string) => {
     return redirect(Paths.Login);
   }
 
-  await lucia.invalidateUserSessions(dbToken.userId);
+  // await lucia.invalidateUserSessions(dbToken.userId);
   
   const session = await lucia.createSession(dbToken.userId, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
 
+  await db.update(users).set({ ipAddress: getClientIP() }).where(eq(users.id, dbToken.userId));
   // await db.update(users).set({ emailVerified: true }).where(eq(users.id, dbToken.userId));
 
   cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
