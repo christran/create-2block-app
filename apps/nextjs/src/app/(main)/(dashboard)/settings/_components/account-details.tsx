@@ -325,8 +325,16 @@ export function AccountDetails({
                 />
               </div>
               {state?.fieldError?.fullname && (
-                <p className="text-xs text-destructive mt-1">{state.fieldError.fullname}</p>
+                <p className="text-xs text-destructive-foreground mt-1">{state.fieldError.fullname}</p>
               )}
+
+              {/* If full name set to an email address ask the user to update*/}
+              {email.includes("@") && (
+                <p className="text-xs text-muted-foreground">
+                  Update your name to personalize your account
+                </p>
+              )}
+
               <div className="space-y-2">
                 <Label>Email</Label>
                 <Input
@@ -342,7 +350,7 @@ export function AccountDetails({
                   disabled
                 />
                 <p className="text-xs text-muted-foreground">
-                  Please contact support if you need to change your email address.
+                  Please contact support if you need to change your email address
                 </p>
               </div>
               {/* {state?.fieldError?.email && (

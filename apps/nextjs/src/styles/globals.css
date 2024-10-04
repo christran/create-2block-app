@@ -58,6 +58,11 @@
     --chart-5: 340 75% 55%;
   }
 
+  /* Improve Contrast for Destructive Text in Dark Mode */
+  .dark .text-destructive {
+    --destructive: 0, 75%, 60%;
+  }
+
   /* New section for selection styles */
   :root {
     --selection-background: #00cc9937;

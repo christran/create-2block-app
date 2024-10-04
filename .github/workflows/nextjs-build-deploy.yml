@@ -79,7 +79,7 @@ jobs:
           echo "Updated Environment Variables:"
           grep '^NEXT_PUBLIC_APP_URL=' .env || echo "NEXT_PUBLIC_APP_URL not found in updated .env"
           grep '^TURBO_TEAM=' .env || echo "TURBO_TEAM not found in updated .env"
-          grep '^TRIGGER_SECRET_KEY=REDACTED' .env || echo "TRIGGER_SECRET_KEY not found in updated .env"
+          echo "TRIGGER_SECRET_KEY=REDACTED"
 
       - name: Install dependencies
         run: pnpm install
