@@ -47,18 +47,23 @@ export class Ratelimit {
     const success = remaining > 0;
     const reset = Math.floor(Date.now() / 1000) + this.limiter.options.windowMs / 1000;
 
+    const rateLimitData = {
+      redisIdentifier: `${this.prefix}:${identifier}`,
+      identifier,
+      remaining,
+      limit: this.limiter.options.maxLimit,
+      reset,
+      success,
+    };
+
     if (this.analytics) {
-      const resetDate = new Date(reset * 1000);
-      const formattedReset = formatDate(resetDate);
-      console.log(`[Rate Limiter]\nIdentifier: ${this.prefix}:${identifier}\nRemaining: ${remaining}\nReset: ${formattedReset}\nSuccess: ${success}`);
+      // TODO: Add analytics to the database and send to Sentry/Posthog or any other logging service
+
+      const resetDate = new Date(rateLimitData.reset * 1000);
+      console.log(`[Rate Limiter]\nRedis Identifier: ${rateLimitData.redisIdentifier}\nIdentifier: ${rateLimitData.identifier}\nRemaining: ${rateLimitData.remaining}\nReset: ${formatDate(resetDate)}\nSuccess: ${rateLimitData.success}`);
     }
 
-    return {
-      success,
-      limit: this.limiter.options.maxLimit,
-      remaining,
-      reset,
-    };
+    return rateLimitData;
   }
 }
 

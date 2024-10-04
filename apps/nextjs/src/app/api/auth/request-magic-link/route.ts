@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Ratelimit, rateLimitMiddleware } from "@/lib/rate-limiter";
+import { getClientIP } from "@/lib/utils";
 
 // Create a rate limiter
 const apiLimiter = new Ratelimit({
@@ -10,7 +11,7 @@ const apiLimiter = new Ratelimit({
 
 
 export async function POST(req: NextRequest) {
-  const identifier = req.headers.get("CF-Connecting-IP") ?? req.headers.get("X-Forwarded-For")?.split(",")[0] ?? req.headers.get("X-Real-IP") ?? "127.0.0.1";
+  const identifier = getClientIP(req);
   const rateLimitResult = await rateLimitMiddleware(apiLimiter, identifier);
 
   if (rateLimitResult) {

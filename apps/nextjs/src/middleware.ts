@@ -4,6 +4,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { env } from "./env";
 import { rateLimitConfig, type RateLimitKey } from "@/lib/rate-limit-config";
 import { Paths } from "@2block/shared/shared-constants";
+import { getClientIP } from "./lib/utils";
 
 // Workaround because nextjs middleware doesn't support redis/crypto yet
 
@@ -45,7 +46,7 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
 
   // Only check rate limit if path is configured see /lib/rate-limit-config.ts
   if (rateLimitKey) {
-    const ip = req.headers.get("CF-Connecting-IP") ?? req.headers.get("X-Forwarded-For")?.split(",")[0] ?? req.headers.get("X-Real-IP") ?? "127.0.0.1";
+    const ip = getClientIP(req);
     const { success, limit, remaining, reset } = await checkRateLimit(ip, rateLimitKey);
     
     const response = success 
@@ -60,21 +61,6 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
 
     return response;
   }
-
-  // if (req.nextUrl.pathname === "/api/send") {
-  //   const requestHeaders = new Headers(req.headers);
-    
-  //   requestHeaders.set("Client_IP", req.headers.get("CF-Connecting-IP") ?? req.headers.get("X-Forwarded-For")?.split(",")[0] ?? req.headers.get("X-Real-IP") ?? "127.0.0.1");
-  //   requestHeaders.set("CF-Connection-IP", req.headers.get("CF-Connecting-IP") ?? req.headers.get("X-Forwarded-For")?.split(",")[0] ?? req.headers.get("X-Real-IP") ?? "127.0.0.1");
-
-  //   const response = NextResponse.next({
-  //     request: {
-  //       headers: requestHeaders,
-  //     },
-  //   });
-    
-  //   return response;
-  // }
 
   if (req.method === "GET") {
     return NextResponse.next();
