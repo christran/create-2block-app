@@ -4,10 +4,11 @@ import { Sidebar } from "./_components/sidebar";
 import { EmailVerificationWarning } from "./(dashboard)/_components/email-verification-warning";
 import { dotsBG } from "@/lib/constants";
 import { useUser } from "@/lib/auth/user-provider";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { getSession } from "@/lib/auth/get-session";
 
 const MainLayout = async ({ children }: { children: ReactNode }) => {
-  const { user: userData } = await validateRequest();
+  // const { user: userData } = await validateRequest();
+  const { user: userData } = await getSession();
 
   /*
   This is a client component, so we need to use the server component to get the user data 
@@ -19,18 +20,18 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
   return (
     <div className="flex">
       <Sidebar
-        fullname={userData?.fullname ?? "Guest"}
+        name={userData?.name ?? "Guest"}
         email={userData?.email ?? ""}
         userRole={userData?.role ?? "guest"}
-        avatar={userData?.avatar ?? ""}
+        avatar={userData?.image ?? ""}
       />
 
       <div className="w-full">
         <Header
-          fullname={userData?.fullname ?? ""}
+          name={userData?.name ?? ""}
           email={userData?.email ?? ""}
           userRole={userData?.role ?? "guest"}
-          avatar={userData?.avatar ?? ""}
+          avatar={userData?.image ?? ""}
         />
         <div className={`scrollContainer h-[calc(100vh-60px)] md:overflow-auto ${dotsBG}`}>
           {userData?.emailVerified === false && (

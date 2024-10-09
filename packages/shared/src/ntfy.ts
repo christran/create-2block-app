@@ -40,11 +40,11 @@ export async function sendNtfy(ntfy: NtfyPublishJSON) {
   console.log(JSON.stringify(ntfy));
 }
 
-export async function newUserNotification(fullname: string, email: string) {
+export async function newUserNotification(name: string, email: string) {
   await sendNtfy({
     topic: "2BLOCK",
     title: "New User",
-    message: `${fullname} (${email}) just signed up.`,
+    message: `${name} (${email}) just signed up.`,
     tags: ["white_check_mark" ],
     priority: 5,
     click: `${process.env.NEXT_PUBLIC_APP_URL}`,
@@ -59,11 +59,11 @@ export async function newUserNotification(fullname: string, email: string) {
   })
 }
 
-export async function newLoginNotification(fullname: string, email: string) {
+export async function newLoginNotification(name: string, email: string) {
   await sendNtfy({
     topic: "2BLOCK",
     title: "New Login",
-    message: `${fullname} (${email}) just logged in.`,
+    message: `${name} (${email}) just logged in.`,
     tags: ["white_check_mark" ],
     priority: 5,
     click: `${process.env.NEXT_PUBLIC_APP_URL}`,
@@ -78,11 +78,11 @@ export async function newLoginNotification(fullname: string, email: string) {
   })
 }
 
-export async function accountDeletedNotification(fullname: string, email: string) {
+export async function accountDeletedNotification(name: string, email: string) {
   await sendNtfy({
     topic: "2BLOCK",
     title: "Account Deleted",
-    message: `${fullname} (${email}) just deleted their account.`,
+    message: `${name} (${email}) just deleted their account.`,
     tags: ["x" ],
     priority: 5,
     click: `${process.env.NEXT_PUBLIC_APP_URL}`,

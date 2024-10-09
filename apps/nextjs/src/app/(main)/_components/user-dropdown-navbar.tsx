@@ -11,7 +11,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { logout } from "@/lib/auth/actions";;
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/next-avatar";
 import { Paths } from "@2block/shared/shared-constants";
@@ -23,19 +22,24 @@ import { useTheme } from "next-themes";
 import { useCallback, useEffect, useRef, useState, Fragment } from "react";
 import { SheetClose } from "@/components/ui/sheet";
 import { cn } from "@2block/shared/utils";;
+import { signOut } from "@/lib/auth/auth-client";
+import { useRouter } from "next/navigation";
+
 
 interface UserDropdownNavBarProps {
-  fullname: string;
+  name: string;
   email: string;
   avatar: string;
   withSheetClose: boolean;
   isClosed: boolean;
 }
 
-export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, isClosed }: UserDropdownNavBarProps) {
+export function UserDropdownNavBar({ name, email, avatar, withSheetClose, isClosed }: UserDropdownNavBarProps) {
   const [SheetCloseWrapper, shetCloseWrapperProps] = withSheetClose
     ? [SheetClose, { asChild: true }]
     : [Fragment, {}];
+
+  const router = useRouter();
 
   const { theme, setTheme } = useTheme();
 
@@ -62,8 +66,14 @@ export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, is
 
   const handleSignout = async () => {
     try {
-      await logout();
-      toast.success("You have been successfully signed out.");
+      await signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            router.push(Paths.Login);
+            toast.success("You have been successfully signed out.");
+          }
+        }
+      });
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -134,7 +144,7 @@ export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, is
 
   return (
     <>
-      {fullname !== "Guest" ? (
+      {name !== "Guest" ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div className={`cursor-pointer flex h-9 items-center rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all duration-100 hover:text-primary ${isClosed ? "justify-center" : "justify-between"}`}>
@@ -142,18 +152,18 @@ export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, is
                 <Avatar className={`relative transition-all duration-0 ease-in-out ${isClosed ? "h-8 w-8" : "h-7 w-7"} drop-shadow-md`}>
                   <AvatarImage 
                     src={avatar} 
-                    alt={fullname} 
+                    alt={name} 
                     className="object-cover" 
                     width={64}
                     height={64}
                   />
                   <AvatarFallback delayMs={100}>
-                    {fullname.split(" ").map(name => name.charAt(0).toUpperCase()).join("")}
+                    {name.split(" ").map(name => name.charAt(0).toUpperCase()).join("")}
                   </AvatarFallback>
                 </Avatar>
                 {!isClosed && (
                   <span className="inline-block ml-2 text-sm truncate max-w-[140px]">
-                    {isEmail(fullname) ? email : fullname}
+                    {isEmail(name) ? email : name}
                   </span>
                 )}
               </div>
@@ -167,18 +177,18 @@ export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, is
                 <Avatar className="h-8 w-8 mr-2 drop-shadow-md relative">
                   <AvatarImage 
                     src={avatar} 
-                    alt={fullname} 
+                    alt={name} 
                     className="object-cover"
                     width={64}
                     height={64}
                   />
                   <AvatarFallback delayMs={100}>
-                    {fullname.split(" ").map(name => name.charAt(0).toUpperCase()).join("")}
+                    {name.split(" ").map(name => name.charAt(0).toUpperCase()).join("")}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
                   <TruncatedText
-                    text={fullname}
+                    text={name}
                     maxWidth="170px"
                     className="font-semibold text-sm"
                   />
@@ -224,7 +234,7 @@ export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, is
               </Link>
             </SheetCloseWrapper>
             <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer font-medium text-muted-foreground hover:text-primary" onClick={handleSignout}>
+              <DropdownMenuItem className="cursor-pointer font-medium text-muted-foreground hover:text-primary" onClick={async () => await handleSignout()}>
                 <div className="flex items-center w-full">
                   <LogOut className="h-4 w-4 mr-2"/>
                   Logout
@@ -240,18 +250,18 @@ export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, is
                 <Avatar className={`relative transition-all duration-0 ease-in-out ${isClosed ? "h-8 w-8" : "h-7 w-7"} drop-shadow-md`}>
                   <AvatarImage 
                     src={avatar} 
-                    alt={fullname} 
+                    alt={name} 
                     className="object-cover"
                     width={64}
                     height={64}
                   />
                   <AvatarFallback delayMs={100}>
-                    {fullname.split(" ").map(name => name.charAt(0).toUpperCase()).join("")}
+                    {name.split(" ").map(name => name.charAt(0).toUpperCase()).join("")}
                   </AvatarFallback>
                 </Avatar>
                 {!isClosed && (
                   <span className="inline-block ml-2 text-sm truncate max-w-[140px]">
-                    {isEmail(fullname) ? email : fullname}
+                    {isEmail(name) ? email : name}
                   </span>
                 )}
               </div>
@@ -265,18 +275,18 @@ export function UserDropdownNavBar({ fullname, email, avatar, withSheetClose, is
                 <Avatar className="h-8 w-8 mr-2 drop-shadow-md relative">
                   <AvatarImage 
                     src={avatar} 
-                    alt={fullname} 
+                    alt={name} 
                     className="object-cover"
                     width={64}
                     height={64}
                   />
                   <AvatarFallback delayMs={100}>
-                    {fullname.split(" ").map(name => name.charAt(0).toUpperCase()).join("")}
+                    {name.split(" ").map(name => name.charAt(0).toUpperCase()).join("")}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
                   <TruncatedText
-                    text={fullname}
+                    text={name}
                     maxWidth="170px"
                     className="font-semibold text-sm"
                   />

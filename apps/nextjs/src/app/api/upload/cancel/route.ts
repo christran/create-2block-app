@@ -1,4 +1,4 @@
-import { validateRequest } from "@/lib/auth/validate-request";
+import { getSession } from "@/lib/auth/get-session";
 import { abortMultipartUpload } from "@/lib/r2";
 import { db } from "@2block/db/client";
 import { files } from "@2block/db/schema";
@@ -12,7 +12,7 @@ interface RequestBody {
 
 export async function POST(request: Request) {
   const { key, uploadId } = await request.json() as RequestBody;
-  const { user } = await validateRequest();
+  const { user } = await getSession();
 
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
 

@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DesktopIcon, HamburgerMenuIcon, PersonIcon } from "@radix-ui/react-icons";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { getSession } from "@/lib/auth/get-session";
 
 const routes = [
   { 
@@ -23,7 +23,7 @@ const routes = [
 ] as const;
 
 export const Header = async () => {
-  const { user } = await validateRequest();
+  const { user } = await getSession();
 
   return (
     <header className="sticky top-0 flex h-16 items-center justify-between border-b bg-background/85 backdrop-blur-sm px-4 md:px-10">

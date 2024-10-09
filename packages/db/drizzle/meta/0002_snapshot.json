@@ -479,8 +479,8 @@
           "primaryKey": true,
           "notNull": true
         },
-        "fullname": {
-          "name": "fullname",
+        "name": {
+          "name": "name",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true

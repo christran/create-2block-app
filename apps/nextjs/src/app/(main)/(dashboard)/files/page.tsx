@@ -1,11 +1,11 @@
-import { validateRequest } from "@/lib/auth/validate-request";
+import { getSession } from "@/lib/auth/get-session";
 import { UploadFiles } from "./upload-files";
 import { redirect } from "next/navigation";
 import { Paths } from "@2block/shared/shared-constants";
 import { api } from "@/trpc/server";
 
 export default async function UploadPage() {
-  const { user } = await validateRequest();
+  const { user } = await getSession();
 
   if (!user) redirect(Paths.Login);
   if (user?.role !== "admin") redirect(Paths.Dashboard); // TODO: Remove this when we have a proper permissions system

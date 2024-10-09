@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS "sessions" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
 	"id" varchar(21) PRIMARY KEY NOT NULL,
-	"fullname" varchar(255) NOT NULL,
+	"name" varchar(255) NOT NULL,
 	"email" varchar(255) NOT NULL,
 	"email_verified" boolean DEFAULT false NOT NULL,
 	"hashed_password" varchar(255),

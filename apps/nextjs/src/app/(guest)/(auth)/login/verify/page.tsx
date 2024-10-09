@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { redirect } from "next/navigation";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { getSession } from "@/lib/auth/get-session";
 import { Paths } from "@2block/shared/shared-constants";
 import Link from "next/link";
 import { ArrowLeftIcon } from "@/components/icons";
@@ -23,7 +23,7 @@ export default async function MagicLinkPage({
 }: {
   searchParams: { [key: string]: string | string[] | undefined }
 }) {
-  const { user } = await validateRequest();
+  const { user } = await getSession();
   const email = searchParams.email as string | undefined;
 
   if (user) redirect(Paths.Dashboard);

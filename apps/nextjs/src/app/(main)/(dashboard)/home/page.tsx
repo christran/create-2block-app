@@ -5,11 +5,13 @@ import { type Metadata } from "next";
 import { Suspense } from "react";
 import { Posts } from "../_components/posts";
 import { PostsSkeleton } from "../_components/posts-skeleton";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { getSession } from "@/lib/auth/get-session";
 import { Paths } from "@2block/shared/shared-constants";
 import { myPostsSchema } from "@/lib/validators/posts"; // TODO: pending move to validators package
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { auth } from "@2block/auth";
+import { headers } from "next/headers";
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
@@ -24,8 +26,13 @@ interface Props {
 export default async function DashboardPage({ searchParams }: Props) {
   const { page, perPage } = myPostsSchema.parse(searchParams);
 
-  const { user } = await validateRequest();
+  // const { user } = await getSession();
+  // if (!user) redirect(Paths.Login);
+
+  const { user } = await getSession();
+
   if (!user) redirect(Paths.Login);
+  // console.log("user", user);
 
   /**
    * Passing multiple promises to `Promise.all` to fetch data in parallel to prevent waterfall requests.

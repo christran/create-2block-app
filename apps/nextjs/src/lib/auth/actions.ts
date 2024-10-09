@@ -3,12 +3,11 @@
 /* eslint @typescript-eslint/no-explicit-any:0, @typescript-eslint/prefer-optional-chain:0 */
 
 import { z } from "zod";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { isWithinExpirationDate, TimeSpan, createDate } from "oslo";
 import { generateRandomString, alphabet } from "oslo/crypto";
 import { eq } from "drizzle-orm";
-import { lucia } from "@2block/auth";
 import { db } from "@2block/db/client";
 import {
   loginSchema,
@@ -24,21 +23,22 @@ import {
   magigcLinkLoginSchema,
 } from "@/lib/validators/auth";
 import { emailVerificationCodes, magicLinkTokens, passwordResetTokens, users } from "@2block/db/schema";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { getSession } from "@/lib/auth/get-session";
 import { Paths } from "@2block/shared/shared-constants";
 import { env } from "@/env";
 
 import { generateId, Scrypt } from "lucia";
 // import { Argon2id } from "oslo/password";
 
-import { sendEmail, EmailTemplate } from "@2block/email/email-service";
+import { sendEmail, EmailTemplate } from "@2block/email";
 
 import { logger } from "../logger";
-import { configure, tasks } from "@trigger.dev/sdk/v3";
+import { tasks } from "@trigger.dev/sdk/v3";
 import type { welcomeEmailTask } from "@2block/api/trigger";
 import { api } from "@/trpc/server";
 import { newUserNotification } from "@2block/shared/ntfy";
 import { getClientIP } from "../utils";
+import { auth } from "@2block/auth";
 
 export interface ActionResponse<T> {
   fieldError?: Partial<Record<keyof T, string | undefined>>;
@@ -72,14 +72,14 @@ export const login = async (_: any, formData: FormData): Promise<ActionResponse<
   }
 
   // linked account doesn't have a password set yet
-  if (existingUser.hashedPassword === null) {
+  if (existingUser.password === null) {
     return {
       formError: "Incorrect email or password",
     };
   }
 
   // Rate limit this
-	const validPassword = await new Scrypt().verify(existingUser?.hashedPassword, password);
+	const validPassword = await new Scrypt().verify(existingUser?.password, password);
 
   if (!validPassword) {
     return {
@@ -87,12 +87,6 @@ export const login = async (_: any, formData: FormData): Promise<ActionResponse<
     };
   }
 
-  const session = await lucia.createSession(existingUser.id, {});
-  const sessionCookie = lucia.createSessionCookie(session.id);
-
-  await db.update(users).set({ ipAddress: getClientIP() }).where(eq(users.id, existingUser.id));
-
-  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
   return redirect(Paths.Dashboard);
 }
 
@@ -104,14 +98,14 @@ export const signup = async (_: any, formData: FormData): Promise<ActionResponse
     const err = parsed.error.flatten();
     return {
       fieldError: {
-        fullname: err.fieldErrors.fullname?.[0],
+        name: err.fieldErrors.name?.[0],
         email: err.fieldErrors.email?.[0],
         password: err.fieldErrors.password?.[0],
       },
     };
   }
 
-  const { fullname, email, password } = parsed.data;
+  const { name, email, password } = parsed.data;
 
   const existingUser = await db.query.users.findFirst({
     where: (table, { eq }) => eq(table.email, email),
@@ -125,32 +119,16 @@ export const signup = async (_: any, formData: FormData): Promise<ActionResponse
   }
 
   const userId = generateId(21);
-  const hashedPassword = await new Scrypt().hash(password);
 
   const newContact = await createContact(email, {
     userId: userId,
-    fullname: fullname
+    name: name
   });
   
-  const verificationCode = await generateEmailVerificationCode(userId, email);
+  await sendEmail(email, EmailTemplate.EmailVerification, { name, code: verificationCode });
 
-  await sendEmail(email, EmailTemplate.EmailVerification, { fullname, code: verificationCode });
+  await newAccountTasks(name, email, newContact.contactId);
 
-  await newAccountTasks(fullname, email, newContact.contactId);
-
-  await db.insert(users).values({
-    id: userId,
-    fullname,
-    email,
-    ipAddress: getClientIP(),
-    hashedPassword,
-    role: "default",
-    contactId: newContact.contactId ?? null
-  });
-
-  const session = await lucia.createSession(userId, {});
-  const sessionCookie = lucia.createSessionCookie(session.id);
-  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 
   // Redirect to /verify-email or to dashboard
   return redirect(Paths.Dashboard);
@@ -197,49 +175,11 @@ export const deleteAccount = async (): Promise<{ error: string } | void> => {
   return redirect(Paths.Login);
 }
 
-// https://docs.useplunk.com/api-reference/contacts/create
-// https://docs.useplunk.com/api-reference/contacts/subscribe
-export const createContact = async (email: string, metadata?: Record<string, unknown>): Promise<{ contactId: string }> => {
-  const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.PLUNK_API_KEY}`
-  }
-
-  try {
-    const options = {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        event: "new-account",
-        email,
-        subscribed: true,
-        data: metadata
-      })
-    };
-
-    const response = await fetch("https://resend.2block.co/api/v1/track", options);
-    const data = await response.json();
-
-    if (!data.success) {
-      throw new Error(data.error ?? data.message ?? "Failed to create contact");
-    }
-
-    logger.info(`📨 Contact successfully created for: ${email}`, {
-      contactId: data.contact,
-    });
-
-    return { contactId: data.contact };
-  } catch (error) {
-    logger.error(`Failed to create contact for ${email}: `, error instanceof Error ? error.message : String(error));
-    throw error;
-  }
-}
-
-export const newAccountTasks = async (fullname:string, email: string, contactId: string) => {
-  await newUserNotification(fullname, email);
+export const newAccountTasks = async (name:string, email: string, contactId: string) => {
+  await newUserNotification(name, email);
 
   const handle = await tasks.trigger<typeof welcomeEmailTask>("welcome-email", {
-    fullname,
+    name,
     email,
     contactId
   }, 
@@ -251,7 +191,7 @@ export const newAccountTasks = async (fullname:string, email: string, contactId:
 }
 
 export const resendVerificationEmail = async (): Promise<{ error?: string; success?: boolean; }> => {
-  const { user } = await validateRequest();
+  const { user } = await getSession();
 
   if (!user) {
     return redirect(Paths.Login);
@@ -270,7 +210,7 @@ export const resendVerificationEmail = async (): Promise<{ error?: string; succe
 
   try {
     const verificationCode = await generateEmailVerificationCode(user.id, user.email);
-    await sendEmail(user.email, EmailTemplate.EmailVerification, { fullname: user.fullname, code: verificationCode });
+    await sendEmail(user.email, EmailTemplate.EmailVerification, { name: user.name, code: verificationCode });
     return { success: true };
   } catch (error) {
     // Delete the code from the database if there's an error sending the email
@@ -288,7 +228,7 @@ export const verifyEmail = async (_: any, formData: FormData): Promise<{ error: 
     return { error: "Invalid verification code." };
   }
 
-  const { user } = await validateRequest();
+  const { user } = await getSession();
 
   if (!user) {
     return redirect(Paths.Login);
@@ -358,7 +298,7 @@ export const sendPasswordResetLink = async (
 
       const verificationLink = `${env.NEXT_PUBLIC_APP_URL}/reset-password/${verificationToken}`;
 
-      await sendEmail(user.email, EmailTemplate.PasswordReset, { fullname: user.fullname, url: verificationLink });
+      await sendEmail(user.email, EmailTemplate.PasswordReset, { name: user.name, url: verificationLink });
 
       return { success: true };
     } catch (error) {
@@ -374,7 +314,7 @@ export const sendPasswordResetLink = async (
 
 // Rate limit this
 export const setupNewPasswordLink = async (): Promise<{ success?: boolean; error?: string; }> => {
-  const { user } = await validateRequest();
+  const { user } = await getSession();
 
   if (!user) {
     return redirect(Paths.Login);
@@ -402,7 +342,7 @@ export const setupNewPasswordLink = async (): Promise<{ success?: boolean; error
 
     const verificationLink = `${env.NEXT_PUBLIC_APP_URL}/reset-password/${verificationToken}`;
 
-    await sendEmail(user.email, EmailTemplate.PasswordReset, { fullname: user.fullname, url: verificationLink });
+    await sendEmail(user.email, EmailTemplate.PasswordReset, { name: user.name, url: verificationLink });
 
     return { success: true };
   } catch (error) {
@@ -425,35 +365,12 @@ export const resetPassword = async (_: any, formData: FormData): Promise<{ succe
     };
   }
   const { token, password } = parsed.data;
-
-  const dbToken = await db.transaction(async (tx) => {
-    const item = await tx.query.passwordResetTokens.findFirst({
-      where: (table, { eq }) => eq(table.id, token),
-    });
-    if (item) {
-      await tx.delete(passwordResetTokens).where(eq(passwordResetTokens.id, item.id));
-    }
-    return item;
-  });
-
-  if (!dbToken) return { error: "Invalid password reset link." };
-
-  if (!isWithinExpirationDate(dbToken.expiresAt)) return { error: "Password reset link expired." };
-
-  await lucia.invalidateUserSessions(dbToken.userId);
-  const hashedPassword = await new Scrypt().hash(password);
-  await db.update(users).set({ 
-    hashedPassword,
-  }).where(eq(users.id, dbToken.userId));
-  const session = await lucia.createSession(dbToken.userId, {});
-  const sessionCookie = lucia.createSessionCookie(session.id);
-  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
   
   redirect(Paths.Dashboard);
 }
 
 export const updateAccount = async (_: any, formData: FormData): Promise<ActionResponse<updateAccountInput> & { success?: boolean; error?: string }> => {
-  const { user } = await validateRequest();
+  const { user } = await getSession();
 
   if (!user) {
     return redirect(Paths.Login);
@@ -466,14 +383,14 @@ export const updateAccount = async (_: any, formData: FormData): Promise<ActionR
     const err = parsed.error.flatten();
     return {
       fieldError: {
-        fullname: err.fieldErrors.fullname?.[0],
+        name: err.fieldErrors.name?.[0],
         // email: err.fieldErrors.email?.[0],
       },
     };
   }
 
-  // const { fullname, email } = parsed.data;
-  const { fullname } = parsed.data;
+  // const { name, email } = parsed.data;
+  const { name } = parsed.data;
 
   // const existingUser = await db.query.users.findFirst({
   //   where: (table, { eq }) => eq(table.email, email),
@@ -491,14 +408,14 @@ export const updateAccount = async (_: any, formData: FormData): Promise<ActionR
   // });
 
   // email input disabled on client side, force on server side
-  // const newEmail = (userData?.hashedPassword ? email : userData?.email)
+  // const newEmail = (userData?.password ? email : userData?.email)
 
   // Force reverify after updating email
   try {
     await db.update(users).set({ 
-      fullname,
+      name,
       // email: newEmail,
-      // emailVerified: userData?.hashedPassword && email !== user.email ? false : userData?.emailVerified
+      // emailVerified: userData?.password && email !== user.email ? false : userData?.emailVerified
     }).where(eq(users.id, user.id));
 
     // revalidatePath(Paths.Settings);
@@ -514,7 +431,7 @@ export const updateAccount = async (_: any, formData: FormData): Promise<ActionR
 }
 
 export const updatePassword = async (_: any, formData: FormData): Promise<ActionResponse<updatePasswordInput> & { success?: boolean; error?: string }> => {
-  const { user } = await validateRequest();
+  const { user } = await getSession();
 
   if (!user) {
     return redirect(Paths.Login);
@@ -537,35 +454,8 @@ export const updatePassword = async (_: any, formData: FormData): Promise<Action
 
   const { current_password, new_password } = parsed.data;
 
-  const userData = await db.query.users.findFirst({
-    where: (table, { eq }) => eq(table.id, user.id),
-  });
-
-  if (userData?.hashedPassword === null) {
-    return {
-      formError: "Internal server error",
-    };
-  }
-
-	// eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-	const validPassword = await new Scrypt().verify(userData?.hashedPassword!, current_password);
-
-  if (!validPassword) {
-    return {
-      // fieldError: {
-      //   current_password: "The current password you entered is invalid",
-      // },
-      error: "The current password you entered is invalid",
-    };
-  }
-
   // Force reverify after updating email
   try {
-    const newHashedPassword = await new Scrypt().hash(new_password);
-
-    await db.update(users).set({ 
-      hashedPassword: newHashedPassword
-    }).where(eq(users.id, user.id));
 
     // revalidatePath(Paths.Security);
     // redirect(Paths.Security);
@@ -576,47 +466,12 @@ export const updatePassword = async (_: any, formData: FormData): Promise<Action
   }
 }
 
-export const updateTwoFactorAuth = async (_: any, formData: FormData): Promise<ActionResponse<updatePasswordInput> & { success?: boolean; error?: string }> => {
-  const { user } = await validateRequest();
-
-  if (!user) {
-    return redirect(Paths.Login);
-  }
-
-  // revalidatePath(Paths.Security)
-  // redirect(Paths.Security);
-  return { success: true };
-}
-
-const timeFromNow = (time: Date) => {
-  const now = new Date();
-  const diff = time.getTime() - now.getTime();
-  const minutes = Math.floor(diff / 1000 / 60);
-  const seconds = Math.floor(diff / 1000) % 60;
-  return `${minutes}m ${seconds}s`;
-};
-
-const generateEmailVerificationCode = async (userId: string, email: string): Promise<string> => {
-  await db.delete(emailVerificationCodes).where(eq(emailVerificationCodes.userId, userId));
-
-  const code = generateRandomString(6, alphabet("0-9")); // 8 digit code
-
-  await db.insert(emailVerificationCodes).values({
-    userId,
-    email,
-    code,
-    expiresAt: createDate(new TimeSpan(30, "m")), // 10 minutes
-  });
-
-  return code;
-}
-
 export const resendMagicLink = async (
   _: any,
   formData: FormData,
 ): Promise<{ success?: boolean; error?: string;}> => {
-  const email = formData.get("email");
-  const parsed = z.string().trim().email().safeParse(email);
+  const obj = Object.fromEntries(formData.entries());
+  const parsed = magigcLinkLoginSchema.safeParse(obj);
 
   if (!parsed.success) {
     return { 
@@ -624,8 +479,10 @@ export const resendMagicLink = async (
     };
   }
 
+  const { email } = parsed.data;
+
   const user = await db.query.users.findFirst({
-    where: (table, { eq }) => eq(table.email, parsed.data),
+    where: (table, { eq }) => eq(table.email, email),
   });
 
   if (user) {
@@ -640,10 +497,13 @@ export const resendMagicLink = async (
       };
     }
   
-    const magicLinkToken = await generateMagicLinkToken(user.id);
-    const magicLink = `${env.NEXT_PUBLIC_APP_URL}${Paths.MagicLink}/${magicLinkToken}`;
-
-    await sendEmail(user.email, EmailTemplate.MagicLink, { fullname: user.fullname, url: magicLink });
+    await auth.api.signInMagicLink({
+      body: {
+        email,
+        callbackURL: Paths.Dashboard
+      },
+      headers: headers()
+    })
 
     return { success: true };
   }
@@ -672,119 +532,13 @@ export const sendMagicLink = async (
 
   const { email } = parsed.data;
 
-  const user = await db.query.users.findFirst({
-    where: (table, { eq }) => eq(table.email, email),
-  });
+  await auth.api.signInMagicLink({
+    body: {
+      email,
+      callbackURL: Paths.Dashboard
+    },
+    headers: headers()
+  })
 
-  if (user) {
-    // TODO: We are ratelimiting this in the middleware so this is not needed
-    const lastSent = await db.query.magicLinkTokens.findFirst({
-      where: (table, { eq }) => eq(table.userId, user?.id),
-      columns: { expiresAt: true },
-    });
-  
-    if (lastSent && isWithinExpirationDate(lastSent.expiresAt)) {
-      return {
-        error: `Please wait ${timeFromNow(lastSent.expiresAt)} before resending a magic link.`,
-      };
-    }
-  
-    const magicLinkToken = await generateMagicLinkToken(user.id);
-    const magicLink = `${env.NEXT_PUBLIC_APP_URL}${Paths.MagicLink}/${magicLinkToken}`;
-
-    await sendEmail(user.email, EmailTemplate.MagicLink, { fullname: user.fullname, url: magicLink });
-
-    return redirect(`${Paths.MagicLink}?email=${encodeURIComponent(user.email)}`);
-  } else {
-    // Register new user
-    
-    const userId = generateId(21);
-
-    const newContact = await createContact(email, {
-      userId: userId,
-      fullname: email // todo: if user updates their name later on in the settings then update contact info
-    });
-
-    const magicLinkToken = await generateMagicLinkToken(userId);
-    const magicLink = `${env.NEXT_PUBLIC_APP_URL}${Paths.MagicLink}/${magicLinkToken}`;
-
-    await sendEmail(email, EmailTemplate.MagicLink, { fullname: email, url: magicLink });
-
-    await newAccountTasks(email, email, newContact.contactId);
-  
-    await db.insert(users).values({
-      id: userId,
-      fullname: email,
-      email: email,
-      emailVerified: true,
-      ipAddress: getClientIP(),
-      role: "default",
-      contactId: newContact.contactId ?? null
-    });
-  
-    return redirect(`${Paths.MagicLink}?email=${encodeURIComponent(email)}`);
-  }
-}
-
-const generateMagicLinkToken = async (userId: string) => {
-  await db.delete(magicLinkTokens).where(eq(magicLinkTokens.userId, userId));
-
-  const code = generateRandomString(64, alphabet("a-z", "A-Z", "0-9"));
-
-  await db.insert(magicLinkTokens).values({
-    id: code,
-    userId,
-    expiresAt: createDate(new TimeSpan(5, "m")), // 5 minutes
-  });
-
-  return code;
-}
-
-export const validateMagicLinkToken = async (token: string) => {
-  const dbToken = await db.transaction(async (tx) => {
-    const item = await tx.query.magicLinkTokens.findFirst({
-      where: (table, { eq }) => eq(table.id, token),
-    });
-    if (item) {
-      await tx.delete(magicLinkTokens).where(eq(magicLinkTokens.id, item.id));
-    }
-    return item;
-  });
-
-  // if (!dbToken) return { error: "Invalid magic link." };
-
-  if (!dbToken) {
-    cookies().set("auth_error", "Invalid magic link", { maxAge: 5, path: "/" });
-    return redirect(Paths.Login);
-  };
-
-  // if (!isWithinExpirationDate(dbToken.expiresAt)) return { error: "Magic link link expired." };
-
-  if (!isWithinExpirationDate(dbToken.expiresAt)) {
-    cookies().set("auth_error", "Magic link link expired", { maxAge: 5, path: "/" });
-    return redirect(Paths.Login);
-  }
-
-  // await lucia.invalidateUserSessions(dbToken.userId);
-  
-  const session = await lucia.createSession(dbToken.userId, {});
-  const sessionCookie = lucia.createSessionCookie(session.id);
-
-  await db.update(users).set({ ipAddress: getClientIP() }).where(eq(users.id, dbToken.userId));
-  // await db.update(users).set({ emailVerified: true }).where(eq(users.id, dbToken.userId));
-
-  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-
-  redirect(Paths.Dashboard);
-}
-
-const generatePasswordResetToken = async (userId: string): Promise<string> => {
-  await db.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, userId));
-  const tokenId = generateId(40);
-  await db.insert(passwordResetTokens).values({
-    id: tokenId,
-    userId,
-    expiresAt: createDate(new TimeSpan(10, "m")),
-  });
-  return tokenId;
+  return redirect(`${Paths.MagicLink}?email=${encodeURIComponent(email)}`);
 }

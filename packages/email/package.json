@@ -9,8 +9,8 @@
       "default": "./src/index.ts"
     },
     "./email-service": {
-      "types": "./dist/email-service.d.ts",
-      "default": "./src/email-service.ts"
+      "types": "./dist/email-service.d.tsx",
+      "default": "./src/email-service.tsx"
     },
     "./actions": {
       "types": "./dist/actions.d.ts",

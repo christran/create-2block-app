@@ -63,6 +63,16 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   }
 
   if (req.method === "GET") {
+    const csrfResponse = await fetch(`${env.NEXT_PUBLIC_APP_URL}/api/auth/csrf`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+    });
+
+    console.log(JSON.stringify(csrfResponse));
+  
     return NextResponse.next();
   }
 

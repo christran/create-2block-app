@@ -8,6 +8,7 @@ export const env = createEnv({
       .default("development"),
   },
   server: {
+    BETTER_AUTH_SECRET: z.string().trim().min(1),
     GOOGLE_CLIENT_ID: z.string().trim().min(1),
     GOOGLE_CLIENT_SECRET: z.string().trim().min(1),
     DISCORD_CLIENT_ID: z.string().trim().min(1),
@@ -22,6 +23,7 @@ export const env = createEnv({
   },
   runtimeEnv: {
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,

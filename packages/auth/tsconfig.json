@@ -1,5 +1,9 @@
 {
   "extends": "@2block/tsconfig/base.json",
-  "include": ["src", "*.ts"],
+  "compilerOptions": {
+    "jsx": "preserve", // TODO: switch to react-jsx and from react imports from email templates and then retry trigger dev
+    "baseUrl": "."
+  },
+  "include": ["*.ts", "*.tsx", "src"],
   "exclude": ["node_modules"]
 }

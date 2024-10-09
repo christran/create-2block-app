@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { completeMultipartUpload } from "@/lib/r2";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { getSession } from "@/lib/auth/get-session";
 import { db } from "@2block/db/client";
 import { files } from "@2block/db/schema";
 import { eq } from "drizzle-orm";
@@ -12,7 +12,7 @@ interface RequestBody {
 }
 
 export async function POST(request: Request) {
-  const { user } = await validateRequest();
+  const { user } = await getSession();
 
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });

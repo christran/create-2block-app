@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import {
   pgTable,
-  serial,
+  // serial,
   boolean,
   index,
   text,
@@ -15,11 +15,11 @@ export const users = pgTable(
   "users",
   {
     id: varchar("id", { length: 21 }).primaryKey(),
-    fullname: varchar("fullname", { length: 255 }).notNull(),
+    name: varchar("name", { length: 255 }).notNull(),
     email: varchar("email", { length: 255 }).unique().notNull(),
     emailVerified: boolean("email_verified").default(false).notNull(),
     ipAddress: varchar("ip_address", { length: 255 }),
-    hashedPassword: varchar("hashed_password", { length: 255 }),
+    password: varchar("password", { length: 255 }),
     role: varchar("role", { length: 10, enum: ["guest", "default", "member", "premium", "admin"] })
     .default("default")
     .notNull(),
@@ -27,7 +27,7 @@ export const users = pgTable(
     googleId: varchar("google_id", { length: 255 }).unique(),
     discordId: varchar("discord_id", { length: 255 }).unique(),
     githubId: varchar("github_id", { length: 255 }).unique(),
-    avatar: varchar("avatar"),
+    image: varchar("image"),
     stripeSubscriptionId: varchar("stripe_subscription_id", { length: 191 }),
     stripePriceId: varchar("stripe_price_id", { length: 191 }),
     stripeCustomerId: varchar("stripe_customer_id", { length: 191 }),
@@ -48,8 +48,31 @@ export const users = pgTable(
 );
 
 export type User = typeof users.$inferSelect;
-export type UserWithoutPassword = Omit<User, "hashedPassword">;
+export type UserWithoutPassword = Omit<User, "password">;
 export type NewUser = typeof users.$inferInsert;
+
+export const accounts = pgTable(
+  "accounts",
+  {
+    id: varchar("id", { length: 255 }).primaryKey(),
+    userId: varchar("user_id", { length: 21 }).notNull(),
+    accountId: varchar("account_id", { length: 255 }).notNull(),
+    providerId: varchar("provider_id", { length: 255 }).notNull(),
+    password: varchar("password", { length: 255 }),
+    accessToken: varchar("access_token", { length: 255 }),
+    refreshToken: varchar("refresh_token", { length: 255 }),
+    expiresAt: timestamp("expires_at", { withTimezone: true, mode: "date" }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { mode: "date" }).$onUpdate(() => new Date()),
+  },
+  (t) => ({
+    userIdx: index("account_user_idx").on(t.userId),
+    providerIdx: index("account_provider_idx").on(t.providerId),
+  }),
+)
+
+export type Account = typeof accounts.$inferSelect;
+export type NewAccount = typeof accounts.$inferInsert;
 
 export const sessions = pgTable(
   "sessions",
@@ -57,11 +80,33 @@ export const sessions = pgTable(
     id: varchar("id", { length: 255 }).primaryKey(),
     userId: varchar("user_id", { length: 21 }).notNull(),
     expiresAt: timestamp("expires_at", { withTimezone: true, mode: "date" }).notNull(),
+    ipAddress: varchar("ip_address", { length: 255 }),
+    userAgent: varchar("user_agent", { length: 255 }),
   },
   (t) => ({
     userIdx: index("session_user_idx").on(t.userId),
   }),
 );
+
+export type Session = typeof sessions.$inferSelect;
+export type NewSession = typeof sessions.$inferInsert;
+
+export const verifications = pgTable(
+  "verifications",
+  {
+    id: varchar("id", { length: 255 }).primaryKey(),
+    identifier: varchar("identifier", { length: 255 }).notNull(),
+    value: varchar("value", { length: 255 }).notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true, mode: "date" }).notNull(),
+  },
+  (t) => ({
+    identifierIdx: index("verification_identifier_idx").on(t.identifier),
+    valueIdx: index("verification_value_idx").on(t.value),
+  }),
+);
+
+export type Verification = typeof verifications.$inferSelect;
+export type NewVerification = typeof verifications.$inferInsert;
 
 export const files = pgTable("files", {
   id: uuid("id").primaryKey(),
@@ -83,45 +128,7 @@ export const files = pgTable("files", {
 );
 
 export type File = typeof files.$inferSelect;
-
-export const emailVerificationCodes = pgTable(
-  "email_verification_codes",
-  {
-    id: serial("id").primaryKey(),
-    userId: varchar("user_id", { length: 21 }).unique().notNull(),
-    email: varchar("email", { length: 255 }).notNull(),
-    code: varchar("code", { length: 8 }).notNull(),
-    expiresAt: timestamp("expires_at", { withTimezone: true, mode: "date" }).notNull(),
-  },
-  (t) => ({
-    userIdx: index("verification_code_user_idx").on(t.userId),
-    emailIdx: index("verification_code_email_idx").on(t.email),
-  }),
-);
-
-export const magicLinkTokens = pgTable(
-  "magic_link_tokens",
-  {
-    id: varchar("id", { length: 64 }).primaryKey(),
-    userId: varchar("user_id", { length: 21 }).unique().notNull(),
-    expiresAt: timestamp("expires_at", { withTimezone: true, mode: "date" }).notNull(),
-  },
-  (t) => ({
-    userIdx: index("magic_Link_token_user_idx").on(t.userId),
-  }),
-);
-
-export const passwordResetTokens = pgTable(
-  "password_reset_tokens",
-  {
-    id: varchar("id", { length: 40 }).primaryKey(),
-    userId: varchar("user_id", { length: 21 }).notNull(),
-    expiresAt: timestamp("expires_at", { withTimezone: true, mode: "date" }).notNull(),
-  },
-  (t) => ({
-    userIdx: index("password_token_user_idx").on(t.userId),
-  }),
-);
+export type NewFile = typeof files.$inferInsert;
 
 export const posts = pgTable(
   "posts",

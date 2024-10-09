@@ -2,7 +2,7 @@ import { generateState } from "arctic";
 import { github } from "@2block/auth";
 import { cookies } from "next/headers";
 import { env } from "@/env";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { getSession } from "@/lib/auth/get-session";
 import { Paths } from "@2block/shared/shared-constants";
 import { redirect } from "next/navigation";
 import { api } from "@/trpc/server";
@@ -12,7 +12,7 @@ export async function GET(request: Request): Promise<Response> {
   const disconnectGitHub = searchParams.get("disconnect") === "1";
 
   if (disconnectGitHub) {
-    const { user } = await validateRequest();
+    const { user } = await getSession();
 
     if (!user) redirect(Paths.Login);
     

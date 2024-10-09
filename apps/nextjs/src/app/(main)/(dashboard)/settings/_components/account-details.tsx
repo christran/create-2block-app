@@ -58,10 +58,10 @@ export function AccountDetails({
   user: UserWithoutPassword | null;
   isPasswordLess: boolean;
 }) {
-  const [fullname, setFullname] = useState(user?.fullname ?? "");
+  const [name, setName] = useState(user?.name ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
   const [files, setFiles] = useState<File[]>([]);
-  const [avatar, setAvatar] = useState(user?.avatar ?? null);
+  const [avatar, setAvatar] = useState(user?.image ?? null);
 
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -72,8 +72,8 @@ export function AccountDetails({
   const userMutation = api.user.updateAvatar.useMutation();
 
   const isDirty = useMemo(() => {
-    return fullname !== user?.fullname || email !== user?.email;
-  }, [fullname, email, user?.fullname, user?.email]);
+    return name !== user?.name || email !== user?.email;
+  }, [name, email, user?.name, user?.email]);
 
   const router = useRouter();
 
@@ -94,7 +94,7 @@ export function AccountDetails({
 
   useEffect(() => {
     if (state?.success) {
-      setFullname(fullname);
+      setName(name);
       setEmail(email);
 
       toast.success("Account updated");
@@ -234,11 +234,11 @@ export function AccountDetails({
                       src={avatar ?? ""}
                       width={256}
                       height={256}
-                      alt={fullname}
+                      alt={name}
                       className="object-cover"
                       />
                       <AvatarFallback delayMs={100}>
-                        {user?.fullname
+                        {user?.name
                           .split(" ")
                           .map((name) => name.charAt(0).toUpperCase())
                           .join("")}
@@ -318,14 +318,14 @@ export function AccountDetails({
                   required
                   placeholder="Jeon Jungkook"
                   autoComplete="name"
-                  name="fullname"
+                  name="name"
                   type="text"
-                  value={fullname}
-                  onChange={(e) => setFullname(e.target.value)}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                 />
               </div>
-              {state?.fieldError?.fullname && (
-                <p className="text-xs text-destructive-foreground mt-1">{state.fieldError.fullname}</p>
+              {state?.fieldError?.name && (
+                <p className="text-xs text-destructive-foreground mt-1">{state.fieldError.name}</p>
               )}
 
               {/* If full name set to an email address ask the user to update*/}

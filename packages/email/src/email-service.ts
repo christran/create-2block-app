@@ -1,7 +1,6 @@
 import "server-only";
 
-import { EmailTemplate  } from "./email-templates";
-import type {PropsMap} from "./email-templates";
+import type { EmailTemplate, PropsMap } from "./email-templates";
 import { getEmailTemplate } from "./email-templates";
 import { sendEmailPlunk } from "./providers/plunk";
 import { sendEmailSMTP } from "./providers/smtp";
@@ -41,4 +40,4 @@ export const sendEmail = async <T extends EmailTemplate>(
   }
 };
 
-export { EmailTemplate, type PropsMap };
+export { EmailTemplate, type PropsMap } from "./email-templates";

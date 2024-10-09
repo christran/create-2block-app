@@ -3,12 +3,12 @@ import { generatePresignedGetUrl, deleteFile } from "@/lib/r2";
 import { db } from "@2block/db/client";
 import { files } from "@2block/db/schema";
 import { eq } from "drizzle-orm";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { getSession } from "@/lib/auth/get-session";
 import { validate as uuidValidate } from "uuid";
 import { env } from "@/env";
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-  // const { user } = await validateRequest();
+  // const { user } = await getSession();
 
   // if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
 
@@ -51,7 +51,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
-  const { user } = await validateRequest();
+  const { user } = await getSession();
 
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
 

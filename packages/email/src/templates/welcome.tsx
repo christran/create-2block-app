@@ -2,8 +2,8 @@ import React from "react";
 import { Body, Container, Head, Html, Preview, Section, Text, Button, Link, Font } from "@react-email/components";
 import { APP_TITLE, EMAIL_FOOTER, EMAIL_UNSUBSCRIBE, Paths } from "@2block/shared/shared-constants";
 
-export default function WelcomeTemplate(props: { fullname: string, url: string, unsubscribe: string }) {
-  const { fullname, url, unsubscribe } = props;
+export default function WelcomeTemplate(props: { name: string, url: string, unsubscribe: string }) {
+  const { name, url, unsubscribe } = props;
 
   return (
     <Html>
@@ -24,7 +24,7 @@ export default function WelcomeTemplate(props: { fullname: string, url: string, 
               Welcome to ✌️BLOCK!
             </Text>
             <Text style={text}>
-              Hey <strong>{fullname}</strong>
+              Hey <strong>{name}</strong>
             </Text>
             <Text style={text}>
               You're a few seconds away from greatness. You're now ready to
@@ -47,7 +47,7 @@ export default function WelcomeTemplate(props: { fullname: string, url: string, 
 }
 
 WelcomeTemplate.PreviewProps = {
-  fullname: "Chris Tran",
+  name: "Chris Tran",
   url: "#",
   unsubscribe: Paths.Unsubscribe
 };

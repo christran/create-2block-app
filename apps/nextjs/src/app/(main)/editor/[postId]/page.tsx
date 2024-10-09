@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { PostEditor } from "./_components/post-editor";
 import { ArrowLeftIcon } from "@/components/icons";
 import Link from "next/link";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { getSession } from "@/lib/auth/get-session";
 import { Paths } from "@2block/shared/shared-constants";
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
 }
 
 export default async function EditPostPage({ params }: Props) {
-  const { user } = await validateRequest();
+  const { user } = await getSession();
   if (!user) redirect(Paths.Login);
 
   const post = await api.post.get({ id: params.postId });

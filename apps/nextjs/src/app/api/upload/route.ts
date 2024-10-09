@@ -3,7 +3,7 @@ import { generatePresignedUrl, createMultipartUpload, prepareUploadParts } from 
 import { v4 as uuidv4 } from "uuid";
 import { db } from "@2block/db/client";
 import { files } from "@2block/db/schema";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { getSession } from "@/lib/auth/get-session";
 import { env } from "@/env";
 import prettyBytes from "pretty-bytes";
 import { Ratelimit, rateLimitMiddleware } from "@/lib/rate-limiter";
@@ -38,7 +38,7 @@ interface RequestBody {
 }
 
 export async function POST(req: NextRequest) {
-  const { user } = await validateRequest();
+  const { user } = await getSession();
 
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
 

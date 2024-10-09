@@ -5,7 +5,7 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./src/index.d.ts",
+      "types": "./dist/index.d.ts",
       "default": "./src/index.ts"
     },
     "./env": "./env.ts"
@@ -15,14 +15,21 @@
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "migrate": "pnpm with-env npx better-auth migrate",
+    "generate": "pnpm with-env npx better-auth generate",
+    "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
     "@2block/db": "workspace:*",
+    "@2block/email": "workspace:*",
     "@2block/shared": "workspace:*",
     "@lucia-auth/adapter-drizzle": "^1.1.0",
     "@t3-oss/env-nextjs": "^0.11.1",
     "arctic": "^1.9.2",
+    "better-auth": "^0.3.3",
+    "dotenv": "^16.4.5",
+    "dotenv-cli": "^7.4.2",
     "lucia": "^3.2.0",
     "next": "14.2.13",
     "react": "catalog:react18",

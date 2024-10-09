@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { env } from "@/env";
 import { type Metadata } from "next";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { getSession } from "@/lib/auth/get-session";
 import { Paths } from "@2block/shared/shared-constants";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { db } from "@2block/db/client";
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminPage() {
-  const { user } = await validateRequest();
+  const { user } = await getSession();
   
   if (!user) redirect(Paths.Login);
   if (user?.role !== "admin") redirect(Paths.Dashboard);
@@ -37,7 +37,7 @@ export default async function AdminPage() {
           </CardHeader>
           <CardContent className="text-center">
             <h3 className="text-2xl font-bold tracking-tight">
-              Hi {user.fullname}
+              Hi {user.name}
             </h3>
             <p className="text-sm text-muted-foreground">
               {db.query.users.findMany().then((users) => {

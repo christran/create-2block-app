@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { redirect } from "next/navigation";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { getSession } from "@/lib/auth/get-session";
 import { VerifyCode } from "./verify-code";
 import { APP_TITLE, Paths } from "@2block/shared/shared-constants";
 import Link from "next/link";
@@ -19,7 +19,7 @@ export const metadata = {
 };
 
 export default async function VerifyEmailPage() {
-  const { user } = await validateRequest();
+  const { user } = await getSession();
 
   if (!user) redirect(Paths.Login);
   if (env.MAGIC_LINK_AUTH) redirect(Paths.Login);

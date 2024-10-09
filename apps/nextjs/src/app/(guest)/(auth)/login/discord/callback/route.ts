@@ -6,7 +6,7 @@ import { discord, lucia } from "@2block/auth";
 import { db } from "@2block/db/client";
 import { Paths } from "@2block/shared/shared-constants";
 import { users } from "@2block/db/schema";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { getSession } from "@/lib/auth/get-session";
 import { createContact, newAccountTasks } from "@/lib/auth/actions";
 import { getClientIP } from "@/lib/utils";
 
@@ -60,20 +60,20 @@ async function createNewUser(discordUser: DiscordUser): Promise<Response> {
   }
 
   const userId = generateId(21);
-  const avatar = discordUser.avatar
-    ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.webp`
+  const avatar = discorduser.image
+    ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discorduser.image}.webp`
     : null;
 
   const newContact = await createContact(discordUser.email, {
     userId: userId,
-    fullname: discordUser.username
+    name: discordUser.username
   });
 
   await newAccountTasks(discordUser.username, discordUser.email, newContact.contactId);
 
   await db.insert(users).values({
     id: userId,
-    fullname: discordUser.username,
+    name: discordUser.username,
     email: discordUser.email,
     emailVerified: true,
     ipAddress: getClientIP(),
@@ -104,7 +104,7 @@ export async function GET(request: Request): Promise<Response> {
   }
 
   try {
-    const { user } = await validateRequest();
+    const { user } = await getSession();
     const discordUser = await getDiscordUser(code);
 
     if (!discordUser.email || !discordUser.verified) {

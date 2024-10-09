@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { Signup } from "./signup";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { getSession } from "@/lib/auth/get-session";
 import { Paths } from "@2block/shared/shared-constants";
 import { env } from "@/env";
 
@@ -10,7 +10,7 @@ export const metadata = {
 };
 
 export default async function SignupPage() {
-  const { user } = await validateRequest();
+  const { user } = await getSession();
 
   if (user) redirect(Paths.Dashboard);
   if (env.MAGIC_LINK_AUTH) redirect(Paths.Login);

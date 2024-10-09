@@ -14,6 +14,7 @@ import { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
 import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/navigation";
+import { signIn } from "@/lib/auth/auth-client";
 
 export function MagicLink() {
   const [state, formAction] = useFormState(sendMagicLink, null);
@@ -42,8 +43,19 @@ export function MagicLink() {
   //   return email.trim() !== '';
   // }, [email]);
 
-  function handleSocial(provider: "google" | "discord" | "github") {    
-    return router.push(`/login/${provider}`);
+  const handleSocial = async (provider: "google" | "discord" | "github") => {    
+    const { data, error } = await signIn.social({
+      provider,
+      callbackURL: Paths.Dashboard,
+    });
+
+    if (error) {
+      toast.error(error.message);
+    }
+
+    // if (data) {
+    //   console.log(data);
+    // }
   }
 
   return (
@@ -59,15 +71,15 @@ export function MagicLink() {
         </CardHeader>
         <CardContent>
         <div className="space-y-2 md:px-6">
-          <Button variant="outline" onClick={() => handleSocial("google")} className="w-full bg-secondary/30 shadow">
+          <Button variant="outline" onClick={async () => await handleSocial("google")} className="w-full bg-secondary/30 shadow">
               <FontAwesomeIcon icon={faGoogle} className="mr-2 h-5 w-5" />
               Continue with Google
           </Button>
-          <Button variant="outline" onClick={() => handleSocial("discord")} className="w-full bg-secondary/30 shadow">
+          <Button variant="outline" onClick={async () => await handleSocial("discord")} className="w-full bg-secondary/30 shadow">
               <DiscordLogoIcon className="mr-2 h-5 w-5" />
               Continue with Discord
           </Button>
-          <Button variant="outline" onClick={() => handleSocial("github")} className="w-full bg-secondary/30 shadow">
+          <Button variant="outline" onClick={async () => await handleSocial("github")} className="w-full bg-secondary/30 shadow">
               <GitHubLogoIcon className="mr-2 h-5 w-5" />
               Continue with GitHub
           </Button>

@@ -7,12 +7,11 @@ import localFont from "next/font/local";
 import { TRPCReactProvider } from "@/trpc/react";
 import type { Metadata, Viewport } from "next";
 import { AnalyticsScript } from "./analytics";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { getSession } from "@/lib/auth/get-session";
 import { cookies } from "next/headers";
 import { env } from "@/env";
 import { UserProvider } from "@/lib/auth/user-provider";
 import { api } from "@/trpc/server";
-import type { DatabaseUserAttributes } from "@2block/auth";
 import { User } from "@2block/db/schema";
 
 // const GeistSans = localFont({
@@ -55,7 +54,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const userPromise = validateRequest().then(({ user }) => {
+  const userPromise = getSession().then(({ user }) => {
     if (!user) {
       return null;
     }

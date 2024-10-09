@@ -4,11 +4,11 @@ import { APP_TITLE, EMAIL_FOOTER, Paths } from "@2block/shared/shared-constants"
 import { env } from "../../env";
 
 export interface EmailVerificationTemplateProps {
-  fullname: string;
+  name: string;
   code: string;
 }
 
-export default function EmailVerificationTemplate({fullname, code}: EmailVerificationTemplateProps) {
+export default function EmailVerificationTemplate({name, code}: EmailVerificationTemplateProps) {
   return (
     <Html>
       <Head />
@@ -28,7 +28,7 @@ export default function EmailVerificationTemplate({fullname, code}: EmailVerific
               <strong>Verify your email address</strong>
             </Text>
             <Text style={text}>
-              Hey <strong>{fullname}</strong>
+              Hey <strong>{name}</strong>
             </Text>
             <Text style={text}>
               Thank you for registering for an account with us. To complete your
@@ -60,7 +60,7 @@ export default function EmailVerificationTemplate({fullname, code}: EmailVerific
 };
 
 EmailVerificationTemplate.PreviewProps = {
-  fullname: "Chris Tran",
+  name: "Chris Tran",
   code: "12345"
 };
 

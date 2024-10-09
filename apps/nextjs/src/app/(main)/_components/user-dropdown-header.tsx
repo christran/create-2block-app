@@ -11,25 +11,35 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { logout } from "@/lib/auth/actions";;
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Paths } from "@2block/shared/shared-constants";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { signOut } from "@/lib/auth/auth-client";
+import { useRouter } from "next/navigation";
 
 export const UserDropdownHeader = ({
-  fullname,
+  name,
   email,
   avatar,
 }: {
-  fullname: string;
+  name: string;
   email: string;
   avatar?: string | undefined;
   className?: string;
 }) => {
+  const router = useRouter();
+
   const handleSignout = async () => {
     try {
-      await logout();
+      await signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            router.push(Paths.Login);
+            toast.success("You have been successfully signed out.");
+          }
+        }
+      });
       toast.success("You have been successfully signed out.");
     } catch (error) {
       if (error instanceof Error) {
@@ -47,13 +57,13 @@ export const UserDropdownHeader = ({
             <Tooltip>
               <TooltipTrigger>
                 <Avatar className="relative">
-                  <AvatarImage src={avatar} alt={fullname} className="object-cover" />
-                  <AvatarFallback delayMs={100}>{fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}</AvatarFallback>
+                  <AvatarImage src={avatar} alt={name} className="object-cover" />
+                  <AvatarFallback delayMs={100}>{name.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}</AvatarFallback>
                 </Avatar>
                 <span className="sr-only">Toggle user menu</span>
               </TooltipTrigger>
               <TooltipContent className="font-medium text-sm">
-                {fullname}
+                {name}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -61,7 +71,7 @@ export const UserDropdownHeader = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>
-          <span className="text-bold">{fullname}</span><br />
+          <span className="text-bold">{name}</span><br />
           <span className="text-xs text-muted-foreground">{email}</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -74,7 +84,7 @@ export const UserDropdownHeader = ({
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="font-semibold"
-          onSelect={handleSignout}
+          onSelect={async () => await handleSignout()}
         >
         Sign out
        </DropdownMenuItem>

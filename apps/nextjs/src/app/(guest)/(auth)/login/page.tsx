@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { getSession } from "@/lib/auth/get-session";
 import { Paths } from "@2block/shared/shared-constants";
 import { Login } from "./login";
 import { MagicLink } from "./magic-link";
@@ -11,7 +11,7 @@ export const metadata = {
 };
 
 export default async function LoginPage() {
-  const { user } = await validateRequest();
+  const { user } = await getSession();
 
   if (user) redirect(Paths.Dashboard);
 

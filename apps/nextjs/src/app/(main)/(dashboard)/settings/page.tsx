@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { env } from "@/env";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { getSession } from "@/lib/auth/get-session";
 import { Paths } from "@2block/shared/shared-constants";
 import { api } from "@/trpc/server";
 import { SettingsTab } from "./_components/settings-tab";
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default async function SettingsPage() {
-  const { user } = await validateRequest();
+  const { user } = await getSession();
 
   if (!user) {
     redirect(Paths.Login);

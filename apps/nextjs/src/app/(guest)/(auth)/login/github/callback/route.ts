@@ -6,7 +6,7 @@ import { github, lucia } from "@2block/auth";
 import { db } from "@2block/db/client";
 import { Paths } from "@2block/shared/shared-constants";
 import { users } from "@2block/db/schema";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { getSession } from "@/lib/auth/get-session";
 import { createContact, newAccountTasks } from "@/lib/auth/actions";
 import { getClientIP } from "@/lib/utils";
 
@@ -75,21 +75,21 @@ async function createNewUser(githubUser: GitHubUser, githubUserEmail: GitHubUser
   const userId = generateId(21);
   const newContact = await createContact(githubUserEmail.email, {
     userId: userId,
-    fullname: githubUser.name
+    name: githubUser.name
   });
 
   await newAccountTasks(githubUser.name, githubUserEmail.email, newContact.contactId);
 
   await db.insert(users).values({
     id: userId,
-    fullname: githubUser.name,
+    name: githubUser.name,
     email: githubUserEmail.email,
     emailVerified: true,
     ipAddress: getClientIP(),
     role: "default",
     contactId: newContact.contactId ?? null,
     githubId: githubUser.id,
-    avatar: githubUser.avatar_url,
+    avatar: githubuser.image_url,
   });
 
   const session = await lucia.createSession(userId, {});
@@ -110,7 +110,7 @@ export async function GET(request: Request): Promise<Response> {
   }
 
   try {
-    const { user } = await validateRequest();
+    const { user } = await getSession();
     const tokens = await github.validateAuthorizationCode(code);
     const githubUserResponse = await fetch("https://api.github.com/user", {
       headers: { Authorization: `Bearer ${tokens.accessToken}` }

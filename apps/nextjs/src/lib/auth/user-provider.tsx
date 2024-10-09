@@ -6,7 +6,7 @@ import { type User } from "@2block/db/schema";
 
 // type User = {
 //   id: string;
-//   fullname: string;
+//   name: string;
 //   email: string;
 //   emailVerified: boolean;
 //   role: string;
@@ -24,7 +24,7 @@ import { type User } from "@2block/db/schema";
 //   updatedAt: string;
 // };
 
-type UserPromise = Promise<Omit<User, "hashedPassword"> | null>;
+type UserPromise = Promise<Omit<User, "password"> | null>;
 
 const UserContext = createContext<UserPromise | null>(null);
 

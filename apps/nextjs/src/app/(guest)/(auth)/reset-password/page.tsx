@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { SendResetEmail } from "./send-reset-email";
-import { validateRequest } from "@/lib/auth/validate-request";
+import { getSession } from "@/lib/auth/get-session";
 import { APP_TITLE, Paths } from "@2block/shared/shared-constants";
 import { env } from "@/env";
 
@@ -17,7 +17,7 @@ export const metadata = {
 };
 
 export default async function ForgotPasswordPage() {
-  const { user } = await validateRequest();
+  const { user } = await getSession();
 
   if (user) redirect(Paths.Dashboard);
   if (env.MAGIC_LINK_AUTH) redirect(Paths.Login);
