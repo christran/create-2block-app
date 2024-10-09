@@ -477,6 +477,24 @@ export const updateAccount = async (_: any, formData: FormData): Promise<ActionR
   }
 }
 
+export const deauthorizeAllSessions = async (): Promise<{ success?: boolean; error?: string }> => {
+  const { user } = await validateRequest();
+
+  if (!user) {
+    return redirect(Paths.Login);
+  }
+
+  try {
+    await invalidateAllUserSessions(user.id);
+    return { success: true };
+  } catch (error) {
+    console.error("Error deauthorizing sessions:", error);
+    return { 
+      error: "We couldn't deauthorize your sessions. Please try again later." 
+    };
+  }
+}
+
 export const updatePassword = async (_: any, formData: FormData): Promise<ActionResponse<updatePasswordInput> & { success?: boolean; error?: string }> => {
   const { user } = await validateRequest();
 
@@ -526,6 +544,9 @@ export const updatePassword = async (_: any, formData: FormData): Promise<Action
     await db.update(users).set({ 
       hashedPassword: newHashedPassword
     }).where(eq(users.id, user.id));
+
+    // Invalidate all user's sessions
+    await invalidateAllUserSessions(user.id);
 
     return { success: true };
   } catch (error) {

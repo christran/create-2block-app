@@ -17,6 +17,7 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { PasswordInput } from "@/components/password-input"
 import { SubmitButton } from "@/components/submit-button"
+import { Paths } from "@2block/shared/shared-constants"
 
 export function UpdatePassword(user: { isPasswordLess: boolean }) {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -33,13 +34,13 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
 
   useEffect(() => {
     if (state?.success) {
-      toast.success("Password updated");
+      toast.success("Your password has been updated, please sign in again");
 
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
 
-      // router.push(Paths.Security);
+      router.push(Paths.Login);
       // window.location.reload()
     }
     if (state?.error) {
@@ -147,17 +148,21 @@ export function UpdatePassword(user: { isPasswordLess: boolean }) {
               )}
             </div>
 
+            <p className="pt-2 text-xs text-muted-foreground">
+              Updating your password will sign you out of your account everywhere
+            </p>
+
             {state?.formError && (
               <p className="rounded-lg bg-destructive/5 p-2 text-[0.8rem] font-medium text-destructive">
                 {state.formError}
               </p>
             )}
           </CardContent>
-          {user.isPasswordLess !== null && (
-            <CardFooter className="border-t px-6 py-4">
+          <CardFooter className="border-t px-6 py-4">
+            <div className="flex flex-col items-start gap-2 w-full">
               <SubmitButton type="submit" disabled={!isDirty}>Update Password</SubmitButton>
-            </CardFooter>
-          )}
+            </div>
+          </CardFooter>
         </Card>
       </form>
     )}

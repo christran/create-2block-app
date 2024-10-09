@@ -1,4 +1,5 @@
-import { clsx, type ClassValue } from "clsx";
+import { clsx  } from "clsx";
+import type {ClassValue} from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -51,7 +52,7 @@ export function formatPrice(
 }
 
 export function absoluteUrl(path: string) {
-  const isDev = process.env.NODE_ENV !== "production" || process.env.NEXT_PUBLIC_APP_URL === "http://localhost:3000";
+  const isDev = process.env.NEXT_PUBLIC_APP_URL === "http://localhost:3000";
 
   return new URL(path, isDev ? "http://localhost:3000" : process.env.NEXT_PUBLIC_APP_URL).href
 }

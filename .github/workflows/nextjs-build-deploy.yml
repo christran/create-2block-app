@@ -28,8 +28,8 @@ name: Build and Deploy 2BLOCK App
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
+  # pull_request:
+  #   branches: [main]
 
 jobs:
   build:

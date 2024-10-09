@@ -38,7 +38,7 @@ export function LinkedAccounts({ isPasswordLess, magicLinkAuth }: { isPasswordLe
   }, [authError]);
 
   function handleSocial(provider: "google" | "discord" | "github") {
-    const connectedAccountsCount = ["googleId", "discordId", "githubId"].filter(id => user[id as keyof LinkedAccountProps]).length;
+    const connectedAccountsCount = ["googleId", "discordId", "githubId"].filter(id => user?.[id as keyof typeof user]).length;
     
     if(!magicLinkAuth) {
       if (isPasswordLess && user?.[`${provider}Id`] && connectedAccountsCount <= 1) {

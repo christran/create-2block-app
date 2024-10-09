@@ -9,6 +9,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { LinkedAccounts } from "./linked-accounts";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/lib/auth/user-provider";
+import { DeauthorizeAllSessions } from "./deauthorize-all-sessions";
 
 export function SettingsTab({ isPasswordLess, magicLinkAuth }: { isPasswordLess: boolean, magicLinkAuth: boolean }) {
   const user = useUser();
@@ -23,24 +24,27 @@ export function SettingsTab({ isPasswordLess, magicLinkAuth }: { isPasswordLess:
       </div>
     },
     { value: "security", label: "Security", content: 
-      <>
-      {!magicLinkAuth ? (
-        <div className="flex flex-col gap-6">
-          <UpdatePassword isPasswordLess={isPasswordLess} />
-          <MultiFactorAuth />
-        </div>
-      ) : (
-        <div className="flex flex-col items-center gap-1 text-center">
-          <h3 className="text-2xl font-bold tracking-tight">
-            No password needed
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            We use 🪄 Magic Links 🪄 to login
-          </p>
-          {/* <Button className="mt-4">Add Product</Button> */}
-        </div>
-      )}
-      </> 
+      <div className="flex flex-col gap-6"> 
+        {!magicLinkAuth ? (
+          <>
+            <UpdatePassword isPasswordLess={isPasswordLess} />
+            <MultiFactorAuth />
+            <DeauthorizeAllSessions />
+          </>
+        ) : (
+          <>
+          {/* <div className="flex flex-col items-center gap-1 text-center">
+            <h3 className="text-2xl font-bold tracking-tight">
+              No password needed
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              We use 🪄 Magic Links 🪄 to sign in
+            </p>
+          </div> */}
+          <DeauthorizeAllSessions />
+          </>
+        )}
+      </div> 
     },
     { value: "linked-accounts", label: "Linked Accounts", content: 
       <div className="flex flex-col gap-6">

@@ -17,7 +17,7 @@ export const discord = new Discord(
   absoluteUrl("/login/discord/callback")
 );
 
-const isDev = env.NODE_ENV !== "production" || env.NEXT_PUBLIC_APP_URL === "http://localhost:3000";
+const isDev = env.NEXT_PUBLIC_APP_URL === "http://localhost:3000";
 
 export const github = new GitHub(
   isDev ? env.GITHUB_LOCALHOST_CLIENT_ID : env.GITHUB_CLIENT_ID,
