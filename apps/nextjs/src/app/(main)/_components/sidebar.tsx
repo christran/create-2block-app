@@ -17,13 +17,13 @@ import { useState } from "react";
 type UserRole = User["role"];
 
 interface SidebarProps {
-  fullname: string;
+  name: string;
   email: string;
   userRole: UserRole;
   avatar: string;
 }
 
-export function Sidebar({ fullname, email, userRole, avatar }: SidebarProps) {
+export function Sidebar({ name, email, userRole, avatar }: SidebarProps) {
   const sidebar = useStore(useSidebarToggle, (state) => state);
   const [isWaving, setIsWaving] = useState(false);
 
@@ -95,7 +95,7 @@ export function Sidebar({ fullname, email, userRole, avatar }: SidebarProps) {
         </div>
 
         <UserDropdownNavBar
-          fullname={fullname}
+          name={name}
           email={email}
           avatar={avatar}
           withSheetClose={false}

@@ -21,7 +21,7 @@ export const userRouter = {
         where: (table, { eq }) => eq(table.id, ctx.user.id),
         columns: {
           id: true,
-          fullname: true,
+          name: true,
           email: true,
           emailVerified: true,
           role: true,
@@ -49,7 +49,7 @@ export const userRouter = {
         where: (table, { eq }) => eq(table.email, input.email),
         columns: {
           id: true,
-          fullname: true,
+          name: true,
           email: true,
           emailVerified: true,
           role: true,
@@ -181,7 +181,7 @@ export const userRouter = {
       const userData = await ctx.db.query.users.findFirst({
         where: (table, { eq }) => eq(table.id, ctx.user.id),
         columns: {
-          fullname: true,
+          name: true,
           email: true,
           contactId: true,
         },
@@ -190,10 +190,10 @@ export const userRouter = {
         throw new Error("User data not found");
       }
 
-      await accountDeletedNotification(userData.fullname, userData.email);
+      await accountDeletedNotification(userData.name, userData.email);
 
       await tasks.trigger<typeof accountDeletedTask>("account-deleted", {
-        fullname: userData.fullname,
+        name: userData.name,
         email: userData.email,
         contactId: userData.contactId
       },

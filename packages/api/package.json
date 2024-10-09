@@ -5,15 +5,15 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./dist/src/index.d.ts",
       "default": "./src/index.ts"
     },
     "./trigger": {
-      "types": "./dist/trigger/index.d.ts",
+      "types": "./dist/src/trigger/index.d.ts",
       "default": "./src/trigger/index.ts"
     },
     "./stripe": {
-      "types": "./src/lib/stripe.ts",
+      "types": "./dist/src/lib/stripe.d.ts",
       "default": "./src/lib/stripe.ts"
     }
   },

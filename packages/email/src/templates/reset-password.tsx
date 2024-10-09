@@ -13,11 +13,11 @@ import {
 import { APP_TITLE, EMAIL_FOOTER } from "@2block/shared/shared-constants";
 
 export interface ResetPasswordTemplateProps {
-  fullname: string;
+  name: string;
   url: string;
 }
 
-export default function ResetPasswordTemplate({ fullname, url }: ResetPasswordTemplateProps) {
+export default function ResetPasswordTemplate({ name, url }: ResetPasswordTemplateProps) {
   return (
     <Html>
     <Head />
@@ -37,7 +37,7 @@ export default function ResetPasswordTemplate({ fullname, url }: ResetPasswordTe
             <strong>Password Reset</strong>
           </Text>
           <Text style={text}>
-            Hello <strong>{fullname}</strong>
+            Hello <strong>{name}</strong>
           </Text>
           <Text style={text}>
             Someone recently requested a password change for your account. If this was
@@ -64,7 +64,7 @@ export default function ResetPasswordTemplate({ fullname, url }: ResetPasswordTe
 };
 
 ResetPasswordTemplate.PreviewProps = {
-  fullname: "Chris Tran",
+  name: "Chris Tran",
   url: "#"
 }
 

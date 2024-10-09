@@ -15,7 +15,7 @@ export const users = pgTable(
   "users",
   {
     id: varchar("id", { length: 21 }).primaryKey(),
-    fullname: varchar("fullname", { length: 255 }).notNull(),
+    name: varchar("name", { length: 255 }).notNull(),
     email: varchar("email", { length: 255 }).unique().notNull(),
     emailVerified: boolean("email_verified").default(false).notNull(),
     ipAddress: varchar("ip_address", { length: 255 }),
@@ -62,6 +62,8 @@ export const sessions = pgTable(
     userIdx: index("session_user_idx").on(t.userId),
   }),
 );
+
+export type Session = typeof sessions.$inferSelect;
 
 export const files = pgTable("files", {
   id: uuid("id").primaryKey(),

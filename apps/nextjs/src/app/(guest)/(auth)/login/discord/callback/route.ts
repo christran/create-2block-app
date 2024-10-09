@@ -1,14 +1,16 @@
 import { cookies } from "next/headers";
-import { generateId } from "lucia";
+import { nanoid } from "nanoid";
 import { OAuth2RequestError } from "arctic";
 import { eq } from "drizzle-orm";
-import { discord, lucia } from "@2block/auth";
+import { createSession, discord, generateSessionToken } from "@2block/auth";
 import { db } from "@2block/db/client";
 import { Paths } from "@2block/shared/shared-constants";
 import { users } from "@2block/db/schema";
 import { validateRequest } from "@/lib/auth/validate-request";
-import { createContact, newAccountTasks } from "@/lib/auth/actions";
+import { createContact } from "@2block/email/actions";
+import { newAccountTasks } from "@/lib/auth/actions";
 import { getClientIP } from "@/lib/utils";
+import { setSessionCookie } from "@/lib/auth/session";
 
 async function getDiscordUser(code: string): Promise<DiscordUser> {
   const tokens = await discord.validateAuthorizationCode(code);
@@ -36,12 +38,11 @@ async function handleLogin(discordUser: DiscordUser, existingUser: { id: string;
     return redirectWithError(Paths.Login, "Please log in with your existing account and link your Discord account in the security settings.");
   }
 
-  const session = await lucia.createSession(existingUser.id, {});
-  const sessionCookie = lucia.createSessionCookie(session.id);
+  const sessionToken = generateSessionToken();
+  const session = await createSession(sessionToken, existingUser.id);
+  setSessionCookie(sessionToken, session.expiresAt);
 
   await db.update(users).set({ ipAddress: getClientIP() }).where(eq(users.id, existingUser.id));
-
-  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 
   return new Response(null, { status: 302, headers: { Location: Paths.Dashboard } });
 }
@@ -59,21 +60,21 @@ async function createNewUser(discordUser: DiscordUser): Promise<Response> {
     return redirectWithError(Paths.Login, "Please log in with your existing account and link your Discord account in the security settings.");
   }
 
-  const userId = generateId(21);
+  const userId = nanoid();
   const avatar = discordUser.avatar
     ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.webp`
     : null;
 
   const newContact = await createContact(discordUser.email, {
     userId: userId,
-    fullname: discordUser.username
+    name: discordUser.username
   });
 
   await newAccountTasks(discordUser.username, discordUser.email, newContact.contactId);
 
   await db.insert(users).values({
     id: userId,
-    fullname: discordUser.username,
+    name: discordUser.username,
     email: discordUser.email,
     emailVerified: true,
     ipAddress: getClientIP(),
@@ -83,9 +84,9 @@ async function createNewUser(discordUser: DiscordUser): Promise<Response> {
     avatar,
   });
 
-  const session = await lucia.createSession(userId, {});
-  const sessionCookie = lucia.createSessionCookie(session.id);
-  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+  const sessionToken = generateSessionToken();
+  const session = await createSession(sessionToken, userId);
+  setSessionCookie(sessionToken, session.expiresAt);
 
   return new Response(null, { status: 302, headers: { Location: Paths.Dashboard } });
 }

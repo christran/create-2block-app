@@ -1,13 +1,16 @@
 import { cookies } from "next/headers";
-import { generateId } from "lucia";
+import { nanoid } from "nanoid";
 import { OAuth2RequestError } from "arctic";
 import { eq } from "drizzle-orm";
-import { github, lucia } from "@2block/auth";
+import { github } from "@2block/auth";
+import { generateSessionToken, createSession } from "@2block/auth";
+import { setSessionCookie } from "@/lib/auth/session"
 import { db } from "@2block/db/client";
 import { Paths } from "@2block/shared/shared-constants";
 import { users } from "@2block/db/schema";
 import { validateRequest } from "@/lib/auth/validate-request";
-import { createContact, newAccountTasks } from "@/lib/auth/actions";
+import { createContact } from "@2block/email/actions";
+import { newAccountTasks } from "@/lib/auth/actions";
 import { getClientIP } from "@/lib/utils";
 
 interface GitHubUserEmail {
@@ -48,12 +51,11 @@ async function handleLogin(githubUser: GitHubUser, existingUser: { id: string; g
     return redirectWithError(Paths.Login, "Please log in with your existing account and link your GitHub account in the security settings.");
   }
 
-  const session = await lucia.createSession(existingUser.id, {});
-  const sessionCookie = lucia.createSessionCookie(session.id);
+  const sessionToken = generateSessionToken();
+  const session = await createSession(sessionToken, existingUser.id);
+  setSessionCookie(sessionToken, session.expiresAt);
 
   await db.update(users).set({ ipAddress: getClientIP() }).where(eq(users.id, existingUser.id));
-
-  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 
   return new Response(null, { status: 302, headers: { Location: Paths.Dashboard } });
 }
@@ -72,17 +74,17 @@ async function createNewUser(githubUser: GitHubUser, githubUserEmail: GitHubUser
     return redirectWithError(Paths.Login, "Please log in with your existing account and link your Google account in the security settings.");
   }
 
-  const userId = generateId(21);
+  const userId = nanoid();
   const newContact = await createContact(githubUserEmail.email, {
     userId: userId,
-    fullname: githubUser.name
+    name: githubUser.name
   });
 
   await newAccountTasks(githubUser.name, githubUserEmail.email, newContact.contactId);
 
   await db.insert(users).values({
     id: userId,
-    fullname: githubUser.name,
+    name: githubUser.name,
     email: githubUserEmail.email,
     emailVerified: true,
     ipAddress: getClientIP(),
@@ -92,9 +94,9 @@ async function createNewUser(githubUser: GitHubUser, githubUserEmail: GitHubUser
     avatar: githubUser.avatar_url,
   });
 
-  const session = await lucia.createSession(userId, {});
-  const sessionCookie = lucia.createSessionCookie(session.id);
-  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+  const sessionToken = generateSessionToken();
+  const session = await createSession(sessionToken, userId);
+  setSessionCookie(sessionToken, session.expiresAt);
 
   return new Response(null, { status: 302, headers: { Location: Paths.Dashboard } });
 }

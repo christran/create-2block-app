@@ -21,7 +21,7 @@ import { Badge } from "@/components/ui/badge";
 type UserRole = User["role"];
 
 interface MobileSheetNavbarProps {
-  fullname: string,
+  name: string,
   email: string,
   avatar: string,
   userRole: UserRole;
@@ -30,7 +30,7 @@ interface MobileSheetNavbarProps {
 const inactiveLinkClass = "flex h-9 items-center justify-between rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all hover:text-primary"
 const activeLinkClass = "text-primary bg-zinc-600/10 dark:bg-zinc-800/70"
 
-export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileSheetNavbarProps) {
+export function MobileSheetNavbar({ name, email, avatar, userRole }: MobileSheetNavbarProps) {
   const path = usePathname();
 
   return (
@@ -153,7 +153,7 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
               </ul>
             </nav>
             <UserDropdownNavBar
-              fullname={fullname}
+              name={name}
               email={email} 
               avatar={avatar} 
               withSheetClose
@@ -221,7 +221,7 @@ export function MobileSheetNavbar({ fullname, email, avatar, userRole }: MobileS
               </ul>
             </nav>
             <UserDropdownNavBar
-              fullname={"Guest"} 
+              name={"Guest"} 
               email={"hello@2block.co"} 
               avatar={"/avatars/01.png"}
               withSheetClose

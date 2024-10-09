@@ -19,13 +19,13 @@ export function Signup() {
   const [state, formAction] = useFormState(signup, null);
   const [currentPassword, setCurrentPassword] = useState('');
   const [email, setEmail] = useState('');
-  const [fullName, setFullName] = useState('');
+  const [name, setName] = useState('');
 
   const router = useRouter();
 
   const isDirty = useMemo(() => {
-    return email.trim() !== '' && currentPassword.trim() !== '' && fullName.trim() !== '';
-  }, [email, currentPassword, fullName]);
+    return email.trim() !== '' && currentPassword.trim() !== '' && name.trim() !== '';
+  }, [email, currentPassword, name]);
 
   function handleSocial(provider: 'google' | 'discord' | 'github') {    
     return router.push(`/login/${provider}`);
@@ -41,20 +41,20 @@ export function Signup() {
         <CardContent>
           <form action={formAction} className="space-y-4">
           <div className="space-y-2">
-              <Label htmlFor="fullname">Full Name</Label>
+              <Label htmlFor="name">Full Name</Label>
               <Input
                 className="bg-secondary/30"
-                id="fullname"
+                id="name"
                 placeholder="Jeon Jungkook"
                 autoComplete="name"
-                name="fullname"
+                name="name"
                 type="text"
                 // required
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
-              {state?.fieldError?.fullname && (
-                <p className="text-xs text-destructive mt-1">{state.fieldError.fullname}</p>
+              {state?.fieldError?.name && (
+                <p className="text-xs text-destructive mt-1">{state.fieldError.name}</p>
               )}
             </div>
             <div className="space-y-2">
@@ -101,10 +101,10 @@ export function Signup() {
             <div className="flex flex-wrap items-center justify-between text-xs text-muted-foreground">
               <div>
                 Already have an account?{" "}
-                  <Link href={Paths.Login} className="text-blue-500">
-                    <Button variant="linkHover2" className="p-0 h-0 after:-bottom-2 after:h-[0.8px] text-[12px] font-medium">
+                  <Link href={Paths.Login} className="text-blue-500 hover:underline">
+                    {/* <Button variant="linkHover2" className="p-0 h-0 after:-bottom-2 after:h-[0.8px] text-[12px] font-medium"> */}
                       Log in
-                    </Button>
+                    {/* </Button> */}
                   </Link>
               </div>
             </div>

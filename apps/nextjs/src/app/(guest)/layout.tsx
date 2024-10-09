@@ -10,7 +10,7 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
   return (
     <div className="flex">
       <Sidebar
-        fullname={user?.fullname ?? "Guest"}
+        name={user?.name ?? "Guest"}
         email={user?.email ?? "hello@2block.co"}
         userRole={user?.role ?? "guest"}
         avatar={user ? user.avatar ?? "" : "/avatars/01.png"}
@@ -18,7 +18,7 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
 
       <div className="w-full">
         <Header
-          fullname={user?.fullname ?? "Guest"}
+          name={user?.name ?? "Guest"}
           email={user?.email ?? "hello@2block.co"}
           userRole={user?.role ?? "guest"}
           avatar={user?.avatar ?? "/avatars/01.png"}

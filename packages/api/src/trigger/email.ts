@@ -23,14 +23,14 @@ import { logger, task } from "@trigger.dev/sdk/v3";
 export const welcomeEmailTask = task({
   id: "welcome-email",
   run: async (payload: {
-    fullname: string,
+    name: string,
     email: string;
     contactId: string
   }, { ctx }) => {
     logger.log( `📨 Sending Welcome Email to: ${payload.email}`);
 
     await sendEmail(payload.email, EmailTemplate.Welcome, { 
-      fullname: payload.fullname,
+      name: payload.name,
       url: `${process.env.NEXT_PUBLIC_APP_URL}${Paths.Dashboard}`, 
       unsubscribe: `${Paths.Unsubscribe}/${payload.contactId}` 
     });
@@ -46,14 +46,14 @@ export const accountDeletedTask = task({
     maxAttempts: 1,
   },
   run: async (payload: {
-    fullname: string,
+    name: string,
     email: string;
     contactId: string
   }, { ctx }) => {
     logger.log( `📨 Sending Account Deleted Email to: ${payload.email}`);
   
     await sendEmail(payload.email, EmailTemplate.AccountDeleted, { 
-      fullname: payload.fullname,
+      name: payload.name,
       url: `${process.env.NEXT_PUBLIC_APP_URL}${Paths.Dashboard}`, 
       unsubscribe: `${Paths.Unsubscribe}/${payload.contactId}` 
     });

@@ -1,5 +1,9 @@
 {
-  "extends": "@2block/tsconfig/base.json",
+  "extends": "@2block/tsconfig/internal-package.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": "."
+  },
   "include": ["src", "*.ts"],
   "exclude": ["node_modules"]
 }

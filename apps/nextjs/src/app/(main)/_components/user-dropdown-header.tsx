@@ -18,11 +18,11 @@ import { Paths } from "@2block/shared/shared-constants";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export const UserDropdownHeader = ({
-  fullname,
+  name,
   email,
   avatar,
 }: {
-  fullname: string;
+  name: string;
   email: string;
   avatar?: string | undefined;
   className?: string;
@@ -47,13 +47,13 @@ export const UserDropdownHeader = ({
             <Tooltip>
               <TooltipTrigger>
                 <Avatar className="relative">
-                  <AvatarImage src={avatar} alt={fullname} className="object-cover" />
-                  <AvatarFallback delayMs={100}>{fullname.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}</AvatarFallback>
+                  <AvatarImage src={avatar} alt={name} className="object-cover" />
+                  <AvatarFallback delayMs={100}>{name.split(' ').map(name => name.charAt(0).toUpperCase()).join('')}</AvatarFallback>
                 </Avatar>
                 <span className="sr-only">Toggle user menu</span>
               </TooltipTrigger>
               <TooltipContent className="font-medium text-sm">
-                {fullname}
+                {name}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -61,7 +61,7 @@ export const UserDropdownHeader = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>
-          <span className="text-bold">{fullname}</span><br />
+          <span className="text-bold">{name}</span><br />
           <span className="text-xs text-muted-foreground">{email}</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

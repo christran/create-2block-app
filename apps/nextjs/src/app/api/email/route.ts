@@ -17,7 +17,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     switch (data.template) {
       case "welcome":
         await sendEmail(data.email, EmailTemplate.Welcome, { 
-          fullname: data.fullname,
+          name: data.name,
           url: absoluteUrl(Paths.Dashboard),
           unsubscribe: `${Paths.Unsubscribe}/${data.contactId}`
         });

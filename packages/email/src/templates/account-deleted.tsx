@@ -3,8 +3,8 @@ import { Body, Container, Head, Html, Preview, Section, Text, Link } from "@reac
 import { APP_TITLE, EMAIL_FOOTER, Paths } from "@2block/shared/shared-constants";
 import { absoluteUrl } from "@2block/shared/utils";;
 
-export default function AccountDeletedTemplate(props: { fullname: string, url: string, unsubscribe: string }) {
-  const { fullname, url, unsubscribe } = props;
+export default function AccountDeletedTemplate(props: { name: string, url: string, unsubscribe: string }) {
+  const { name, url, unsubscribe } = props;
 
   return (
     <Html>
@@ -23,10 +23,10 @@ export default function AccountDeletedTemplate(props: { fullname: string, url: s
               {APP_TITLE}
             </Text>
             <Text style={heading}>
-              Noooooo {fullname}!
+              Noooooo {name}!
             </Text>
             <Text style={text}>
-              Hi <strong>{fullname}</strong>
+              Hi <strong>{name}</strong>
             </Text>
             <Text style={text}>
               Your account has been successfully deleted. If you change your mind you can always sign up again <Link href={absoluteUrl(Paths.Home)}>here</Link>
@@ -47,7 +47,7 @@ export default function AccountDeletedTemplate(props: { fullname: string, url: s
 }
 
 AccountDeletedTemplate.PreviewProps = {
-  fullname: "Chris Tran",
+  name: "Chris Tran",
   url: "#",
   unsubscribe: "#"
 };

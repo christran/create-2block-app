@@ -7,7 +7,7 @@
  * need to use are documented accordingly near the end.
  */
 
-import { lucia } from "@2block/auth";
+import { validateSessionToken } from "@2block/auth";
 import { stripe } from "./lib/stripe";
 import { db } from "@2block/db/client";
 import { initTRPC, TRPCError } from "@trpc/server";
@@ -38,7 +38,7 @@ const extractSessionId = (cookieString: string | null, sessionCookieName: string
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const cookieString = opts.headers.get("cookie");
-  const sessionId = extractSessionId(cookieString, lucia.sessionCookieName);
+  const sessionId = extractSessionId(cookieString, "session");
 
   // console.log("cookie", opts.headers.get("cookie"));
 
@@ -52,7 +52,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
     };
   }
 
-  const { session, user } = await lucia.validateSession(sessionId);; // trpc needs this. cookies().get(lucia.sessionCookieName)?.value ????
+  const { session, user } = await validateSessionToken(sessionId);
   return {
     session,
     user,

@@ -36,7 +36,8 @@ const config = {
     },
 
     experimental: {
-        swrDelta: 31536000
+        swrDelta: 31536000,
+        serverComponentsExternalPackages: ["@node-rs/argon2"],
     },
     
     async headers() {
