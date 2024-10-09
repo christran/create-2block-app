@@ -13,11 +13,11 @@ import {
 import { APP_TITLE, EMAIL_FOOTER } from "@2block/shared/shared-constants";
 
 export interface MagicLinkTemplateProps {
-  fullname: string;
+  name: string;
   url: string;
 }
 
-export default function MagicLinkTemplate({ fullname, url }: MagicLinkTemplateProps) {
+export default function MagicLinkTemplate({ name, url }: MagicLinkTemplateProps) {
   return (
     <Html>
     <Head />
@@ -37,7 +37,7 @@ export default function MagicLinkTemplate({ fullname, url }: MagicLinkTemplatePr
             <strong>Login with this Magic Link</strong>
           </Text>
           <Text style={text}>
-            Hello <strong>{fullname}</strong>
+            Hello <strong>{name}</strong>
           </Text>
           <Text style={text}>
             Use the button or link below to login to your account
@@ -69,7 +69,7 @@ export default function MagicLinkTemplate({ fullname, url }: MagicLinkTemplatePr
 };
 
 MagicLinkTemplate.PreviewProps = {
-  fullname: "Chris Tran",
+  name: "Chris Tran",
   url: "#",
 }
 

@@ -1,47 +1,9 @@
-import { Lucia, TimeSpan } from "lucia";
 import { Google, Discord, GitHub } from "arctic";
-import { DrizzlePostgreSQLAdapter } from "@lucia-auth/adapter-drizzle";
 import { env } from "../env";
-import { db } from "@2block/db/client";
-import { sessions, users } from "@2block/db/schema";
 import type {User as DbUser} from "@2block/db/schema";
 import { absoluteUrl } from "@2block/shared/utils";
 
-// Uncomment the following lines if you are using nodejs 18 or lower. Not required in Node.js 20, CloudFlare Workers, Deno, Bun, and Vercel Edge Functions.
-// import { webcrypto } from "node:crypto";
-// globalThis.crypto = webcrypto as Crypto;
-
-const adapter = new DrizzlePostgreSQLAdapter(db, sessions, users);
-
-export const lucia = new Lucia(adapter, {
-  getSessionAttributes: (/* attributes */) => {
-    return {};
-  },
-  getUserAttributes: (attributes) => {
-    return {
-      id: attributes.id,
-      fullname: attributes.fullname,
-      email: attributes.email,
-      emailVerified: attributes.emailVerified,
-      role: attributes.role,
-      contactId: attributes.contactId,
-      googleId: attributes.googleId,
-      githubId: attributes.githubId,
-      discordId: attributes.discordId,
-      avatar: attributes.avatar,
-      createdAt: attributes.createdAt,
-      updatedAt: attributes.updatedAt,
-    };
-  },
-  sessionExpiresIn: new TimeSpan(30, "d"),
-  sessionCookie: {
-    name: "session",
-    expires: false, // session cookies have very long lifespan (2 years)
-    attributes: {
-      secure: env.NODE_ENV === "production",
-    },
-  },
-});
+export * from "./auth";
 
 export const google = new Google(
   env.GOOGLE_CLIENT_ID,
@@ -65,13 +27,4 @@ export const github = new GitHub(
   }
 );
 
-declare module "lucia" {
-  interface Register {
-    Lucia: typeof lucia;
-    DatabaseSessionAttributes: DatabaseSessionAttributes;
-    DatabaseUserAttributes: DatabaseUserAttributes;
-  }
-}
-
-type DatabaseSessionAttributes = object
 export type DatabaseUserAttributes = Omit<DbUser, "hashedPassword">

@@ -2,7 +2,7 @@ import type { TRPCRouterRecord } from "@trpc/server";
 import { protectedProcedure } from "../../trpc";
 import { z } from "zod";
 import { posts } from "@2block/db/schema";
-import { generateId } from "lucia";
+import { nanoid } from "nanoid";
 import { count, eq } from "drizzle-orm";
 import { createPostSchema, deletePostSchema, getPostSchema, listPostsSchema, myPostsSchema, updatePostSchema } from "./post.input";
 
@@ -38,7 +38,7 @@ export const postRouter = {
   create: protectedProcedure
     .input(createPostSchema)
     .mutation(async ({ ctx, input }) => {
-      const id = generateId(15);
+      const id = nanoid();
 
       await ctx.db.insert(posts).values({
         id,

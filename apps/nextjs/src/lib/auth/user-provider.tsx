@@ -6,7 +6,7 @@ import { type User } from "@2block/db/schema";
 
 // type User = {
 //   id: string;
-//   fullname: string;
+//   name: string;
 //   email: string;
 //   emailVerified: boolean;
 //   role: string;

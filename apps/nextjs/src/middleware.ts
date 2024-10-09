@@ -1,10 +1,10 @@
 // middleware.ts
-import { verifyRequestOrigin } from "lucia";
 import { type NextRequest, NextResponse } from "next/server";
 import { env } from "./env";
 import { rateLimitConfig, type RateLimitKey } from "@/lib/rate-limit-config";
 import { Paths } from "@2block/shared/shared-constants";
 import { getClientIP } from "./lib/utils";
+import { verifyRequestOrigin } from "oslo/request";
 
 // Workaround because nextjs middleware doesn't support redis/crypto yet
 
@@ -63,22 +63,50 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   }
 
   if (req.method === "GET") {
-    return NextResponse.next();
-  }
+    const response = NextResponse.next();
+    const token = req.cookies.get("session")?.value ?? null;
+    if (token !== null) {
+			// Only extend cookie expiration on GET requests since we can be sure
+			// a new session wasn't set when handling the request.
+			response.cookies.set("session", token, {
+        httpOnly: true,
+				path: "/",
+				maxAge: 60 * 60 * 24 * 30,
+        secure: process.env.NODE_ENV === "production",
+				sameSite: "lax"
+			});
+		}
+		return response;
+	}
 
-  const originHeader = req.headers.get("Origin");
-  const hostHeader = req.headers.get("Host");
-  if (
-    !originHeader ||
-    !hostHeader ||
-    !verifyRequestOrigin(originHeader, [hostHeader])
-  ) {
-    return new NextResponse(null, {
-      status: 403,
-    });
-  }
+  // CSRF Protection
+	const originHeader = req.headers.get("Origin");
+	// NOTE: You may need to use `X-Forwarded-Host` instead
+	const hostHeader = req.headers.get("Host");
 
-  return NextResponse.next();
+	if (originHeader === null || hostHeader === null) {
+		return new NextResponse(null, {
+			status: 403
+		});
+	}
+
+	let origin: URL;
+
+	try {
+		origin = new URL(originHeader);
+	} catch {
+		return new NextResponse(null, {
+			status: 403
+		});
+	}
+
+	if (origin.host !== hostHeader) {
+		return new NextResponse(null, {
+			status: 403
+		});
+	}
+
+	return NextResponse.next();
 }
 
 // Updated config without spread operator

@@ -119,16 +119,16 @@ export function Login() {
           <div className="mb-2 flex flex-wrap items-center justify-between text-xs text-muted-foreground">
             <div>
               Don't have an account?{" "}
-              <Link href={Paths.Signup} className="text-blue-500">
-                <Button variant="linkHover2" className="p-0 h-0 after:-bottom-2 after:h-[0.8px] text-[12px] font-medium">
+              <Link href={Paths.Signup} className="text-blue-500 hover:underline">
+                {/* <Button variant="linkHover2" className="p-0 h-0 after:-bottom-2 after:h-[0.8px] text-[12px] font-medium"> */}
                   Sign up
-                </Button>
+                {/* </Button> */}
               </Link>
-            </div>
-              <Link href={Paths.ResetPassword} className="text-blue-500">
-                <Button variant="linkHover2" className="p-0 h-0 after:-bottom-2 after:h-[0.8px] text-[12px] font-medium">
+              </div>
+              <Link href={Paths.ResetPassword} className="text-blue-500 hover:underline">
+                {/* <Button variant="linkHover2" className="p-0 h-0 after:-bottom-2 after:h-[0.8px] text-[12px] font-medium"> */}
                   Forgot password?
-                </Button>
+                {/* </Button> */}
               </Link>
           </div>
 

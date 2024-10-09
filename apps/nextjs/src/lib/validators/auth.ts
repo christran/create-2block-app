@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const signupSchema = z.object({
-  fullname: z.string().min(1, "Please provide your full name.").max(255).regex(/^[a-zA-Z\s]+$/, "Only letters and spaces are allowed."),
+  name: z.string().min(1, "Please provide your full name.").max(255).regex(/^[a-zA-Z\s]+$/, "Only letters and spaces are allowed."),
   email: z.string().email("Please enter a valid email address"),
   password: z
     .string()
@@ -25,7 +25,7 @@ export const magigcLinkLoginSchema = z.object({
 export type MagicLinkInput = z.infer<typeof magigcLinkLoginSchema>;
 
 export const updateAccountSchema = z.object({
-  fullname: z.string().min(1, "Please provide your full name.").max(255).regex(/^[a-zA-Z\s]+$/, "Only letters and spaces are allowed."),
+  name: z.string().min(1, "Please provide your full name.").max(255).regex(/^[a-zA-Z\s]+$/, "Only letters and spaces are allowed."),
   // email: z.string().email("Please enter a valid email address"),
 });
 export type updateAccountInput = z.infer<typeof updateAccountSchema>;

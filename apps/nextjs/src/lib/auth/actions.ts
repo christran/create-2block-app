@@ -8,7 +8,6 @@ import { redirect } from "next/navigation";
 import { isWithinExpirationDate, TimeSpan, createDate } from "oslo";
 import { generateRandomString, alphabet } from "oslo/crypto";
 import { eq } from "drizzle-orm";
-import { lucia } from "@2block/auth";
 import { db } from "@2block/db/client";
 import {
   loginSchema,
@@ -28,17 +27,20 @@ import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@2block/shared/shared-constants";
 import { env } from "@/env";
 
-import { generateId, Scrypt } from "lucia";
-// import { Argon2id } from "oslo/password";
+import { nanoid } from "nanoid";
+import { hash, verify } from "@node-rs/argon2";
 
 import { sendEmail, EmailTemplate } from "@2block/email/email-service";
 
 import { logger } from "../logger";
-import { configure, tasks } from "@trigger.dev/sdk/v3";
+import { tasks } from "@trigger.dev/sdk/v3";
+import { createContact } from "@2block/email/actions";
 import type { welcomeEmailTask } from "@2block/api/trigger";
 import { api } from "@/trpc/server";
 import { newUserNotification } from "@2block/shared/ntfy";
 import { getClientIP } from "../utils";
+import { createSession, generateSessionToken, invalidateAllUserSessions, invalidateSession } from "@2block/auth";
+import { deleteSessionCookie, setSessionCookie } from "./session";
 
 export interface ActionResponse<T> {
   fieldError?: Partial<Record<keyof T, string | undefined>>;
@@ -79,7 +81,7 @@ export const login = async (_: any, formData: FormData): Promise<ActionResponse<
   }
 
   // Rate limit this
-	const validPassword = await new Scrypt().verify(existingUser?.hashedPassword, password);
+  const validPassword = await verifyPassword(existingUser.hashedPassword, password);
 
   if (!validPassword) {
     return {
@@ -87,12 +89,12 @@ export const login = async (_: any, formData: FormData): Promise<ActionResponse<
     };
   }
 
-  const session = await lucia.createSession(existingUser.id, {});
-  const sessionCookie = lucia.createSessionCookie(session.id);
+  const sessionToken = generateSessionToken();
+  const session = await createSession(sessionToken, existingUser.id);
+  setSessionCookie(sessionToken, session.expiresAt);
 
   await db.update(users).set({ ipAddress: getClientIP() }).where(eq(users.id, existingUser.id));
 
-  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
   return redirect(Paths.Dashboard);
 }
 
@@ -104,14 +106,14 @@ export const signup = async (_: any, formData: FormData): Promise<ActionResponse
     const err = parsed.error.flatten();
     return {
       fieldError: {
-        fullname: err.fieldErrors.fullname?.[0],
+        name: err.fieldErrors.name?.[0],
         email: err.fieldErrors.email?.[0],
         password: err.fieldErrors.password?.[0],
       },
     };
   }
 
-  const { fullname, email, password } = parsed.data;
+  const { name, email, password } = parsed.data;
 
   const existingUser = await db.query.users.findFirst({
     where: (table, { eq }) => eq(table.email, email),
@@ -124,23 +126,23 @@ export const signup = async (_: any, formData: FormData): Promise<ActionResponse
     };
   }
 
-  const userId = generateId(21);
-  const hashedPassword = await new Scrypt().hash(password);
+  const userId = nanoid();
+  const hashedPassword = await hashPassword(password);
 
   const newContact = await createContact(email, {
     userId: userId,
-    fullname: fullname
+    name: name
   });
   
   const verificationCode = await generateEmailVerificationCode(userId, email);
 
-  await sendEmail(email, EmailTemplate.EmailVerification, { fullname, code: verificationCode });
+  await sendEmail(email, EmailTemplate.EmailVerification, { name, code: verificationCode });
 
-  await newAccountTasks(fullname, email, newContact.contactId);
+  await newAccountTasks(name, email, newContact.contactId);
 
   await db.insert(users).values({
     id: userId,
-    fullname,
+    name,
     email,
     ipAddress: getClientIP(),
     hashedPassword,
@@ -148,9 +150,9 @@ export const signup = async (_: any, formData: FormData): Promise<ActionResponse
     contactId: newContact.contactId ?? null
   });
 
-  const session = await lucia.createSession(userId, {});
-  const sessionCookie = lucia.createSessionCookie(session.id);
-  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+  const sessionToken = generateSessionToken();
+  const session = await createSession(sessionToken, userId);
+  setSessionCookie(sessionToken, session.expiresAt);
 
   // Redirect to /verify-email or to dashboard
   return redirect(Paths.Dashboard);
@@ -168,9 +170,8 @@ export const logout = async (): Promise<{ error: string } | void> => {
   cookies().set("lastKnownUserId", user.id);
   cookies().set("lastKnownEmail", user.email);
 
-  await lucia.invalidateSession(session.id);
-  const sessionCookie = lucia.createBlankSessionCookie();
-  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+  await invalidateSession(session.id);
+  deleteSessionCookie();
 
   return redirect(Paths.Login);
 }
@@ -190,56 +191,17 @@ export const deleteAccount = async (): Promise<{ error: string } | void> => {
     };
   }
 
-  await lucia.invalidateSession(session.id);
-  const sessionCookie = lucia.createBlankSessionCookie();
-  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+  await invalidateSession(session.id);
+  deleteSessionCookie();
 
   return redirect(Paths.Login);
 }
 
-// https://docs.useplunk.com/api-reference/contacts/create
-// https://docs.useplunk.com/api-reference/contacts/subscribe
-export const createContact = async (email: string, metadata?: Record<string, unknown>): Promise<{ contactId: string }> => {
-  const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.PLUNK_API_KEY}`
-  }
-
-  try {
-    const options = {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        event: "new-account",
-        email,
-        subscribed: true,
-        data: metadata
-      })
-    };
-
-    const response = await fetch("https://resend.2block.co/api/v1/track", options);
-    const data = await response.json();
-
-    if (!data.success) {
-      throw new Error(data.error ?? data.message ?? "Failed to create contact");
-    }
-
-    logger.info(`📨 Contact successfully created for: ${email}`, {
-      contactId: data.contact,
-    });
-
-    return { contactId: data.contact };
-  } catch (error) {
-    logger.error(`Failed to create contact for ${email}: `, error instanceof Error ? error.message : String(error));
-    throw error;
-  }
-}
-
-export const newAccountTasks = async (fullname:string, email: string, contactId: string) => {
-  await newUserNotification(fullname, email);
+export const newAccountTasks = async (name:string, email: string, contactId: string) => {
+  await newUserNotification(name, email);
 
   const handle = await tasks.trigger<typeof welcomeEmailTask>("welcome-email", {
-    fullname,
+    name,
     email,
     contactId
   }, 
@@ -270,7 +232,7 @@ export const resendVerificationEmail = async (): Promise<{ error?: string; succe
 
   try {
     const verificationCode = await generateEmailVerificationCode(user.id, user.email);
-    await sendEmail(user.email, EmailTemplate.EmailVerification, { fullname: user.fullname, code: verificationCode });
+    await sendEmail(user.email, EmailTemplate.EmailVerification, { name: user.name, code: verificationCode });
     return { success: true };
   } catch (error) {
     // Delete the code from the database if there's an error sending the email
@@ -310,11 +272,12 @@ export const verifyEmail = async (_: any, formData: FormData): Promise<{ error: 
 
   if (dbCode.email !== user.email) return { error: "Email does not match." };
 
-  await lucia.invalidateUserSessions(user.id);
+  await invalidateAllUserSessions(user.id);
+  const sessionToken = generateSessionToken();
+  const session = await createSession(sessionToken, user.id);
+  setSessionCookie(sessionToken, session.expiresAt);
+
   await db.update(users).set({ emailVerified: true }).where(eq(users.id, user.id));
-  const session = await lucia.createSession(user.id, {});
-  const sessionCookie = lucia.createSessionCookie(session.id);
-  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 
   redirect(Paths.Dashboard);
 }
@@ -358,7 +321,7 @@ export const sendPasswordResetLink = async (
 
       const verificationLink = `${env.NEXT_PUBLIC_APP_URL}/reset-password/${verificationToken}`;
 
-      await sendEmail(user.email, EmailTemplate.PasswordReset, { fullname: user.fullname, url: verificationLink });
+      await sendEmail(user.email, EmailTemplate.PasswordReset, { name: user.name, url: verificationLink });
 
       return { success: true };
     } catch (error) {
@@ -402,7 +365,7 @@ export const setupNewPasswordLink = async (): Promise<{ success?: boolean; error
 
     const verificationLink = `${env.NEXT_PUBLIC_APP_URL}/reset-password/${verificationToken}`;
 
-    await sendEmail(user.email, EmailTemplate.PasswordReset, { fullname: user.fullname, url: verificationLink });
+    await sendEmail(user.email, EmailTemplate.PasswordReset, { name: user.name, url: verificationLink });
 
     return { success: true };
   } catch (error) {
@@ -440,14 +403,15 @@ export const resetPassword = async (_: any, formData: FormData): Promise<{ succe
 
   if (!isWithinExpirationDate(dbToken.expiresAt)) return { error: "Password reset link expired." };
 
-  await lucia.invalidateUserSessions(dbToken.userId);
-  const hashedPassword = await new Scrypt().hash(password);
+  await invalidateAllUserSessions(dbToken.userId);
+  const hashedPassword = await hashPassword(password);
+  const sessionToken = generateSessionToken();
+  const session = await createSession(sessionToken, dbToken.userId);
+  setSessionCookie(sessionToken, session.expiresAt);
+
   await db.update(users).set({ 
     hashedPassword,
   }).where(eq(users.id, dbToken.userId));
-  const session = await lucia.createSession(dbToken.userId, {});
-  const sessionCookie = lucia.createSessionCookie(session.id);
-  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
   
   redirect(Paths.Dashboard);
 }
@@ -466,14 +430,14 @@ export const updateAccount = async (_: any, formData: FormData): Promise<ActionR
     const err = parsed.error.flatten();
     return {
       fieldError: {
-        fullname: err.fieldErrors.fullname?.[0],
+        name: err.fieldErrors.name?.[0],
         // email: err.fieldErrors.email?.[0],
       },
     };
   }
 
-  // const { fullname, email } = parsed.data;
-  const { fullname } = parsed.data;
+  // const { name, email } = parsed.data;
+  const { name } = parsed.data;
 
   // const existingUser = await db.query.users.findFirst({
   //   where: (table, { eq }) => eq(table.email, email),
@@ -496,7 +460,7 @@ export const updateAccount = async (_: any, formData: FormData): Promise<ActionR
   // Force reverify after updating email
   try {
     await db.update(users).set({ 
-      fullname,
+      name,
       // email: newEmail,
       // emailVerified: userData?.hashedPassword && email !== user.email ? false : userData?.emailVerified
     }).where(eq(users.id, user.id));
@@ -541,34 +505,28 @@ export const updatePassword = async (_: any, formData: FormData): Promise<Action
     where: (table, { eq }) => eq(table.id, user.id),
   });
 
-  if (userData?.hashedPassword === null) {
+  if (!userData || !userData?.hashedPassword) {
     return {
       formError: "Internal server error",
     };
   }
 
-	// eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-	const validPassword = await new Scrypt().verify(userData?.hashedPassword!, current_password);
+  const validPassword = await verifyPassword(userData.hashedPassword, current_password);
 
   if (!validPassword) {
     return {
-      // fieldError: {
-      //   current_password: "The current password you entered is invalid",
-      // },
       error: "The current password you entered is invalid",
     };
   }
 
   // Force reverify after updating email
   try {
-    const newHashedPassword = await new Scrypt().hash(new_password);
+    const newHashedPassword = await hashPassword(new_password);
 
     await db.update(users).set({ 
       hashedPassword: newHashedPassword
     }).where(eq(users.id, user.id));
 
-    // revalidatePath(Paths.Security);
-    // redirect(Paths.Security);
     return { success: true };
   } catch (error) {
     console.error("Error updating user:", error);
@@ -643,7 +601,7 @@ export const resendMagicLink = async (
     const magicLinkToken = await generateMagicLinkToken(user.id);
     const magicLink = `${env.NEXT_PUBLIC_APP_URL}${Paths.MagicLink}/${magicLinkToken}`;
 
-    await sendEmail(user.email, EmailTemplate.MagicLink, { fullname: user.fullname, url: magicLink });
+    await sendEmail(user.email, EmailTemplate.MagicLink, { name: user.name, url: magicLink });
 
     return { success: true };
   }
@@ -692,29 +650,29 @@ export const sendMagicLink = async (
     const magicLinkToken = await generateMagicLinkToken(user.id);
     const magicLink = `${env.NEXT_PUBLIC_APP_URL}${Paths.MagicLink}/${magicLinkToken}`;
 
-    await sendEmail(user.email, EmailTemplate.MagicLink, { fullname: user.fullname, url: magicLink });
+    await sendEmail(user.email, EmailTemplate.MagicLink, { name: user.name, url: magicLink });
 
     return redirect(`${Paths.MagicLink}?email=${encodeURIComponent(user.email)}`);
   } else {
     // Register new user
     
-    const userId = generateId(21);
+    const userId = nanoid();
 
     const newContact = await createContact(email, {
       userId: userId,
-      fullname: email // todo: if user updates their name later on in the settings then update contact info
+      name: email // todo: if user updates their name later on in the settings then update contact info
     });
 
     const magicLinkToken = await generateMagicLinkToken(userId);
     const magicLink = `${env.NEXT_PUBLIC_APP_URL}${Paths.MagicLink}/${magicLinkToken}`;
 
-    await sendEmail(email, EmailTemplate.MagicLink, { fullname: email, url: magicLink });
+    await sendEmail(email, EmailTemplate.MagicLink, { name: email, url: magicLink });
 
     await newAccountTasks(email, email, newContact.contactId);
   
     await db.insert(users).values({
       id: userId,
-      fullname: email,
+      name: email,
       email: email,
       emailVerified: true,
       ipAddress: getClientIP(),
@@ -764,23 +722,20 @@ export const validateMagicLinkToken = async (token: string) => {
     cookies().set("auth_error", "Magic link link expired", { maxAge: 5, path: "/" });
     return redirect(Paths.Login);
   }
-
-  // await lucia.invalidateUserSessions(dbToken.userId);
   
-  const session = await lucia.createSession(dbToken.userId, {});
-  const sessionCookie = lucia.createSessionCookie(session.id);
+  const sessionToken = generateSessionToken();
+  const session = await createSession(sessionToken, dbToken.userId);
+  setSessionCookie(sessionToken, session.expiresAt);
 
   await db.update(users).set({ ipAddress: getClientIP() }).where(eq(users.id, dbToken.userId));
   // await db.update(users).set({ emailVerified: true }).where(eq(users.id, dbToken.userId));
-
-  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 
   redirect(Paths.Dashboard);
 }
 
 const generatePasswordResetToken = async (userId: string): Promise<string> => {
   await db.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, userId));
-  const tokenId = generateId(40);
+  const tokenId = nanoid(48);
   await db.insert(passwordResetTokens).values({
     id: tokenId,
     userId,
@@ -788,3 +743,19 @@ const generatePasswordResetToken = async (userId: string): Promise<string> => {
   });
   return tokenId;
 }
+
+// Update the hashPassword function
+const hashPassword = async (password: string): Promise<string> => {
+  // Argon2id with minimum recommended settings
+  return hash(password, {
+    algorithm: 2, // Argon2id
+    memoryCost: 19456, // 19 MiB
+    timeCost: 2,
+    parallelism: 1,
+  });
+};
+
+// Update the verifyPassword function
+const verifyPassword = async (storedHash: string, password: string): Promise<boolean> => {
+  return verify(storedHash, password);
+};

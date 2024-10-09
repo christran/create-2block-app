@@ -1,14 +1,16 @@
 import { cookies } from "next/headers";
-import { generateId } from "lucia";
+import { nanoid } from "nanoid";
 import { OAuth2RequestError } from "arctic";
 import { eq } from "drizzle-orm";
-import { google, lucia } from "@2block/auth";
+import { createSession, generateSessionToken, google } from "@2block/auth";
 import { db } from "@2block/db/client";
 import { Paths } from "@2block/shared/shared-constants";
 import { users } from "@2block/db/schema";
 import { validateRequest } from "@/lib/auth/validate-request";
-import { createContact, newAccountTasks } from "@/lib/auth/actions";
+import { createContact } from "@2block/email/actions";
+import { newAccountTasks } from "@/lib/auth/actions";
 import { getClientIP } from "@/lib/utils";
+import { setSessionCookie } from "@/lib/auth/session";
 
 // ... existing GoogleUser interface ...
 
@@ -38,12 +40,11 @@ async function handleLogin(googleUser: GoogleUser, existingUser: { id: string; g
     return redirectWithError(Paths.Login, "Please log in with your existing account and link your Google account in the security settings.");
   }
 
-  const session = await lucia.createSession(existingUser.id, {});
-  const sessionCookie = lucia.createSessionCookie(session.id);
+  const sessionToken = generateSessionToken();
+  const session = await createSession(sessionToken, existingUser.id);
+  setSessionCookie(sessionToken, session.expiresAt);
 
   await db.update(users).set({ ipAddress: getClientIP() }).where(eq(users.id, existingUser.id));
-
-  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 
   return new Response(null, { status: 302, headers: { Location: Paths.Dashboard } });
 }
@@ -61,17 +62,17 @@ async function createNewUser(googleUser: GoogleUser): Promise<Response> {
     return redirectWithError(Paths.Login, "Please log in with your existing account and link your Google account in the security settings.");
   }
 
-  const userId = generateId(21);
+  const userId = nanoid();
   const newContact = await createContact(googleUser.email, {
     userId: userId,
-    fullname: googleUser.name
+    name: googleUser.name
   });
 
   await newAccountTasks(googleUser.name, googleUser.email, newContact.contactId);
 
   await db.insert(users).values({
     id: userId,
-    fullname: googleUser.name,
+    name: googleUser.name,
     email: googleUser.email,
     emailVerified: true,
     ipAddress: getClientIP(),
@@ -81,9 +82,9 @@ async function createNewUser(googleUser: GoogleUser): Promise<Response> {
     avatar: googleUser.picture,
   });
 
-  const session = await lucia.createSession(userId, {});
-  const sessionCookie = lucia.createSessionCookie(session.id);
-  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+  const sessionToken = generateSessionToken();
+  const session = await createSession(sessionToken, userId);
+  setSessionCookie(sessionToken, session.expiresAt);
 
   return new Response(null, { status: 302, headers: { Location: Paths.Dashboard } });
 }

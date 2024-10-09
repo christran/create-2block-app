@@ -12,13 +12,13 @@ import { Paths } from "@2block/shared/shared-constants";
 type UserRole = User["role"];
 
 interface HeaderProps {
-  fullname: string,
+  name: string,
   email: string,
   userRole: UserRole;
   avatar: string,
 }
 
-export const Header = ({ fullname, email, avatar, userRole }: HeaderProps) => {
+export const Header = ({ name, email, avatar, userRole }: HeaderProps) => {
   const SearchForm = () => {
     const [isFocused, setIsFocused] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -66,7 +66,7 @@ export const Header = ({ fullname, email, avatar, userRole }: HeaderProps) => {
   return (
     <header className="flex h-[60px] items-center justify-between border-b px-2 md:px-4 bg-background/85 backdrop-blur-sm sticky top-0 z-30">
       <MobileSheetNavbar 
-        fullname={fullname ?? "Guest"} 
+        name={name ?? "Guest"} 
         email={email ?? "hello@2block.co"} 
         avatar={avatar ?? "/avatars/01.png"} 
         userRole={userRole ?? "guest"} 
