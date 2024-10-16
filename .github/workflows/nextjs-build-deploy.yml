@@ -64,7 +64,7 @@ jobs:
         with:
           path: |
             ${{ github.workspace }}/apps/nextjs/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('apps/nextjs/**/*.js', 'apps/nextjs/**/*.jsx', 'apps/nextjs/**/*.ts', 'apps/nextjs/**/*.tsx') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-
 

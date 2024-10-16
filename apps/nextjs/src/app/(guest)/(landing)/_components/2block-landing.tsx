@@ -35,7 +35,7 @@ export function TwoBlockLanding() {
       BLOCK
     </h1>
     <p className="py-4 text-sm md:text-xl text-center text-muted-foreground">
-      The quick brown fox jumped over the lazy dog.
+      The quick brown fox jumped over the lazy dog!
     </p>
     <div className="flex justify-center gap-4">
 
