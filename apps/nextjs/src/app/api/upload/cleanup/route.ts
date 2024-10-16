@@ -16,6 +16,8 @@ export async function GET(request: Request) {
   const { user } = await validateRequest();
   const cleanupResults = [];
 
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+
   if (user?.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }

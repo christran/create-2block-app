@@ -137,9 +137,9 @@ export function UserDropdownNavBar({ name, email, avatar, withSheetClose, isClos
       {name !== "Guest" ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <div className={`cursor-pointer flex h-9 items-center rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all duration-100 hover:text-primary ${isClosed ? "justify-center" : "justify-between"}`}>
+            <div className={`cursor-pointer flex h-9 items-center rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 hover:text-primary ${isClosed ? "justify-center" : "justify-between"}`}>
               <div className={`flex items-center ${isClosed ? "justify-center w-full" : ""}`}>
-                <Avatar className={`relative transition-all duration-0 ease-in-out ${isClosed ? "h-8 w-8" : "h-7 w-7"} drop-shadow-md`}>
+                <Avatar className={`relative ${isClosed ? "h-8 w-8" : "h-7 w-7"} drop-shadow-md`}>
                   <AvatarImage 
                     src={avatar} 
                     alt={name} 
@@ -235,9 +235,9 @@ export function UserDropdownNavBar({ name, email, avatar, withSheetClose, isClos
       ) : (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <div className={`cursor-pointer flex h-9 items-center rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 transition-all duration-100 hover:text-primary ${isClosed ? "justify-center" : "justify-between"}`}>
+            <div className={`cursor-pointer flex h-9 items-center rounded-lg px-2 text-sm font-medium text-muted-foreground hover:bg-zinc-600/10 dark:hover:bg-zinc-800/70 hover:text-primary ${isClosed ? "justify-center" : "justify-between"}`}>
               <div className={`flex items-center ${isClosed ? "justify-center w-full" : ""}`}>
-                <Avatar className={`relative transition-all duration-0 ease-in-out ${isClosed ? "h-8 w-8" : "h-7 w-7"} drop-shadow-md`}>
+                <Avatar className={`relative ${isClosed ? "h-8 w-8" : "h-7 w-7"} drop-shadow-md`}>
                   <AvatarImage 
                     src={avatar} 
                     alt={name} 
