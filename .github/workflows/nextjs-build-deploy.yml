@@ -60,7 +60,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Cache Next.js
-        uses: actions/cache
+        uses: actions/cache@v4.1.1
         with:
           path: |
             ${{ github.workspace }}/apps/nextjs/.next/cache
